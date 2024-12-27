@@ -5,10 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+public class Xinbot {
+    private static final Logger log = LoggerFactory.getLogger(Xinbot.class);
+
+    public static final String version = "v1.0";
 
     public static void main(String[] args){
+        log.info("version: " + version);
         Bot.Instance.getBotProfile().load(args);
         File dir = new File(Bot.Instance.getBotProfile().getPluginsDirectory());
         if (!dir.exists() || !dir.isDirectory()) {

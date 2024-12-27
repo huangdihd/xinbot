@@ -66,7 +66,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>xin.bbtt.mcbot.Main</mainClass> <!-- 指定主类 -->
+                        <mainClass>xin.bbtt.mcbot.Xinbot</mainClass> <!-- 指定主类 -->
                     </manifest>
                 </archive>
                 <descriptorRefs>
