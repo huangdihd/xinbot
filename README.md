@@ -19,4 +19,4 @@
    - `-o`: The Minecraft username of the bot owner.  
 
 4. **Develop Plugins**  
-   To add custom functionalities, create and integrate plugins tailored to your needs.  
+   To add custom functionalities, create and integrate plugins tailored to your needs with [Plugin Development Guide](PDG.md).  
