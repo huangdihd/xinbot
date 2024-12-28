@@ -75,7 +75,10 @@ public class Bot {
         session.connect();
         long start_time = Instant.now().toEpochMilli();
         while (!session.isConnected()){
-            if (System.currentTimeMillis() - start_time > 2000) break;
+            if (System.currentTimeMillis() - start_time > 2000) {
+                disconnect("connect timed out.");
+                break;
+            }
         }
     }
 
