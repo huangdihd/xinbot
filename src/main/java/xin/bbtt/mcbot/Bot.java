@@ -54,6 +54,7 @@ public class Bot {
 
     public void stop() {
         thread.interrupt();
+        disconnect("Bot stopped.");
         is_running = false;
     }
 
@@ -63,11 +64,6 @@ public class Bot {
             if (!session.isConnected()) {
                 pluginManager.disableAll();
                 connect();
-                try {
-                    Thread.sleep(2000L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }
@@ -77,6 +73,14 @@ public class Bot {
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
+        long start_time = Instant.now().toEpochMilli();
+        while (!session.isConnected()){
+            if (System.currentTimeMillis() - start_time > 2000) break;
+        }
+    }
+
+    private void disconnect(String reason){
+        session.disconnect(reason);
     }
 
     public boolean isRunning() {
@@ -93,6 +97,10 @@ public class Bot {
 
     public void addListener(SessionListener listener){
         session.addListener(listener);
+    }
+
+    public void removeListener(SessionListener listener){
+        session.removeListener(listener);
     }
 
     public void sendCommand(String command) {

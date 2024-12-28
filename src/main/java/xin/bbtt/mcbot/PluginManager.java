@@ -64,4 +64,8 @@ public class PluginManager {
             }
         }
     }
+
+    public Plugin getPlugin(String name) {
+        return plugins.get(name);
+    }
 }
