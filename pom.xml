@@ -6,7 +6,7 @@
 
     <groupId>xin.bbtt</groupId>
     <artifactId>xinbot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -54,7 +54,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.example.MinecraftClientTitleTest</mainClass> <!-- 指定主类 -->
+                            <mainClass>xin.bbtt.mcbot.Xinbot</mainClass> <!-- 指定主类 -->
                         </manifest>
                     </archive>
                 </configuration>

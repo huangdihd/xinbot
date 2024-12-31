@@ -184,7 +184,25 @@ public class PlayerJoinListener implements SessionListener {
     }
 }
 ```
-## 6. Conclusion
+
+## 6. Add Your Class in the Services Folder
+
+The `PluginManager` uses `ServiceLoader` to import plugins. To ensure your plugin is properly recognized, follow these steps:
+
+1. **Create the Services Folder**:  
+   Navigate to the `resources` folder of your project. Inside it, create a directory named `META-INF/services`.
+
+2. **Create the Descriptor File**:  
+   In the `META-INF/services` folder, create a file named `xin.bbtt.mcbot.Plugin`.
+
+3. **Add Plugin Class Full Paths**:  
+   Open the `xin.bbtt.mcbot.Plugin` file and list the full paths of your plugin classes, one per line. For example:
+   ```plaintext
+   com.example.myplugin.MyFirstPlugin
+   com.example.myplugin.MySecondPlugin
+   ```
+By completing these steps, your plugins will be discoverable by the `PluginManager` during runtime.
+## 7. Conclusion
 
 By implementing the `Plugin` interface, developers can easily create and manage plugins. The plugin lifecycle is controlled by the `PluginManager`, and plugins can register event listeners to handle events in the game. Developers can initialize configurations in the `onLoad()` method, register event listeners in the `onEnable()` method, and clean up resources in the `onDisable()` method.
 

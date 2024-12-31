@@ -15,7 +15,7 @@ public class PluginManager {
     public void loadPlugin(Plugin plugin) {
         plugins.put(plugin.getName(), plugin);
         plugin.onLoad();
-        log.error("Loaded plugin: {}", plugin.getClass().getName());
+        log.info("Loaded plugin: {}", plugin.getClass().getName());
     }
 
     public void loadPlugins(String pluginsDirectory) {
@@ -33,6 +33,7 @@ public class PluginManager {
 
         for (File file : files) {
             try {
+                log.info("Trying to load plugin: {}", file.getName());
                 URL[] urls = { file.toURI().toURL() };
                 URLClassLoader classLoader = new URLClassLoader(urls);
                 ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
