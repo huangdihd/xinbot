@@ -12,7 +12,7 @@
 3. **Run the Client**  
    Execute the following command to start Xinbot:  
    ```bash
-   java -jar xinbot-1.0-SNAPSHOT-jar-with-dependencies.jar -u [username] -p [password] -o [owner]
+   java -jar xinbot-*-jar-with-dependencies.jar -u [username] -p [password] -o [owner]
    ```
    - `-u`: The Minecraft account username.  
    - `-p`: The password for the Minecraft account.  
