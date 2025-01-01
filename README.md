@@ -4,7 +4,7 @@
 ## How to Use  
 
 1. **Download the Client**  
-   Download the file: `xinbot-1.0-SNAPSHOT-jar-with-dependencies.jar`.  
+   Download the file: `xinbot-[version]-jar-with-dependencies.jar`.  
 
 2. **Install Java**  
    Ensure Java version 17 or newer is installed.  
