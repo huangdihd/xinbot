@@ -9,6 +9,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title.ClientboundSetTitleTextPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,9 @@ import java.util.stream.Collectors;
 import static xin.bbtt.mcbot.Utils.parseColors;
 
 class AutoLoginProcessor extends SessionAdapter {
-    private static final Logger log = LoggerFactory.getLogger("AutoLoginProcessor");
     private Long wait_time = System.currentTimeMillis();
+
+    public static int join_button_slot;
 
     @Override
     public void packetReceived(Session session, Packet packet) {
@@ -33,13 +35,17 @@ class AutoLoginProcessor extends SessionAdapter {
     }
 
     private void login(ClientboundSetTitleTextPacket titlePacket) {
-        if (titlePacket.toString().contains("/L")) Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
-        if (titlePacket.toString().contains("登陆成功")) Bot.Instance.login = true;
+        if (titlePacket.toString().contains("登陆成功")) {
+            Bot.Instance.login = true;
+            return;
+        }
+        if (titlePacket.toString().contains("登陆")) Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
+
     }
 
     private void join() {
         if (wait_time > System.currentTimeMillis() - 1000) return;
-        Bot.Instance.setCarriedItem(2);
+        Bot.Instance.setCarriedItem(join_button_slot);
         Bot.Instance.useItemWithMainHand(0, 0);
         wait_time = System.currentTimeMillis();
     }
@@ -50,7 +56,9 @@ class ChatMessagePrinter extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        log.info(parseColors(Utils.toString(systemChatPacket.getContent())));
+        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\\\\n")).forEach((line) -> {
+            log.info(parseColors(line));
+        });
     }
 }
 
@@ -115,5 +123,17 @@ class DisconnectReasonPointer extends SessionAdapter {
     @Override
     public void disconnected(DisconnectedEvent event) {
         log.info(parseColors(Utils.toString(event.getReason())));
+    }
+}
+
+
+class JoinButtonRecorder extends SessionAdapter {
+
+    @Override
+    public void packetReceived(Session session, Packet packet) {
+        if (!(packet instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket)) return;
+        if (Bot.Instance.server.equals(Server.Xin)) return;
+        if (!containerSetSlotPacket.toString().contains("加入游戏")) return;
+        AutoLoginProcessor.join_button_slot = containerSetSlotPacket.getSlot() % 9;
     }
 }

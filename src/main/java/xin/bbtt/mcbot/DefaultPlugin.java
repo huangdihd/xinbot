@@ -14,6 +14,7 @@ public class DefaultPlugin implements Plugin {
         Bot.Instance.addListener(new QueueProcessor());
         Bot.Instance.addListener(new ServerMembersChangedMessagePrinter());
         Bot.Instance.addListener(new DisconnectReasonPointer());
+        Bot.Instance.addListener(new JoinButtonRecorder());
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.io.File;
 public class Xinbot {
     private static final Logger log = LoggerFactory.getLogger(Xinbot.class);
 
-    public static final String version = "1.0-RELEASE";
+    public static final String version = "1.1-RELEASE";
 
     public static void main(String[] args){
         log.info("version: " + version);
