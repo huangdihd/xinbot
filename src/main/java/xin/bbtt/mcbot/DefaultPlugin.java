@@ -8,12 +8,13 @@ public class DefaultPlugin implements Plugin {
 
     @Override
     public void onEnable() {
+        Bot.Instance.addListener(new MessageSender());
         Bot.Instance.addListener(new AutoLoginProcessor());
         Bot.Instance.addListener(new ServerRecorder());
         Bot.Instance.addListener(new ChatMessagePrinter());
         Bot.Instance.addListener(new QueueProcessor());
         Bot.Instance.addListener(new ServerMembersChangedMessagePrinter());
-        Bot.Instance.addListener(new DisconnectReasonPointer());
+        Bot.Instance.addListener(new DisconnectReasonPrinter());
         Bot.Instance.addListener(new JoinButtonRecorder());
     }
 

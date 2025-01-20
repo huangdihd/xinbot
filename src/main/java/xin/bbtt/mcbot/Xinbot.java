@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 public class Xinbot {
-    private static final Logger log = LoggerFactory.getLogger(Xinbot.class);
+    private static final Logger log = LoggerFactory.getLogger(Xinbot.class.getSimpleName());
 
-    public static final String version = "1.1-RELEASE";
+    public static final String version = "1.2-RELEASE";
 
     public static void main(String[] args){
         log.info("version: " + version);
@@ -25,5 +25,6 @@ public class Xinbot {
         }
         Bot.Instance.init();
         Bot.Instance.start();
+
     }
 }

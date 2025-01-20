@@ -11,17 +11,49 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title.ClientboundSetTitleTextPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
+
+class MessageSender extends SessionAdapter {
+    private static Long last_send_time = System.currentTimeMillis();
+    @Override
+    public void packetReceived(Session session, Packet packet) {
+        if (Bot.Instance.server == Server.Xin && System.currentTimeMillis() - last_send_time < 3000) return;
+        if (Bot.Instance.to_be_sent_messages.isEmpty()) return;
+        if (Bot.Instance.to_be_sent_messages.get(0).startsWith("/")) {
+            String command = Bot.Instance.to_be_sent_messages.get(0).replaceFirst("/", "");
+            session.send(new ServerboundChatCommandPacket(command));
+        }
+        else {
+            String message = Bot.Instance.to_be_sent_messages.get(0);
+            session.send(
+                    new ServerboundChatPacket(
+                            message,
+                            Instant.now().toEpochMilli(),
+                            0L,
+                            null,
+                            0,
+                            new BitSet()
+                    )
+            );
+        }
+        last_send_time = System.currentTimeMillis();
+        Bot.Instance.to_be_sent_messages.remove(0);
+    }
+}
 
 class AutoLoginProcessor extends SessionAdapter {
     private Long wait_time = System.currentTimeMillis();
@@ -39,7 +71,7 @@ class AutoLoginProcessor extends SessionAdapter {
             Bot.Instance.login = true;
             return;
         }
-        if (titlePacket.toString().contains("登陆")) Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
+        Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
 
     }
 
@@ -52,7 +84,7 @@ class AutoLoginProcessor extends SessionAdapter {
 }
 
 class ChatMessagePrinter extends SessionAdapter {
-    private static final Logger log = LoggerFactory.getLogger("[ChatMessage]");
+    private static final Logger log = LoggerFactory.getLogger(ChatMessagePrinter.class.getSimpleName());
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
@@ -73,7 +105,7 @@ class ServerRecorder extends SessionAdapter {
 
 class ServerMembersChangedMessagePrinter extends SessionAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger("[ServerMemberChangesMessage]");
+    private static final Logger log = LoggerFactory.getLogger(ServerMembersChangedMessagePrinter.class.getSimpleName());
 
     @Override
     public void packetReceived(Session session, Packet packet) {
@@ -117,8 +149,8 @@ class QueueProcessor extends SessionAdapter {
     }
 }
 
-class DisconnectReasonPointer extends SessionAdapter {
-    private static final Logger log = LoggerFactory.getLogger("[DisconnectReason]");
+class DisconnectReasonPrinter extends SessionAdapter {
+    private static final Logger log = LoggerFactory.getLogger(DisconnectReasonPrinter.class.getSimpleName());
 
     @Override
     public void disconnected(DisconnectedEvent event) {

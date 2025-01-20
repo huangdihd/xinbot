@@ -10,7 +10,7 @@ import java.net.*;
 public class PluginManager {
     private final Map<String, Plugin> plugins = new HashMap<>();
 
-    private static final Logger log = LoggerFactory.getLogger("[PluginManager]");
+    private static final Logger log = LoggerFactory.getLogger(PluginManager.class.getSimpleName());
 
     public void loadPlugin(Plugin plugin) {
         plugins.put(plugin.getName(), plugin);

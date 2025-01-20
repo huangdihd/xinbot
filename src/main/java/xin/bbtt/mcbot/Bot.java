@@ -2,32 +2,30 @@ package xin.bbtt.mcbot;
 
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
+import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Bot {
-    private static final Logger log = LoggerFactory.getLogger(Bot.class);
-    private boolean is_running = false;
+    private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
+    private volatile boolean is_running = false;
     private MinecraftProtocol protocol;
     private Session session;
     private final Thread thread = new Thread(this::main_loop);
     private final BotProfile botProfile;
     private final PluginManager pluginManager;
 
+    public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
     public static Bot Instance = new Bot();
     public Server server;
     public boolean login = false;
@@ -60,16 +58,23 @@ public class Bot {
 
     private void main_loop() {
         connect();
-        while (is_running) {
-            if (!session.isConnected()) {
-                pluginManager.disableAll();
-                connect();
-            }
-        }
+        while (is_running) Thread.onSpinWait();
+    }
+
+    private void on_disconnect() {
+        if (!is_running) return;
+        pluginManager.disableAll();
+        connect();
     }
 
     private void connect(){
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
+        session.addListener(new SessionAdapter() {
+            @Override
+            public void disconnected(DisconnectedEvent event) {
+                on_disconnect();
+            }
+        });
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
@@ -107,20 +112,11 @@ public class Bot {
     }
 
     public void sendCommand(String command) {
-        session.send(new ServerboundChatCommandPacket(command));
+        to_be_sent_messages.add("/" + command);
     }
 
     public void sendChatMessage(String message) {
-        session.send(
-                new ServerboundChatPacket(
-                    message,
-                    Instant.now().toEpochMilli(),
-                    0L,
-                    null,
-                    0,
-                    new BitSet()
-                )
-        );
+        to_be_sent_messages.add(message);
     }
 
     public void setCarriedItem(int slot) {
