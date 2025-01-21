@@ -27,7 +27,7 @@ public class Bot {
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
     public static Bot Instance = new Bot();
-    public Server server;
+    public Server server = null;
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
 
@@ -64,6 +64,7 @@ public class Bot {
     private void on_disconnect() {
         if (!is_running) return;
         pluginManager.disableAll();
+        server = null;
         connect();
     }
 
@@ -78,13 +79,14 @@ public class Bot {
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
-        long start_time = Instant.now().toEpochMilli();
-        while (!session.isConnected()){
+        long start_time = System.currentTimeMillis();
+        while (server == null && !is_running){
             if (System.currentTimeMillis() - start_time > 2000) {
                 disconnect("connect timed out.");
                 break;
             }
         }
+        log.info("connect complete.");
     }
 
     private void disconnect(String reason){
