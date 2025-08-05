@@ -59,13 +59,12 @@ public class Bot {
     private void main_loop() {
         connect();
         while (is_running) {
-            if (!Bot.Instance.getBotProfile().getHighStability()) {
-                Thread.onSpinWait();
-                continue;
+            if (Bot.Instance.getBotProfile().getHighStability()) {
+                if (session.isConnected()) continue;
+                pluginManager.disableAll();
+                connect();
             }
-            if (session.isConnected()) continue;
-            pluginManager.disableAll();
-            connect();
+            Thread.onSpinWait();
         }
     }
 
