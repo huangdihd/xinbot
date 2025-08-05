@@ -58,7 +58,10 @@ public class Utils {
         ArrayList<String> result = new ArrayList<>();
 
         if (component instanceof TranslatableComponent translatable) {
-            result.add(LangManager.get(translatable.key()));
+            String text = LangManager.get(translatable.key());
+            if (!text.isEmpty()) {
+                result.add(text);
+            }
         }
         else if (component instanceof TextComponent textComponent) {
             String content = textComponent.content();
@@ -70,7 +73,9 @@ public class Utils {
                 ANSICode.append(getStyleAnsi(textComponent));
             }
             ANSICode.append(parseColors(content));
-            result.add(ANSICode.toString());
+            if (!ANSICode.toString().isEmpty()) {
+                result.add(ANSICode.toString());
+            }
         }
 
         for (Component child : component.children()) {
