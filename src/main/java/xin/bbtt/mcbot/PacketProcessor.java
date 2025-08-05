@@ -152,7 +152,7 @@ class DisconnectReasonPrinter extends SessionAdapter {
 
     @Override
     public void disconnected(DisconnectedEvent event) {
-        log.info(parseColors(Utils.toString(event.getReason())));
+        log.info(Utils.toString(event.getReason()));
     }
 }
 

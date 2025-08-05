@@ -69,9 +69,6 @@ public class Utils {
                         textColor.red(), textColor.green(), textColor.blue()));
                 ANSICode.append(getStyleAnsi(textComponent));
             }
-            else {
-                ANSICode.append("\u001B[97m");
-            }
             ANSICode.append(parseColors(content));
             result.add(ANSICode.toString());
         }
