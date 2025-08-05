@@ -58,7 +58,15 @@ public class Bot {
 
     private void main_loop() {
         connect();
-        while (is_running) Thread.onSpinWait();
+        while (is_running) {
+            if (!Bot.Instance.getBotProfile().getHighStability()) {
+                Thread.onSpinWait();
+                continue;
+            }
+            if (session.isConnected()) continue;
+            pluginManager.disableAll();
+            connect();
+        }
     }
 
     private void on_disconnect() {
@@ -70,7 +78,8 @@ public class Bot {
 
     private void connect(){
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
-        session.addListener(new SessionAdapter() {
+        if (!Bot.Instance.getBotProfile().getHighStability())
+            session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
                 on_disconnect();

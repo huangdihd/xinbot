@@ -88,9 +88,7 @@ class ChatMessagePrinter extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\\\\n")).forEach((line) -> {
-            log.info(parseColors(line));
-        });
+        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\\\\n")).forEach((line) -> log.info(parseColors(line)));
     }
 }
 
@@ -143,7 +141,7 @@ class QueueProcessor extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        if (problem.has(Utils.toString(systemChatPacket.getContent()))) {
+        if (problem.has(Utils.toString(systemChatPacket.getContent()).trim())) {
             Bot.Instance.sendChatMessage(problem.get(Utils.toString(systemChatPacket.getContent())).getAsString());
         }
     }

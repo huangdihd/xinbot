@@ -4,7 +4,7 @@
 ## How to Use  
 
 1. **Download the Client**  
-   Download the file: `xinbot-[version]-jar-with-dependencies.jar`.  
+   Download the file: `xinbot-[version].jar`.  
 
 2. **Install Java**  
    Ensure Java version 17 or newer is installed.  
@@ -12,7 +12,7 @@
 3. **Run the Client**  
    Execute the following command to start Xinbot:  
    ```bash
-   java -jar xinbot-*-jar-with-dependencies.jar -u [username] -p [password] -o [owner]
+   java -jar xinbot-*.jar -u [username] -p [password] -o [owner]
    ```
    - `-u`: The Minecraft account username.  
    - `-p`: The password for the Minecraft account.  
