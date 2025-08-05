@@ -1,6 +1,10 @@
 package xin.bbtt.mcbot;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -32,26 +36,18 @@ public class Utils {
             "\u001B[91m", "\u001B[95m", "\u001B[93m", "\u001B[97m"  // §c-§f
     };
 
-    public static Map<String, String> colorMap = new HashMap<>();
+    public static String ansiColor(int r, int g, int b) {
+        return String.format("\u001B[38;2;%d;%d;%dm", r, g, b);
+    }
 
-    static {
-        colorMap.put("NamedTextColor{name=\"black\"", "§0");
-        colorMap.put("NamedTextColor{name=\"dark_blue\"", "§1");
-        colorMap.put("NamedTextColor{name=\"dark_green\"", "§2");
-        colorMap.put("NamedTextColor{name=\"dark_aqua\"", "§3");
-        colorMap.put("NamedTextColor{name=\"dark_red\"", "§4");
-        colorMap.put("NamedTextColor{name=\"dark_purple\"", "§5");
-        colorMap.put("NamedTextColor{name=\"gold\"", "§6");
-        colorMap.put("NamedTextColor{name=\"gray\"", "§7");
-        colorMap.put("NamedTextColor{name=\"dark_gray\"", "§8");
-        colorMap.put("NamedTextColor{name=\"blue\"", "§9");
-        colorMap.put("NamedTextColor{name=\"green\"", "§a");
-        colorMap.put("NamedTextColor{name=\"aqua\"", "§b");
-        colorMap.put("NamedTextColor{name=\"red\"", "§c");
-        colorMap.put("NamedTextColor{name=\"light_purple\"", "§d");
-        colorMap.put("NamedTextColor{name=\"yellow\"", "§e");
-        colorMap.put("NamedTextColor{name=\"white\"", "§f");
-        colorMap.put("null", "");
+    public static String getStyleAnsi(TextComponent text) {
+        StringBuilder sb = new StringBuilder();
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.BOLD))) sb.append("\u001B[1m");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.ITALIC))) sb.append("\u001B[3m");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.UNDERLINED))) sb.append("\u001B[4m");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.STRIKETHROUGH))) sb.append("\u001B[9m");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.OBFUSCATED))) sb.append("░"); // §k 无法用 ANSI 实现
+        return sb.toString();
     }
 
     public static String toString(Component component) {
@@ -59,45 +55,36 @@ public class Utils {
     }
 
     public static ArrayList<String> toStrings(Component component) {
-        return toStrings(component, "§r");
-    }
-
-    public static ArrayList<String> toStrings(Component component, String defaultColorCode) {
         ArrayList<String> result = new ArrayList<>();
 
-        String serialized = component.toString();
-
-        // 处理 TranslatableComponentImpl 特例
-        if (serialized.startsWith("TranslatableComponentImpl")) {
-            String key = serialized.split("key=\"")[1].split("\"")[0];
-            result.add(key);
-            return result;
+        if (component instanceof TranslatableComponent translatable) {
+            result.add(LangManager.get(translatable.key()));
         }
-
-        // 获取内容
-        String content = serialized.replaceFirst("^TextComponentImpl\\{content=\"", "").split("\", style=")[0];
-
-        // 获取颜色
-        String color = "null";
-        if (serialized.contains("color=")) {
-            color = serialized.split("color=")[1].split(",")[0];
-        }
-
-        result.add(colorMap.getOrDefault(color, ""));
-        if (!content.isEmpty()) result.add(content);
-
-        if (!component.children().isEmpty()) {
-            for (Component child : component.children()) {
-                result.addAll(toStrings(child, colorMap.getOrDefault(color, "")));
+        else if (component instanceof TextComponent textComponent) {
+            String content = textComponent.content();
+            TextColor textColor = textComponent.color();
+            StringBuilder ANSICode = new StringBuilder();
+            if (textColor != null) {
+                ANSICode.append(ansiColor(
+                        textColor.red(), textColor.green(), textColor.blue()));
+                ANSICode.append(getStyleAnsi(textComponent));
             }
+            else {
+                ANSICode.append("\u001B[97m");
+            }
+            ANSICode.append(parseColors(content));
+            result.add(ANSICode.toString());
         }
 
-        if (!"null".equals(color)) result.add(defaultColorCode);
+        for (Component child : component.children()) {
+            result.addAll(toStrings(child));
+        }
+
         return result;
     }
 
     public static String parseColors(String text) {
-        text = text.replace("§r§", "§");
+        text = text.replace("§r§", "§"); // 合并重复重置
 
         Pattern pattern = Pattern.compile("§([0-9a-fk-or])");
         Matcher matcher = pattern.matcher(text);
@@ -106,14 +93,14 @@ public class Utils {
         int lastIndex = 0;
 
         while (matcher.find()) {
-            result.append(text, lastIndex, matcher.start()); // 添加前面的普通字符
-            String code = matcher.group(1);
+            result.append(text, lastIndex, matcher.start()); // 普通文本
+            char code = matcher.group(1).charAt(0);
             lastIndex = matcher.end();
 
-            if (FORMAT_CODES.containsKey(code.charAt(0))) {
-                result.append(FORMAT_CODES.get(code.charAt(0)));
+            if (FORMAT_CODES.containsKey(code)) {
+                result.append(FORMAT_CODES.get(code));
             } else {
-                int index = Integer.parseInt(code, 16);
+                int index = Integer.parseInt(String.valueOf(code), 16);
                 if (index >= 0 && index < ANSI_COLORS.length) {
                     result.append(ANSI_COLORS[index]);
                 }
@@ -121,6 +108,6 @@ public class Utils {
         }
 
         result.append(text.substring(lastIndex));
-        return "\u001B[97m " + result + "\u001B[0m";
+        return result.toString();
     }
 }

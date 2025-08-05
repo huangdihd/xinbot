@@ -37,6 +37,9 @@ public class Bot {
     }
 
     public void init() {
+        if (!this.getBotProfile().getDisableLanguageFile()) {
+            LangManager.loadLanguage(null);
+        }
         this.pluginManager.loadPlugin(new DefaultPlugin());
         this.pluginManager.loadPlugins(this.botProfile.getPluginsDirectory());
     }
