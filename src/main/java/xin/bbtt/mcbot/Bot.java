@@ -85,6 +85,9 @@ public class Bot {
         catch (UserInterruptException e) {
             this.stop();
         }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private void on_disconnect() {
