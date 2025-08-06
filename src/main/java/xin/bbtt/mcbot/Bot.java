@@ -10,6 +10,7 @@ import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
+import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,8 @@ public class Bot {
     private volatile boolean is_running = false;
     public MinecraftProtocol protocol;
     private Session session;
-    private final Thread thread = new Thread(this::main_loop);
+    private final Thread main_thread = new Thread(this::main_loop);
+    private final Thread input_thread = new Thread(this::get_input);
     private final BotProfile botProfile;
     private final PluginManager pluginManager;
 
@@ -42,6 +44,7 @@ public class Bot {
         }
         this.pluginManager.loadPlugin(new DefaultPlugin());
         this.pluginManager.loadPlugins(this.botProfile.getPluginsDirectory());
+        this.input_thread.start();
     }
 
     public void start() {
@@ -50,11 +53,11 @@ public class Bot {
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
         login = false;
         log.info(this.botProfile.toString());
-        thread.start();
+        main_thread.start();
     }
 
     public void stop() {
-        thread.interrupt();
+        main_thread.interrupt();
         disconnect("Bot stopped.");
         is_running = false;
     }
@@ -68,6 +71,19 @@ public class Bot {
                 connect();
             }
             Thread.onSpinWait();
+        }
+    }
+
+    private void get_input() {
+        try {
+            while (true) {
+                String input = CLI.lineReader.readLine("> ");
+                if (input == null || input.isEmpty()) continue;
+                this.sendChatMessage(input);
+            }
+        }
+        catch (UserInterruptException e) {
+            this.stop();
         }
     }
 

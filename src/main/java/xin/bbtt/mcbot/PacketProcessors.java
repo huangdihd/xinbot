@@ -165,9 +165,7 @@ class QueueProcessor extends SessionAdapter {
         if (!matcher.find()) return;
 
         String answer = matcher.group(1);
-        if (questions.has(Utils.toString(systemChatPacket.getContent()).trim())) {
-            Bot.Instance.sendChatMessage(answer);
-        }
+        Bot.Instance.sendChatMessage(answer);
     }
 }
 

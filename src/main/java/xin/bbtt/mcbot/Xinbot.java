@@ -1,6 +1,5 @@
 package xin.bbtt.mcbot;
 
-import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +12,7 @@ public class Xinbot {
 
     public static void main(String[] args){
         if (Bot.Instance.getBotProfile().load(args)) return;
-        AnsiConsole.systemInstall();
+        CLI.init();
         log.info("version: {}", version);
         File dir = new File(Bot.Instance.getBotProfile().getPluginsDirectory());
         if (!dir.exists() || !dir.isDirectory()) {
