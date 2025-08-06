@@ -98,7 +98,7 @@ class ChatMessagePrinter extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\\\\n")).forEach((line) -> log.info(parseColors(line)));
+        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\n")).forEach((line) -> log.info(parseColors(line)));
         log.debug(toStrings(systemChatPacket.getContent()).toString());
     }
 }
