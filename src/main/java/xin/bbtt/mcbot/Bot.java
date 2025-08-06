@@ -10,6 +10,7 @@ import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,13 +59,14 @@ public class Bot {
 
     public void stop() {
         main_thread.interrupt();
+        input_thread.interrupt();
         disconnect("Bot stopped.");
         is_running = false;
     }
 
     private void main_loop() {
         connect();
-        while (is_running) {
+        while (!Thread.currentThread().isInterrupted() && is_running) {
             if (Bot.Instance.getBotProfile().getHighStability()) {
                 if (session.isConnected()) continue;
                 pluginManager.disableAll();
@@ -75,18 +77,20 @@ public class Bot {
     }
 
     private void get_input() {
-        try {
-            while (true) {
-                String input = CLI.lineReader.readLine("> ");
-                if (input == null || input.isEmpty()) continue;
-                this.sendChatMessage(input);
+
+        while (!Thread.currentThread().isInterrupted() && is_running) {
+            String input = null;
+            try {
+                input = CLI.lineReader.readLine("> ");
             }
-        }
-        catch (UserInterruptException e) {
-            this.stop();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
+            catch (UserInterruptException | EndOfFileException e) {
+                this.stop();
+            }
+            catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            if (input == null || input.isEmpty()) continue;
+            this.sendChatMessage(input);
         }
     }
 
