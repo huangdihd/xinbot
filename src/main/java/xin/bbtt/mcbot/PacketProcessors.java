@@ -2,20 +2,31 @@ package xin.bbtt.mcbot;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.kyori.adventure.text.TextComponent;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.*;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title.ClientboundSetTitleTextPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -63,7 +74,7 @@ class MessageSender extends SessionAdapter {
 }
 
 class AutoLoginProcessor extends SessionAdapter {
-    private Long wait_time = System.currentTimeMillis();
+    public static Long wait_time = System.currentTimeMillis();
 
     private static final Logger log = LoggerFactory.getLogger(AutoLoginProcessor.class.getSimpleName());
 
@@ -91,19 +102,66 @@ class AutoLoginProcessor extends SessionAdapter {
 
     private void join() {
         if (wait_time > System.currentTimeMillis() - 1000) return;
+        if (Bot.Instance.server != Server.Login) return;
         Bot.Instance.setCarriedItem(join_button_slot);
         Bot.Instance.useItemWithMainHand(0, 0);
         wait_time = System.currentTimeMillis();
     }
 }
 
+class AutoJoinProcessor extends SessionAdapter {
+    private static final Logger log = LoggerFactory.getLogger(AutoJoinProcessor.class.getSimpleName());
+    private int containerId = -1;
+    @Override
+    public void packetReceived(Session session, Packet packet) {
+        if (packet instanceof ClientboundOpenScreenPacket openScreenPacket) recordContainer(openScreenPacket);
+        if (packet instanceof ClientboundContainerSetContentPacket containerSetContentPacket) clickButton(containerSetContentPacket, session);
+    }
+
+    private void recordContainer(ClientboundOpenScreenPacket openScreenPacket) {
+        if (Bot.Instance.server != Server.Login) return;
+        if (!(openScreenPacket.getTitle() instanceof TextComponent title)) return;
+        if (!title.content().contains("Join The Game")) return;
+        containerId = openScreenPacket.getContainerId();
+        log.debug("Recorded container id {}", containerId);
+    }
+
+    private void clickButton(ClientboundContainerSetContentPacket containerSetContentPacket, Session session) {
+        if (Bot.Instance.server != Server.Login) return;
+        if (!(containerSetContentPacket.getContainerId() == containerId)) return;
+        ItemStack[] items = containerSetContentPacket.getItems();
+        for (int slot = 0; slot < items.length; slot++) {
+            ItemStack itemStack = items[slot];
+            if (itemStack == null) continue;
+            if (!itemStack.toString().contains("加入队列")) continue;
+            Int2ObjectMap<ItemStack> changedSlots = new Int2ObjectOpenHashMap<>();
+            changedSlots.put(slot, null);
+            session.send(new ServerboundContainerClickPacket(
+                    containerId,
+                    containerSetContentPacket.getStateId(),
+                    slot,
+                    ContainerActionType.CLICK_ITEM,
+                    ClickItemAction.LEFT_CLICK,
+                    itemStack,
+                    changedSlots
+            ));
+            containerId = -1;
+            AutoLoginProcessor.wait_time = System.currentTimeMillis() + 5000L;
+            return;
+        }
+    }
+}
+
 class ChatMessagePrinter extends SessionAdapter {
     private static final Logger log = LoggerFactory.getLogger(ChatMessagePrinter.class.getSimpleName());
+    private static final Marker chatMessageMarker = MarkerFactory.getMarker("[ChatMessage]");
+    private static final Marker overlayMessageMarker = MarkerFactory.getMarker("[OverlayMessage]");
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\n")).forEach((line) -> log.info(parseColors(line)));
-        log.debug(toStrings(systemChatPacket.getContent()).toString());
+        Marker marker = systemChatPacket.isOverlay() ? overlayMessageMarker : chatMessageMarker;
+        Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\n")).forEach((line) -> log.info(marker, parseColors(line)));
+        log.debug(marker, toStrings(systemChatPacket.getContent()).toString());
     }
 }
 
@@ -128,6 +186,8 @@ class CaptchaProcessor extends SessionAdapter {
 }
 
 class ServerRecorder extends SessionAdapter {
+    private static final Logger log = LoggerFactory.getLogger(ServerRecorder.class);
+
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;

@@ -10,6 +10,7 @@ public class DefaultPlugin implements Plugin {
     public void onEnable() {
         Bot.Instance.addListener(new MessageSender());
         Bot.Instance.addListener(new AutoLoginProcessor());
+        Bot.Instance.addListener(new AutoJoinProcessor());
         Bot.Instance.addListener(new ServerRecorder());
         Bot.Instance.addListener(new ChatMessagePrinter());
         Bot.Instance.addListener(new CaptchaProcessor());

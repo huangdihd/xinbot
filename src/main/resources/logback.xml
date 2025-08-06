@@ -5,7 +5,7 @@
     <appender name="CONSOLE" class="xin.bbtt.mcbot.JLineConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>[%d{HH:mm:ss} %highlight(%5level)] [%cyan(%logger)]: %msg%n</pattern>
+            <pattern>[%d{HH:mm:ss} %highlight(%5level)] [%cyan(%logger)]%marker: %msg%n</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>
