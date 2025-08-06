@@ -18,7 +18,7 @@ public class BotProfile {
     private String password;
     @Parameter(names = {"--high-stability", "-hs"}, description = "Use old version reconnect system to improve stability(May lead to high cpu usage).")
     private boolean highStability;
-    @Parameter(names = {"--disable-language-file", "-dlf"}, description = "Do not load language files (reduce memory footprint).")
+    @Parameter(names = {"--disable-language-file", "-dlf"}, description = "Do not load language files (reduce memory usage).")
     private boolean disableLanguageFile;
 
     @Override

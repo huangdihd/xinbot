@@ -42,9 +42,10 @@ public class LangManager {
                     return;
                 }
             }
-
             Type type = new TypeToken<Map<String, String>>() {}.getType();
             currentLang = new Gson().fromJson(langObj, type);
+
+            System.gc();
 
             log.info("Loaded language {}", langCode);
 

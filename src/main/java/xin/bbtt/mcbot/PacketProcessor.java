@@ -24,6 +24,8 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
@@ -145,13 +147,26 @@ class ServerMembersChangedMessagePrinter extends SessionAdapter {
 }
 
 class QueueProcessor extends SessionAdapter {
-    private final JsonObject problem = JsonParser.parseString(new BufferedReader(new InputStreamReader(Objects.requireNonNull(QueueProcessor.class.getClassLoader().getResourceAsStream("problems.json")), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).getAsJsonObject();
+    private final JsonObject questions = JsonParser.parseString(new BufferedReader(new InputStreamReader(Objects.requireNonNull(QueueProcessor.class.getClassLoader().getResourceAsStream("questions.json")), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).getAsJsonObject();
 
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        if (problem.has(Utils.toString(systemChatPacket.getContent()).trim())) {
-            Bot.Instance.sendChatMessage(problem.get(Utils.toString(systemChatPacket.getContent())).getAsString());
+        String fullQuestion = Utils.toString(systemChatPacket.getContent());
+        if (!fullQuestion.contains("丨")) return;
+        String[] parts = fullQuestion.split("丨");
+        if (parts.length != 2) return;
+        String question = parts[0];
+        String options = parts[1];
+        if (!questions.has(question)) return;
+        Pattern pattern = Pattern.compile(questions.get(question).getAsString());
+        Matcher matcher = pattern.matcher(options);
+
+        if (!matcher.find()) return;
+
+        String answer = matcher.group(1);
+        if (questions.has(Utils.toString(systemChatPacket.getContent()).trim())) {
+            Bot.Instance.sendChatMessage(answer);
         }
     }
 }
