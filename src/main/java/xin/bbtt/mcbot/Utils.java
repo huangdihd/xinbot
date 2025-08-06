@@ -3,6 +3,7 @@ package xin.bbtt.mcbot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -20,6 +21,27 @@ public class Utils {
 
     private static final Map<Character, String> FORMAT_CODES = new HashMap<>();
 
+    private static final Map<NamedTextColor, String> colorCodeMap = new HashMap<>();
+
+    static {
+        colorCodeMap.put(NamedTextColor.BLACK, "§0");
+        colorCodeMap.put(NamedTextColor.DARK_BLUE, "§1");
+        colorCodeMap.put(NamedTextColor.DARK_GREEN, "§2");
+        colorCodeMap.put(NamedTextColor.DARK_AQUA, "§3");
+        colorCodeMap.put(NamedTextColor.DARK_RED, "§4");
+        colorCodeMap.put(NamedTextColor.DARK_PURPLE, "§5");
+        colorCodeMap.put(NamedTextColor.GOLD, "§6");
+        colorCodeMap.put(NamedTextColor.GRAY, "§7");
+        colorCodeMap.put(NamedTextColor.DARK_GRAY, "§8");
+        colorCodeMap.put(NamedTextColor.BLUE, "§9");
+        colorCodeMap.put(NamedTextColor.GREEN, "§a");
+        colorCodeMap.put(NamedTextColor.AQUA, "§b");
+        colorCodeMap.put(NamedTextColor.RED, "§c");
+        colorCodeMap.put(NamedTextColor.LIGHT_PURPLE, "§d");
+        colorCodeMap.put(NamedTextColor.YELLOW, "§e");
+        colorCodeMap.put(NamedTextColor.WHITE, "§f");
+    }
+
     static {
         FORMAT_CODES.put('k', ANSI_GARBAGE);
         FORMAT_CODES.put('l', ANSI_BOLD);
@@ -36,16 +58,12 @@ public class Utils {
             "\u001B[91m", "\u001B[95m", "\u001B[93m", "\u001B[97m"  // §c-§f
     };
 
-    public static String ansiColor(int r, int g, int b) {
-        return String.format("\u001B[38;2;%d;%d;%dm", r, g, b);
-    }
-
     public static String getStyleAnsi(TextComponent text) {
         StringBuilder sb = new StringBuilder();
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.BOLD))) sb.append("\u001B[1m");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.ITALIC))) sb.append("\u001B[3m");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.UNDERLINED))) sb.append("\u001B[4m");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.STRIKETHROUGH))) sb.append("\u001B[9m");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.BOLD))) sb.append("§l");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.ITALIC))) sb.append("§o");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.UNDERLINED))) sb.append("§n");
+        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.STRIKETHROUGH))) sb.append("§m");
         if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.OBFUSCATED))) sb.append("░"); // §k 无法用 ANSI 实现
         return sb.toString();
     }
@@ -55,6 +73,10 @@ public class Utils {
     }
 
     public static ArrayList<String> toStrings(Component component) {
+        return toStrings(component, null);
+    }
+
+    public static ArrayList<String> toStrings(Component component, NamedTextColor defaultColor) {
         ArrayList<String> result = new ArrayList<>();
 
         if (component instanceof TranslatableComponent translatable) {
@@ -66,20 +88,21 @@ public class Utils {
         else if (component instanceof TextComponent textComponent) {
             String content = textComponent.content();
             TextColor textColor = textComponent.color();
-            StringBuilder ANSICode = new StringBuilder();
-            if (textColor != null) {
-                ANSICode.append(ansiColor(
-                        textColor.red(), textColor.green(), textColor.blue()));
-                ANSICode.append(getStyleAnsi(textComponent));
+            StringBuilder colorCode = new StringBuilder();
+            if (textColor instanceof NamedTextColor namedTextColor) {
+                colorCode.append(colorCodeMap.getOrDefault(namedTextColor, ""));
+                defaultColor = namedTextColor;
             }
-            ANSICode.append(parseColors(content));
-            if (!ANSICode.toString().isEmpty()) {
-                result.add(ANSICode.toString());
+            else {
+                colorCode.append(colorCodeMap.getOrDefault(defaultColor, ""));
             }
+            colorCode.append(getStyleAnsi(textComponent));
+            colorCode.append(content);
+            result.add(colorCode.toString());
         }
 
         for (Component child : component.children()) {
-            result.addAll(toStrings(child));
+            result.addAll(toStrings(child, defaultColor));
         }
 
         return result;
@@ -92,6 +115,8 @@ public class Utils {
         Matcher matcher = pattern.matcher(text);
 
         StringBuilder result = new StringBuilder();
+
+        result.append("\u001B[97m");
         int lastIndex = 0;
 
         while (matcher.find()) {
@@ -110,6 +135,7 @@ public class Utils {
         }
 
         result.append(text.substring(lastIndex));
+        result.append("\u001B[0m");
         return result.toString();
     }
 }

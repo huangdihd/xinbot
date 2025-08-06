@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.C
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title.ClientboundSetTitleTextPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
+import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,16 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
+import static xin.bbtt.mcbot.Utils.toStrings;
 
 class MessageSender extends SessionAdapter {
     private static Long last_send_time = System.currentTimeMillis();
+
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (Bot.Instance.server == Server.Xin && System.currentTimeMillis() - last_send_time < 3000) return;
+        if (System.currentTimeMillis() - last_send_time < 3000) return;
+        if (Bot.Instance.protocol.getOutboundState() != ProtocolState.GAME) return;
+        if (Bot.Instance.protocol.getInboundState() != ProtocolState.GAME) return;
         if (Bot.Instance.to_be_sent_messages.isEmpty()) return;
         if (Bot.Instance.to_be_sent_messages.get(0).startsWith("/")) {
             String command = Bot.Instance.to_be_sent_messages.get(0).replaceFirst("/", "");
@@ -58,6 +63,8 @@ class MessageSender extends SessionAdapter {
 class AutoLoginProcessor extends SessionAdapter {
     private Long wait_time = System.currentTimeMillis();
 
+    private static final Logger log = LoggerFactory.getLogger(AutoLoginProcessor.class.getSimpleName());
+
     public static int join_button_slot;
 
     @Override
@@ -68,6 +75,7 @@ class AutoLoginProcessor extends SessionAdapter {
 
     private void login(ClientboundSetTitleTextPacket titlePacket) {
         if (titlePacket.toString().contains("登陆成功")) {
+            log.info("Login successful");
             Bot.Instance.login = true;
             return;
         }
@@ -89,6 +97,7 @@ class ChatMessagePrinter extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
         Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\\\\n")).forEach((line) -> log.info(parseColors(line)));
+        log.debug(toStrings(systemChatPacket.getContent()).toString());
     }
 }
 
@@ -152,7 +161,8 @@ class DisconnectReasonPrinter extends SessionAdapter {
 
     @Override
     public void disconnected(DisconnectedEvent event) {
-        log.info(Utils.toString(event.getReason()));
+        log.info(parseColors(Utils.toString(event.getReason())));
+        log.error(event.getCause().getMessage(), event.getCause());
     }
 }
 

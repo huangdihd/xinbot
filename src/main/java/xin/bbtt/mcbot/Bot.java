@@ -19,7 +19,7 @@ import java.util.*;
 public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
     private volatile boolean is_running = false;
-    private MinecraftProtocol protocol;
+    public MinecraftProtocol protocol;
     private Session session;
     private final Thread thread = new Thread(this::main_loop);
     private final BotProfile botProfile;
