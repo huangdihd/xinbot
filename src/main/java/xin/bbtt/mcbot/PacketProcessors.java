@@ -81,6 +81,10 @@ class AutoLoginProcessor extends SessionAdapter {
             Bot.Instance.login = true;
             return;
         }
+        if (titlePacket.toString().contains("注册")) {
+            Bot.Instance.sendCommand("reg " + Bot.Instance.getBotProfile().getPassword() + " " + Bot.Instance.getBotProfile().getPassword());
+            return;
+        }
         Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
 
     }
@@ -100,6 +104,26 @@ class ChatMessagePrinter extends SessionAdapter {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
         Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\n")).forEach((line) -> log.info(parseColors(line)));
         log.debug(toStrings(systemChatPacket.getContent()).toString());
+    }
+}
+
+class CaptchaProcessor extends SessionAdapter {
+    private static final Logger log = LoggerFactory.getLogger(CaptchaProcessor.class.getSimpleName());
+    @Override
+    public void packetReceived(Session session, Packet packet) {
+        if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
+
+        String message = Utils.toString(systemChatPacket.getContent());
+        Pattern pattern = Pattern.compile("请先输入：(.*) 完成人机验证！");
+        Matcher matcher = pattern.matcher(message);
+
+        if (!matcher.find()) return;
+
+        String captchaMessage = matcher.group(1);
+
+        Bot.Instance.sendChatMessage(captchaMessage);
+
+        log.debug(captchaMessage);
     }
 }
 
