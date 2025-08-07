@@ -14,6 +14,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.JLine.CLI;
 
 import java.time.Instant;
 import java.util.*;
@@ -22,7 +23,7 @@ public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
     private volatile boolean is_running = false;
     public MinecraftProtocol protocol;
-    private Session session;
+    public Session session;
     private final Thread main_thread = new Thread(this::main_loop);
     private final Thread input_thread = new Thread(this::get_input);
     private final BotProfile botProfile;

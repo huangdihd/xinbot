@@ -2,7 +2,7 @@
     <property name="log.charset" value="${log.charset:-UTF-8}" />
     <property name="log.level" value="${log.level:-INFO}" />
 
-    <appender name="CONSOLE" class="xin.bbtt.mcbot.JLineConsoleAppender">
+    <appender name="CONSOLE" class="xin.bbtt.mcbot.JLine.JLineConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
             <pattern>[%d{HH:mm:ss} %highlight(%5level)] [%cyan(%logger)]%marker: %msg%n</pattern>

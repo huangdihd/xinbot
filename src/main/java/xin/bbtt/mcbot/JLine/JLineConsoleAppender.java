@@ -1,4 +1,4 @@
-package xin.bbtt.mcbot;
+package xin.bbtt.mcbot.JLine;
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;

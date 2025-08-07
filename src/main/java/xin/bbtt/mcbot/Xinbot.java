@@ -2,6 +2,7 @@ package xin.bbtt.mcbot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.JLine.CLI;
 
 import java.io.File;
 

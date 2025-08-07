@@ -1,4 +1,4 @@
-package xin.bbtt.mcbot;
+package xin.bbtt.mcbot.JLine;
 
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -17,6 +17,7 @@ public class CLI {
 
             lineReader = LineReaderBuilder.builder()
                     .terminal(terminal)
+                    .completer(new JLineServerCompleter())
                     .build();
 
             JLineConsoleAppender.setLineReader(lineReader);
