@@ -1,5 +1,6 @@
 package xin.bbtt.mcbot;
 
+import lombok.Getter;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -15,18 +16,23 @@ import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.JLine.CLI;
+import xin.bbtt.mcbot.auth.AccountLoader;
+import xin.bbtt.mcbot.config.BotConfig;
 
 import java.time.Instant;
 import java.util.*;
 
 public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
+    @Getter
     private volatile boolean is_running = false;
     public MinecraftProtocol protocol;
     public Session session;
     private final Thread main_thread = new Thread(this::main_loop);
     private final Thread input_thread = new Thread(this::get_input);
-    private final BotProfile botProfile;
+    @Getter
+    private BotConfig config;
+    @Getter
     private final PluginManager pluginManager;
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
@@ -36,25 +42,22 @@ public class Bot {
     public final Map<UUID, GameProfile> players = new HashMap<>();
 
     private Bot() {
-        this.botProfile = new BotProfile();
         this.pluginManager = new PluginManager();
     }
 
-    public void init() {
-        if (!this.getBotProfile().getDisableLanguageFile()) {
-            LangManager.loadLanguage(null);
-        }
+    public void init(BotConfig config) {
+        this.config = config;
         this.pluginManager.loadPlugin(new DefaultPlugin());
-        this.pluginManager.loadPlugins(this.botProfile.getPluginsDirectory());
+        this.pluginManager.loadPlugins(this.config.getPlugin().getDirectory());
         this.input_thread.start();
     }
 
     public void start() {
         is_running = true;
-        protocol = new MinecraftProtocol(botProfile.getUsername());
+        protocol = AccountLoader.getProtocol();
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
         login = false;
-        log.info(this.botProfile.toString());
+        log.info("Starting bot with username: {}", protocol.getProfile().getName());
         main_thread.start();
     }
 
@@ -68,7 +71,7 @@ public class Bot {
     private void main_loop() {
         connect();
         while (!Thread.currentThread().isInterrupted() && is_running) {
-            if (Bot.Instance.getBotProfile().getHighStability()) {
+            if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) {
                 if (session.isConnected()) continue;
                 pluginManager.disableAll();
                 connect();
@@ -78,8 +81,7 @@ public class Bot {
     }
 
     private void get_input() {
-
-        while (!Thread.currentThread().isInterrupted() && is_running) {
+        while (!Thread.currentThread().isInterrupted() && is_running && CLI.lineReader != null) {
             String input = null;
             try {
                 input = CLI.lineReader.readLine("> ");
@@ -104,7 +106,7 @@ public class Bot {
 
     private void connect(){
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
-        if (!Bot.Instance.getBotProfile().getHighStability())
+        if (!Bot.Instance.getConfig().getAdvances().isEnableHighStability())
             session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
@@ -126,18 +128,6 @@ public class Bot {
 
     private void disconnect(String reason){
         session.disconnect(reason);
-    }
-
-    public boolean isRunning() {
-        return is_running;
-    }
-
-    public BotProfile getBotProfile() {
-        return botProfile;
-    }
-
-    public PluginManager getPluginManager() {
-        return pluginManager;
     }
 
     public void addListener(SessionListener listener){

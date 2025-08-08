@@ -90,15 +90,15 @@ class AutoLoginProcessor extends SessionAdapter {
             return;
         }
         if (titlePacket.toString().contains("注册")) {
-            Bot.Instance.sendCommand("reg " + Bot.Instance.getBotProfile().getPassword() + " " + Bot.Instance.getBotProfile().getPassword());
+            Bot.Instance.sendCommand("reg " + Bot.Instance.getConfig().getAccount().getPassword() + " " + Bot.Instance.getConfig().getAccount().getPassword());
             return;
         }
-        Bot.Instance.sendCommand("l " + Bot.Instance.getBotProfile().getPassword());
+        Bot.Instance.sendCommand("l " + Bot.Instance.getConfig().getAccount().getPassword());
 
     }
 
     private void join() {
-        if (wait_time > System.currentTimeMillis() - 1000) return;
+        if (wait_time > System.currentTimeMillis() - 1500) return;
         if (Bot.Instance.server != Server.Login) return;
         Bot.Instance.setCarriedItem(join_button_slot);
         Bot.Instance.useItemWithMainHand(0, 0);
@@ -143,7 +143,6 @@ class AutoJoinProcessor extends SessionAdapter {
                     changedSlots
             ));
             containerId = -1;
-            AutoLoginProcessor.wait_time = System.currentTimeMillis() + 5000L;
             return;
         }
     }
@@ -151,14 +150,22 @@ class AutoJoinProcessor extends SessionAdapter {
 
 class ChatMessagePrinter extends SessionAdapter {
     private static final Logger log = LoggerFactory.getLogger(ChatMessagePrinter.class.getSimpleName());
-    private static final Marker chatMessageMarker = MarkerFactory.getMarker("[ChatMessage]");
+    private static final Marker chatMessageMarker = MarkerFactory.getMarker("[SysChatMessage]");
     private static final Marker overlayMessageMarker = MarkerFactory.getMarker("[OverlayMessage]");
+    private static String overlayMessage;
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
-        Marker marker = systemChatPacket.isOverlay() ? overlayMessageMarker : chatMessageMarker;
+        Marker marker;
+        if (systemChatPacket.isOverlay()) {
+            if (Utils.toString(systemChatPacket.getContent()).equals(overlayMessage)) return;
+            marker = overlayMessageMarker;
+            overlayMessage = Utils.toString(systemChatPacket.getContent());
+        } else {
+            marker = chatMessageMarker;
+        }
         Arrays.stream(Utils.toString(systemChatPacket.getContent()).split("\n")).forEach((line) -> log.info(marker, parseColors(line)));
-        log.debug(marker, toStrings(systemChatPacket.getContent()).toString());
+        log.debug(marker,"Received message: {}",  toStrings(systemChatPacket.getContent()));
     }
 }
 
@@ -213,7 +220,7 @@ class ServerMembersChangedMessagePrinter extends SessionAdapter {
         });
         if (playerInfoUpdatePacket.getEntries().length != 1) return;
         if (playerInfoUpdatePacket.getEntries()[0].getProfile() == null) return;
-        if (playerInfoUpdatePacket.getEntries()[0].getProfile().getName().equals(Bot.Instance.getBotProfile().getUsername())) return;
+        if (playerInfoUpdatePacket.getEntries()[0].getProfile().getName().equals(Bot.Instance.getConfig().getAccount().getName())) return;
         log.info(parseColors("§8[§2+§8]§7{}"), playerInfoUpdatePacket.getEntries()[0].getProfile().getName());
     }
 
@@ -221,17 +228,22 @@ class ServerMembersChangedMessagePrinter extends SessionAdapter {
         if (playerInfoRemovePacket.getProfileIds().size() != 1) return;
         if (Bot.Instance.players.get(playerInfoRemovePacket.getProfileIds().get(0)) == null) return;
         String name = Bot.Instance.players.get(playerInfoRemovePacket.getProfileIds().get(0)).getName();
-        if (!name.equals(Bot.Instance.getBotProfile().getUsername())) log.info(parseColors("§8[§c-§8]§7{}"), name);
+        if (!name.equals(Bot.Instance.getConfig().getAccount().getName())) log.info(parseColors("§8[§c-§8]§7{}"), name);
         Bot.Instance.players.remove(playerInfoRemovePacket.getProfileIds().get(0));
     }
 }
 
 class QueueProcessor extends SessionAdapter {
-    private final JsonObject questions = JsonParser.parseString(new BufferedReader(new InputStreamReader(Objects.requireNonNull(QueueProcessor.class.getClassLoader().getResourceAsStream("questions.json")), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).getAsJsonObject();
+    private static final JsonObject questions = JsonParser.parseString(new BufferedReader(new InputStreamReader(Objects.requireNonNull(QueueProcessor.class.getClassLoader().getResourceAsStream("questions.json")), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).getAsJsonObject();
 
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
+        if (systemChatPacket.isOverlay()) {
+            if (Utils.toString(systemChatPacket.getContent()).startsWith("§0§lPosition in queue: §6§l")) {
+                AutoLoginProcessor.wait_time = System.currentTimeMillis();
+            }
+        }
         String fullQuestion = Utils.toString(systemChatPacket.getContent());
         if (!fullQuestion.contains("丨")) return;
         String[] parts = fullQuestion.split("丨");

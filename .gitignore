@@ -1,6 +1,7 @@
 target/
 out/
 plugin/
+config.conf
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

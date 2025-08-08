@@ -8,14 +8,14 @@ import org.jline.reader.ParsedLine;
 import xin.bbtt.mcbot.Bot;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class JLineServerCompleter implements Completer {
     private static final AtomicInteger transactionId = new AtomicInteger();
-    private final Map<String, List<String>> cachedResults = new ConcurrentHashMap<>();
 
     @Override
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
@@ -24,20 +24,19 @@ public class JLineServerCompleter implements Completer {
         boolean isRootCommand = buffer.startsWith("/") && !buffer.contains(" ");
         String query = isRootCommand ? buffer.substring(1) : buffer;
 
-        List<String> cached = cachedResults.getOrDefault(buffer, List.of());
-        for (String suggestion : cached) {
-            candidates.add(new Candidate(isRootCommand ? "/" + suggestion : suggestion));
-        }
-
         int id = transactionId.incrementAndGet();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bot.Instance.session.addListener(new CommandSuggestionsProcessor(future, id));
+        Bot.Instance.addListener(new CommandSuggestionsProcessor(future, id));
         Bot.Instance.session.send(new ServerboundCommandSuggestionPacket(id, query));
-
-        future.thenAccept(results -> {
-            cachedResults.put(buffer, results);
-            reader.callWidget("redisplay");
-        });
+        List<String> results;
+        try {
+            results = future.get(200, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            results = List.of();
+        }
+        for (String result : results) {
+            candidates.add(new Candidate((isRootCommand ? "/" : "") + result));
+        }
     }
 }
 

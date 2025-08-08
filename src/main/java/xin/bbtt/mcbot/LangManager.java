@@ -16,7 +16,9 @@ public class LangManager {
     private static Map<String, String> currentLang = Map.of();
     private static final Logger log = LoggerFactory.getLogger(LangManager.class.getSimpleName());
 
-    private LangManager() {}
+    public static void Init() {
+        loadLanguage(null);
+    }
 
     public static void loadLanguage(@Nullable String langCode) {
         if (langCode == null || langCode.isBlank()) {
@@ -53,12 +55,6 @@ public class LangManager {
             log.error(e.getMessage(), e);
             currentLang = Map.of();
         }
-    }
-
-    public static void unloadLanguage() {
-        currentLang = Map.of();
-        log.info("Language unloaded");
-        System.gc();
     }
 
     public static String get(String key) {

@@ -23,7 +23,9 @@ public class CommandSuggestionsProcessor extends SessionAdapter {
         if (!(packet instanceof ClientboundCommandSuggestionsPacket commandSuggestionsPacket)) return;
         if (commandSuggestionsPacket.getTransactionId() != transactionId) return;
         List<String> result = List.of(commandSuggestionsPacket.getMatches());
-        future.complete(result);
+        if (!future.isDone()) {
+            future.complete(result);
+        }
         session.removeListener(this);
     }
 }
