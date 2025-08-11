@@ -1,0 +1,108 @@
+name: Dev Release (overwrite & snapshot)
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  dev-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write     # Create/delete releases and tags
+      packages: write     # Publish to GitHub Packages
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+          server-id: github                  # Must match <id> in pom.xml distributionManagement
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+          settings-path: ${{ github.workspace }}
+
+      # Read version from pom.xml and normalize to base version (strip -SNAPSHOT)
+      - name: Read base version from pom.xml
+        id: get_version
+        shell: bash
+        run: |
+          RAW_VER="$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)"
+          BASE_VER="${RAW_VER%-SNAPSHOT}"
+          echo "raw_version=$RAW_VER"   >> $GITHUB_OUTPUT
+          echo "base_version=$BASE_VER" >> $GITHUB_OUTPUT
+
+      # Get short git SHA for a compact dev version identifier
+      - name: Get short SHA
+        id: git
+        shell: bash
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      # Automatically set a unique Maven version for this dev build
+      - name: Set dynamic Maven version
+        run: mvn -B versions:set \
+          -DnewVersion=${{ steps.get_version.outputs.base_version }}-dev-${{ github.run_number }}-${{ steps.git.outputs.short }} \
+          -DgenerateBackupPoms=false
+
+      # Build the project (skip tests if desired)
+      - name: Build
+        run: mvn -B -ntp -DskipTests package
+
+      # Remove old dev-latest release and tag if they exist (to overwrite cleanly)
+      - name: Delete existing dev-latest release and tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = 'dev-latest';
+            try {
+              const rel = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag
+              });
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: rel.data.id
+              });
+              core.info(`Deleted release for tag ${tag}`);
+            } catch (e) {
+              core.info('No existing release for dev-latest, continuing...');
+            }
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'tags/dev-latest'
+              });
+              core.info('Deleted tag dev-latest');
+            } catch (e) {
+              core.info('No existing tag dev-latest, continuing...');
+            }
+
+      # Create a new dev-latest pre-release with artifacts
+      - name: Create dev-latest pre-release with artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev-latest
+          name: "Dev Build (latest)"
+          prerelease: true
+          body: |
+            Automatically generated Dev build.
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Version: ${{ steps.get_version.outputs.base_version }}-dev-${{ github.run_number }}-${{ steps.git.outputs.short }}
+          files: |
+            target/*.jar
+            target/*-sources.jar
+            target/*-javadoc.jar
+            target/*.zip
+          generate_release_notes: false
+
+      # Deploy the SNAPSHOT to GitHub Packages (requires pom.xml distributionManagement)
+      - name: Deploy SNAPSHOT to GitHub Packages
+        run: mvn -B -ntp -DskipTests deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
