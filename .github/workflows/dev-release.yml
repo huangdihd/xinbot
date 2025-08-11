@@ -29,8 +29,10 @@ jobs:
         id: get_version
         shell: bash
         run: |
+          set -e
           RAW_VER="$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)"
           BASE_VER="${RAW_VER%-SNAPSHOT}"
+          echo "BASE_VERSION=$BASE_VER" >> $GITHUB_ENV
           echo "raw_version=$RAW_VER"   >> $GITHUB_OUTPUT
           echo "base_version=$BASE_VER" >> $GITHUB_OUTPUT
 
@@ -38,13 +40,20 @@ jobs:
       - name: Get short SHA
         id: git
         shell: bash
-        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          set -e
+          SHORT="$(git rev-parse --short HEAD)"
+          echo "SHORT_SHA=$SHORT" >> $GITHUB_ENV
+          echo "short=$SHORT"     >> $GITHUB_OUTPUT
 
-      # Automatically set a unique Maven version for this dev build
+      # Compose final dev version and set it via versions:set
       - name: Set dynamic Maven version
-        run: mvn -B versions:set \
-          -DnewVersion=${{ steps.get_version.outputs.base_version }}-dev-${{ github.run_number }}-${{ steps.git.outputs.short }} \
-          -DgenerateBackupPoms=false
+        shell: bash
+        run: |
+          set -e
+          NEW_VERSION="${BASE_VERSION}-dev-${GITHUB_RUN_NUMBER}-${SHORT_SHA}"
+          echo "Setting version to: ${NEW_VERSION}"
+          mvn -B -ntp versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
 
       # Build the project (skip tests if desired)
       - name: Build
