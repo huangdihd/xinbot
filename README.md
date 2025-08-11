@@ -7,7 +7,7 @@
   <a href="https://github.com/huangdihd/xinbot/issues">
     <img src="https://img.shields.io/github/issues/huangdihd/xinbot?style=for-the-badge&label=Issues&color=yellow" alt="Issues">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/blob/main/LICENSE">
+  <a href="https://github.com/huangdihd/xinbot/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/huangdihd/xinbot?style=for-the-badge&label=License&color=blue" alt="License">
   </a>
   <a href="https://github.com/huangdihd/xinbot/stargazers">
