@@ -38,6 +38,7 @@ public class LangManager {
 
             JsonObject langObj = root.getAsJsonObject(langCode);
             if (langObj == null) {
+                langCode = "en_us";
                 langObj = root.getAsJsonObject("en_us");
                 if (langObj == null) {
                     currentLang = Map.of();

@@ -1,4 +1,4 @@
-package xin.bbtt.mcbot;
+package xin.bbtt.mcbot.plugin;
 
 public interface Plugin {
     default String getName(){

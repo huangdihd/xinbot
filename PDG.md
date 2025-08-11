@@ -43,29 +43,30 @@ package xin.bbtt.mcbot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.plugin.Plugin;
 
 public class MyPlugin implements Plugin {
-    private static final Logger log = LoggerFactory.getLogger(MyPlugin.class);
+   private static final Logger log = LoggerFactory.getLogger(MyPlugin.class);
 
-    @Override
-    public void onLoad() {
-        log.info("Plugin Loaded: {}", getName());
-        // Initialization tasks such as loading configuration files
-    }
+   @Override
+   public void onLoad() {
+      log.info("Plugin Loaded: {}", getName());
+      // Initialization tasks such as loading configuration files
+   }
 
-    @Override
-    public void onEnable() {
-        log.info("Plugin Enabled: {}", getName());
-        // Register event listeners or start services here
-        Bot.Instance.addListener(new MyCustomListener());
-    }
+   @Override
+   public void onEnable() {
+      log.info("Plugin Enabled: {}", getName());
+      // Register event listeners or start services here
+      Bot.Instance.addPacketListener(new MyCustomListener());
+   }
 
-    @Override
-    public void onDisable() {
-        log.info("Plugin Disabled: {}", getName());
-        // Clean up resources such as removing event listeners
-        Bot.Instance.removeListener(new MyCustomListener());
-    }
+   @Override
+   public void onDisable() {
+      log.info("Plugin Disabled: {}", getName());
+      // Clean up resources such as removing event listeners
+      Bot.Instance.removeListener(new MyCustomListener());
+   }
 }
 ```
 ## 3. Steps to Write a Plugin
@@ -79,29 +80,30 @@ package xin.bbtt.mcbot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.plugin.Plugin;
 
 public class MyPlugin implements Plugin {
-    private static final Logger log = LoggerFactory.getLogger(MyPlugin.class);
+   private static final Logger log = LoggerFactory.getLogger(MyPlugin.class);
 
-    @Override
-    public void onLoad() {
-        log.info("Plugin Loaded: {}", getName());
-        // Initialization tasks such as loading configuration files
-    }
+   @Override
+   public void onLoad() {
+      log.info("Plugin Loaded: {}", getName());
+      // Initialization tasks such as loading configuration files
+   }
 
-    @Override
-    public void onEnable() {
-        log.info("Plugin Enabled: {}", getName());
-        // Register event listeners or start services here
-        Bot.Instance.addListener(new MyCustomListener());
-    }
+   @Override
+   public void onEnable() {
+      log.info("Plugin Enabled: {}", getName());
+      // Register event listeners or start services here
+      Bot.Instance.addPacketListener(new MyCustomListener());
+   }
 
-    @Override
-    public void onDisable() {
-        log.info("Plugin Disabled: {}", getName());
-        // Clean up resources such as removing event listeners
-        Bot.Instance.removeListener(new MyCustomListener());
-    }
+   @Override
+   public void onDisable() {
+      log.info("Plugin Disabled: {}", getName());
+      // Clean up resources such as removing event listeners
+      Bot.Instance.removeListener(new MyCustomListener());
+   }
 }
 ```
 ### 3.3 Plugin Configuration
@@ -193,10 +195,10 @@ The `PluginManager` uses `ServiceLoader` to import plugins. To ensure your plugi
    Navigate to the `resources` folder of your project. Inside it, create a directory named `META-INF/services`.
 
 2. **Create the Descriptor File**:  
-   In the `META-INF/services` folder, create a file named `xin.bbtt.mcbot.Plugin`.
+   In the `META-INF/services` folder, create a file named `xin.bbtt.mcbot.plugin.Plugin`.
 
 3. **Add Plugin Class Full Paths**:  
-   Open the `xin.bbtt.mcbot.Plugin` file and list the full paths of your plugin classes, one per line. For example:
+   Open the `xin.bbtt.mcbot.plugin.Plugin` file and list the full paths of your plugin classes, one per line. For example:
    ```plaintext
    com.example.myplugin.MyFirstPlugin
    com.example.myplugin.MySecondPlugin

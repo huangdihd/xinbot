@@ -1,5 +1,8 @@
 package xin.bbtt.mcbot;
 
+import xin.bbtt.mcbot.plugin.Plugin;
+import xin.bbtt.mcbot.listeners.*;
+
 public class DefaultPlugin implements Plugin {
 
     @Override
@@ -8,16 +11,17 @@ public class DefaultPlugin implements Plugin {
 
     @Override
     public void onEnable() {
-        Bot.Instance.addListener(new MessageSender());
-        Bot.Instance.addListener(new AutoLoginProcessor());
-        Bot.Instance.addListener(new AutoJoinProcessor());
-        Bot.Instance.addListener(new ServerRecorder());
-        Bot.Instance.addListener(new ChatMessagePrinter());
-        Bot.Instance.addListener(new CaptchaProcessor());
-        Bot.Instance.addListener(new QueueProcessor());
-        Bot.Instance.addListener(new ServerMembersChangedMessagePrinter());
-        Bot.Instance.addListener(new DisconnectReasonPrinter());
-        Bot.Instance.addListener(new JoinButtonRecorder());
+        Bot.Instance.addPacketListener(new MessageSender());
+        Bot.Instance.addPacketListener(new AutoLoginListener());
+        Bot.Instance.addPacketListener(new AutoJoinListener());
+        Bot.Instance.addPacketListener(new ServerRecorder());
+        Bot.Instance.addPacketListener(new ChatMessagePrinter());
+        Bot.Instance.addPacketListener(new CaptchaListener());
+        Bot.Instance.addPacketListener(new AnswerQuestionListener());
+        Bot.Instance.addPacketListener(new PositionInQueueListener());
+        Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter());
+        Bot.Instance.addPacketListener(new DisconnectReasonPrinter());
+        Bot.Instance.addPacketListener(new JoinButtonRecorder());
     }
 
     @Override

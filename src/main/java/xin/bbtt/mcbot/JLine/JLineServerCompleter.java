@@ -26,8 +26,8 @@ public class JLineServerCompleter implements Completer {
 
         int id = transactionId.incrementAndGet();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bot.Instance.addListener(new CommandSuggestionsProcessor(future, id));
-        Bot.Instance.session.send(new ServerboundCommandSuggestionPacket(id, query));
+        Bot.Instance.addPacketListener(new CommandSuggestionsProcessor(future, id));
+        Bot.Instance.getSession().send(new ServerboundCommandSuggestionPacket(id, query));
         List<String> results;
         try {
             results = future.get(200, TimeUnit.MILLISECONDS);

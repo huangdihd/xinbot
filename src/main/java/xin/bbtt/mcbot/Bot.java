@@ -1,6 +1,7 @@
 package xin.bbtt.mcbot;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -8,9 +9,6 @@ import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
@@ -18,18 +16,20 @@ import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.JLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.plugin.PluginManager;
 
-import java.time.Instant;
 import java.util.*;
 
 public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
     @Getter
-    private volatile boolean is_running = false;
-    public MinecraftProtocol protocol;
-    public Session session;
-    private final Thread main_thread = new Thread(this::main_loop);
-    private final Thread input_thread = new Thread(this::get_input);
+    private volatile boolean running = false;
+    @Getter
+    private MinecraftProtocol protocol;
+    @Getter
+    private Session session;
+    private final Thread mainThread = new Thread(this::mainLoop);
+    private final Thread inputThread = new Thread(this::getInput);
     @Getter
     private BotConfig config;
     @Getter
@@ -37,7 +37,9 @@ public class Bot {
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
     public static Bot Instance = new Bot();
-    public Server server = null;
+    @Getter
+    @Setter
+    private Server server = null;
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
 
@@ -49,28 +51,30 @@ public class Bot {
         this.config = config;
         this.pluginManager.loadPlugin(new DefaultPlugin());
         this.pluginManager.loadPlugins(this.config.getPlugin().getDirectory());
-        this.input_thread.start();
+        this.inputThread.setDaemon(true);
+        this.inputThread.start();
     }
 
     public void start() {
-        is_running = true;
+        running = true;
         protocol = AccountLoader.getProtocol();
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        main_thread.start();
+        mainThread.start();
     }
 
     public void stop() {
-        main_thread.interrupt();
-        input_thread.interrupt();
+        pluginManager.disableAll();
+        mainThread.interrupt();
+        inputThread.interrupt();
         disconnect("Bot stopped.");
-        is_running = false;
+        running = false;
     }
 
-    private void main_loop() {
+    private void mainLoop() {
         connect();
-        while (!Thread.currentThread().isInterrupted() && is_running) {
+        while (!Thread.currentThread().isInterrupted() && running) {
             if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) {
                 if (session.isConnected()) continue;
                 pluginManager.disableAll();
@@ -80,11 +84,11 @@ public class Bot {
         }
     }
 
-    private void get_input() {
-        while (!Thread.currentThread().isInterrupted() && is_running && CLI.lineReader != null) {
+    private void getInput() {
+        while (!Thread.currentThread().isInterrupted() && running && CLI.getLineReader() != null) {
             String input = null;
             try {
-                input = CLI.lineReader.readLine("> ");
+                input = CLI.getLineReader().readLine("> ");
             }
             catch (UserInterruptException | EndOfFileException e) {
                 this.stop();
@@ -98,7 +102,7 @@ public class Bot {
     }
 
     private void on_disconnect() {
-        if (!is_running) return;
+        if (!running) return;
         pluginManager.disableAll();
         server = null;
         connect();
@@ -117,7 +121,7 @@ public class Bot {
         log.info("connecting.");
         session.connect();
         long start_time = System.currentTimeMillis();
-        while (server == null && !is_running){
+        while (server == null && !running){
             if (System.currentTimeMillis() - start_time > 2000) {
                 disconnect("connect timed out.");
                 break;
@@ -130,7 +134,7 @@ public class Bot {
         session.disconnect(reason);
     }
 
-    public void addListener(SessionListener listener){
+    public void addPacketListener(SessionListener listener){
         session.addListener(listener);
     }
 
@@ -144,21 +148,5 @@ public class Bot {
 
     public void sendChatMessage(String message) {
         to_be_sent_messages.add(message);
-    }
-
-    public void setCarriedItem(int slot) {
-        if (slot > 9 || slot < 0) return;
-        session.send(new ServerboundSetCarriedItemPacket(slot));
-    }
-
-    public void useItemWithMainHand(float yRot, float xRot) {
-        session.send(
-                new ServerboundUseItemPacket(
-                    Hand.MAIN_HAND,
-                    (int) Instant.now().toEpochMilli(),
-                    yRot,
-                    xRot
-                )
-        );
     }
 }

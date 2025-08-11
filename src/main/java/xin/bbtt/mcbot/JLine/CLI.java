@@ -1,12 +1,14 @@
 package xin.bbtt.mcbot.JLine;
 
+import lombok.Getter;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 public class CLI {
-    public static LineReader lineReader;
+    @Getter
+    private static LineReader lineReader;
 
     public static void init() {
         try {

@@ -3,17 +3,15 @@ package xin.bbtt.mcbot.JLine;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import lombok.Setter;
 import org.jline.reader.LineReader;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class JLineConsoleAppender extends ConsoleAppender<ILoggingEvent> {
+    @Setter
     private static LineReader lineReader;
-
-    public static void setLineReader(LineReader reader) {
-        lineReader = reader;
-    }
 
     @Override
     protected void append(ILoggingEvent event) {
