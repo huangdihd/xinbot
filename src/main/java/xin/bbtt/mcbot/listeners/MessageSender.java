@@ -50,6 +50,9 @@ public class MessageSender extends SessionAdapter {
         }
         else {
             String message = Bot.Instance.to_be_sent_messages.get(0);
+            if (message.startsWith("\\/")) {
+                message = message.substring(1);
+            }
             SendChatMessageEvent sendChatMessageEvent = new SendChatMessageEvent(message);
             Bot.Instance.getPluginManager().events().callEvent(sendChatMessageEvent);
             if (!sendChatMessageEvent.isDefaultActionCancelled())

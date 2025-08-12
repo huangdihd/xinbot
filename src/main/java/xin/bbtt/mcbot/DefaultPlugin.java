@@ -18,6 +18,10 @@
 
 package xin.bbtt.mcbot;
 
+import xin.bbtt.mcbot.commands.command.CommandCommand;
+import xin.bbtt.mcbot.commands.command.SayCommand;
+import xin.bbtt.mcbot.commands.executor.CommandCommandExecutor;
+import xin.bbtt.mcbot.commands.executor.SayCommandExecutor;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.listeners.*;
 
@@ -29,6 +33,8 @@ public class DefaultPlugin implements Plugin {
 
     @Override
     public void onEnable() {
+
+        // Packet listeners
         Bot.Instance.addPacketListener(new MessageSender());
         Bot.Instance.addPacketListener(new AutoLoginListener());
         Bot.Instance.addPacketListener(new AutoJoinListener());
@@ -40,6 +46,10 @@ public class DefaultPlugin implements Plugin {
         Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter());
         Bot.Instance.addPacketListener(new DisconnectReasonPrinter());
         Bot.Instance.addPacketListener(new JoinButtonRecorder());
+
+        // Commands
+        Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new CommandCommand(), new CommandCommandExecutor(), this);
     }
 
     @Override

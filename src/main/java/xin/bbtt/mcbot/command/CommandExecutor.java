@@ -18,9 +18,11 @@
 
 package xin.bbtt.mcbot.command;
 
-public abstract class Command {
-    public abstract String getName();
-    public abstract String[] getAliases();
-    public abstract String getDescription();
-    public abstract String getUsage();
+import java.util.List;
+
+public abstract class CommandExecutor {
+    public abstract void onCommand(Command command, String label, String[] args);
+    public List<String> onTabComplete(Command cmd, String label, String[] args) {
+        return List.of();
+    }
 }

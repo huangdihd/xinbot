@@ -69,20 +69,24 @@ public class EventManager {
 
     /** Unregister all listeners owned by the given plugin/owner. */
     public void unregisterAll(Plugin plugin) {
-        List<RegisteredListener> ls = byPlugin.remove(plugin);
-        if (ls == null) return;
-        for (RegisteredListener rl : ls) {
+        List<RegisteredListener> listenerList = byPlugin.remove(plugin);
+        if (listenerList == null) return;
+        for (RegisteredListener rl : listenerList) {
             rl.handlerList().unregister(rl);
         }
     }
 
     public void callEvent(Event event) {
         HandlerList list = event.getHandlers();
-        for (RegisteredListener rl : list.getRegisteredListenersInOrder()) {
+        for (RegisteredListener registeredListener : list.getRegisteredListenersInOrder()) {
             try {
-                rl.callEvent(event);
-            } catch (Throwable t) {
-                log.error(eventErrorMarker, "Error while executing event {}", t.getClass().getSimpleName(), t);
+                registeredListener.callEvent(event);
+            } catch (Throwable throwable) {
+                log.error(eventErrorMarker,
+                        "Error while executing event {}",
+                        throwable.getClass().getSimpleName(),
+                        throwable
+                );
             }
         }
     }

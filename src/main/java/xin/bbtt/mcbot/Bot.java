@@ -115,7 +115,7 @@ public class Bot {
                 log.error(e.getMessage(), e);
             }
             if (input == null || input.isEmpty()) continue;
-            this.sendChatMessage(input);
+            this.getPluginManager().commands().callCommand(input);
         }
     }
 

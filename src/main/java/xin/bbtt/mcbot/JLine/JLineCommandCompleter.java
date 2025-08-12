@@ -18,32 +18,25 @@
 
 package xin.bbtt.mcbot.JLine;
 
-import lombok.Getter;
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
+import org.jline.reader.ParsedLine;
+import xin.bbtt.mcbot.Bot;
 
-public class CLI {
-    @Getter
-    private static LineReader lineReader;
+import java.util.List;
 
-    public static void init() {
-        try {
-            Terminal terminal = TerminalBuilder.builder()
-                    .system(true)
-                    .encoding("UTF-8")
-                    .build();
+public class JLineCommandCompleter implements Completer {
 
-            lineReader = LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .completer(new JLineCommandCompleter())
-                    .build();
+    @Override
+    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
+        String buffer = line.line();
 
-            JLineConsoleAppender.setLineReader(lineReader);
+        List<String> results = Bot.Instance.getPluginManager().commands().callComplete(buffer);
 
-        } catch (Exception e) {
-            System.err.println("Failed to initialize JLine: " + e.getMessage());
+        for (String result : results) {
+            candidates.add(new Candidate(result));
         }
     }
 }
+

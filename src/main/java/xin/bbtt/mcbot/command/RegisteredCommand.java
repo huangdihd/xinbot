@@ -18,9 +18,17 @@
 
 package xin.bbtt.mcbot.command;
 
-public abstract class Command {
-    public abstract String getName();
-    public abstract String[] getAliases();
-    public abstract String getDescription();
-    public abstract String getUsage();
+import xin.bbtt.mcbot.plugin.Plugin;
+
+import java.util.List;
+
+public record RegisteredCommand(Plugin plugin, Command command, CommandExecutor executor) {
+    void callCommand(String label, String[] args) {
+        executor.onCommand(command, label, args);
+    }
+    List<String> callComplete(String label, String[] args) {
+        return executor.onTabComplete(command, label, args);
+
+    }
+
 }

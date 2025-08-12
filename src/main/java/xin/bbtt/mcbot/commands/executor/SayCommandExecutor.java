@@ -16,11 +16,20 @@
  *
  */
 
-package xin.bbtt.mcbot.command;
+package xin.bbtt.mcbot.commands.executor;
 
-public abstract class Command {
-    public abstract String getName();
-    public abstract String[] getAliases();
-    public abstract String getDescription();
-    public abstract String getUsage();
+import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.command.Command;
+import xin.bbtt.mcbot.command.CommandExecutor;
+
+public class SayCommandExecutor extends CommandExecutor {
+    @Override
+    public void onCommand(Command command, String label, String[] args) {
+        if (args == null || args.length == 0) return;
+        String message = String.join(" ", args);
+        if (message.startsWith("/")) {
+            message = "\\" + message;
+        }
+        Bot.Instance.sendChatMessage(message);
+    }
 }

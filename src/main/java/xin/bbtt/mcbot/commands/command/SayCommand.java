@@ -16,11 +16,29 @@
  *
  */
 
-package xin.bbtt.mcbot.command;
+package xin.bbtt.mcbot.commands.command;
 
-public abstract class Command {
-    public abstract String getName();
-    public abstract String[] getAliases();
-    public abstract String getDescription();
-    public abstract String getUsage();
+import xin.bbtt.mcbot.command.Command;
+
+public class SayCommand extends Command {
+
+    @Override
+    public String getName() {
+        return "say";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] { "say" , "chat" };
+    }
+
+    @Override
+    public String getDescription() {
+        return "A command to say a chat.";
+    }
+
+    @Override
+    public String getUsage() {
+        return "say <message>";
+    }
 }

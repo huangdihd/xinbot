@@ -22,6 +22,9 @@ package xin.bbtt.mcbot.plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xin.bbtt.mcbot.command.Command;
+import xin.bbtt.mcbot.command.CommandExecutor;
+import xin.bbtt.mcbot.command.CommandManager;
 import xin.bbtt.mcbot.event.EventManager;
 import xin.bbtt.mcbot.event.Listener;
 
@@ -37,12 +40,18 @@ public class PluginManager {
 
     // Event manager
     private final EventManager eventManager = new EventManager();
+    // Command manager
+    private final CommandManager commandManager = new CommandManager();
 
-    /** Expose event system to core code (callEvent/registration). */
     public EventManager events() { return eventManager; }
+
+    public CommandManager commands() { return commandManager; }
 
     public void registerEvents(Listener listener, Plugin plugin) {
         eventManager.registerEvents(listener, plugin);
+    }
+    public void registerCommand(Command command, CommandExecutor executor, Plugin plugin) {
+        commandManager.registerCommand(command, executor, plugin);
     }
 
     public void loadPlugin(Plugin plugin) {
@@ -95,6 +104,11 @@ public class PluginManager {
                 eventManager.unregisterAll(plugin);
             } catch (Exception ex) {
                 log.warn("Error while unregistering listeners for plugin {}", plugin.getName(), ex);
+            }
+            try {
+                commandManager.unregisterAll(plugin);
+            } catch (Exception ex) {
+                log.warn("Error while unregistering commands for plugin {}", plugin.getName(), ex);
             }
             try {
                 plugin.onDisable();
