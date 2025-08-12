@@ -81,3 +81,7 @@ java -jar xinbot-[版本号].jar [配置文件路径，默认: config.conf]
 
 通过开发插件为机器人添加自定义功能。  
 详见 [插件开发指南](PDG_CN.md)。
+
+* * *
+
+<p> Made with ❤️ by <b>huangdihd</b> </p>
