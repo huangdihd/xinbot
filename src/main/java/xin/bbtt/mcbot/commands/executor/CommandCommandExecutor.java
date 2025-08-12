@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static xin.bbtt.mcbot.listeners.CommandsRecorder.rootCommands;
+
 public class CommandCommandExecutor extends TabExecutor {
     private static int transactionId = 0;
 
@@ -41,6 +43,9 @@ public class CommandCommandExecutor extends TabExecutor {
 
     @Override
     public List<String> onTabComplete(Command command, String label, String[] args) {
+        if (args.length == 0) {
+            return rootCommands;
+        }
         String cmd = String.join(" ", args);
         CompletableFuture<List<String>> future = new CompletableFuture<>();
         Bot.Instance.addPacketListener(new CommandSuggestionsListener(future, transactionId));

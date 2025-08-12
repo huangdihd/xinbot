@@ -28,7 +28,6 @@ public record RegisteredCommand(Plugin plugin, Command command, CommandExecutor 
     }
     List<String> callComplete(String label, String[] args) {
         return executor.onTabComplete(command, label, args);
-
     }
 
 }

@@ -143,6 +143,9 @@ public class CommandManager {
         }
         for (RegisteredCommand registeredCommand : commandList) {
             for (String commandName : registeredCommand.command().getAliases()) {
+                if (registeredCommand.command().getName().startsWith(prefix)) {
+                    names.add(registeredCommand.command().getName() + ":" + commandName);
+                }
                 if (commandName.startsWith(prefix)) {
                     names.add(commandName);
                 }
@@ -166,6 +169,10 @@ public class CommandManager {
 
         if (registeredCommand == null) {
             return List.of();
+        }
+
+        if (args[args.length - 1].isEmpty()) {
+            args = Arrays.copyOfRange(args, 0, args.length - 1);
         }
 
         try {

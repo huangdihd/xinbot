@@ -46,6 +46,7 @@ public class DefaultPlugin implements Plugin {
         Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter());
         Bot.Instance.addPacketListener(new DisconnectReasonPrinter());
         Bot.Instance.addPacketListener(new JoinButtonRecorder());
+        Bot.Instance.addPacketListener(new CommandsRecorder());
 
         // Commands
         Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);
