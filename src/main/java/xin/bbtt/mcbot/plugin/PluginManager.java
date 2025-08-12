@@ -121,4 +121,8 @@ public class PluginManager {
     public Plugin getPlugin(String name) {
         return plugins.get(name);
     }
+
+    public Collection<Plugin> getPlugins() {
+        return plugins.values();
+    }
 }

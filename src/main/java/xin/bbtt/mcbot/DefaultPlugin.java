@@ -19,9 +19,13 @@
 package xin.bbtt.mcbot;
 
 import xin.bbtt.mcbot.commands.command.CommandCommand;
+import xin.bbtt.mcbot.commands.command.HelpCommand;
 import xin.bbtt.mcbot.commands.command.SayCommand;
+import xin.bbtt.mcbot.commands.command.StopCommand;
 import xin.bbtt.mcbot.commands.executor.CommandCommandExecutor;
+import xin.bbtt.mcbot.commands.executor.HelpCommandExecutor;
 import xin.bbtt.mcbot.commands.executor.SayCommandExecutor;
+import xin.bbtt.mcbot.commands.executor.StopCommandExecutor;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.listeners.*;
 
@@ -51,6 +55,8 @@ public class DefaultPlugin implements Plugin {
         // Commands
         Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new CommandCommand(), new CommandCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new StopCommand(), new StopCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new HelpCommand(), new HelpCommandExecutor(), this);
     }
 
     @Override

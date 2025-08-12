@@ -101,6 +101,10 @@ public class CommandManager {
         return null;
     }
 
+    public Collection<RegisteredCommand> getCommandsByPlugin(Plugin plugin) {
+        return byPlugin.get(plugin);
+    }
+
     public void registerCommand(Command command, CommandExecutor executor, Plugin plugin) {
         RegisteredCommand registeredCommand = new RegisteredCommand(plugin, command, executor);
         byPlugin.computeIfAbsent(plugin, k -> new ArrayList<>()).add(registeredCommand);
@@ -127,6 +131,10 @@ public class CommandManager {
             return;
         }
 
+        if (args.length > 0 && args[args.length - 1].isEmpty()) {
+            args = Arrays.copyOfRange(args, 0, args.length - 1);
+        }
+
         try {
             registeredCommand.callCommand(label, args);
         }
@@ -143,8 +151,8 @@ public class CommandManager {
         }
         for (RegisteredCommand registeredCommand : commandList) {
             for (String commandName : registeredCommand.command().getAliases()) {
-                if (registeredCommand.command().getName().startsWith(prefix)) {
-                    names.add(registeredCommand.command().getName() + ":" + commandName);
+                if (registeredCommand.plugin().getName().startsWith(prefix)) {
+                    names.add(registeredCommand.plugin().getName() + ":" + commandName);
                 }
                 if (commandName.startsWith(prefix)) {
                     names.add(commandName);
@@ -171,7 +179,7 @@ public class CommandManager {
             return List.of();
         }
 
-        if (args[args.length - 1].isEmpty()) {
+        if (args.length > 0 && args[args.length - 1].isEmpty()) {
             args = Arrays.copyOfRange(args, 0, args.length - 1);
         }
 
