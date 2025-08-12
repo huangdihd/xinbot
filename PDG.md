@@ -12,21 +12,21 @@ Xinbot is available via JitPack. Add the following to your build configuration:
 Add JitPack repository to your `pom.xml`:
 ```xml
 <repositories>
-<repository>
-<id>jitpack.io</id>
-<url>https://jitpack.io</url>
-</repository>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
 </repositories>
 ```
 
 Add Xinbot dependency:
 ```xml
 <dependencies>
-<dependency>
-<groupId>com.github.huangdihd</groupId>
-<artifactId>xinbot</artifactId>
-<version>VERSION</version> <!-- Replace with latest version -->
-</dependency>
+    <dependency>
+        <groupId>com.github.huangdihd</groupId>
+        <artifactId>xinbot</artifactId>
+        <version>VERSION</version> <!-- Replace with latest version -->
+    </dependency>
 </dependencies>
 ```
 
@@ -35,14 +35,14 @@ Add Xinbot dependency:
 Add JitPack repository to your `build.gradle`:
 ```groovy
 repositories {
-maven { url 'https://jitpack.io' }
+    maven { url 'https://jitpack.io' }
 }
 ```
 
 Add Xinbot dependency:
 ```groovy
 dependencies {
-implementation 'com.github.huangdihd:xinbot:VERSION' // Replace with latest version
+    implementation 'com.github.huangdihd:xinbot:VERSION' // Replace with latest version
 }
 ```
 
@@ -85,17 +85,17 @@ import org.geysermc.mcprotocollib.network.packet.Packet;
 import xin.bbtt.mcbot.Bot;
 
 public class MyPacketListener extends SessionAdapter {
-@Override
-public void packetReceived(Session session, Packet packet) {
-// Handle incoming packets
-System.out.println("Received packet: " + packet.getClass().getSimpleName());
-}
-}
-
+    @Override
+    public void packetReceived(Session session, Packet packet) {
+        // Handle incoming packets
+        System.out.println("Received packet: " + packet.getClass().getSimpleName());
+        }
+    }
+    
 // Register in your plugin's onEnable()
 @Override
-public void onEnable() {
-Bot.Instance.addPacketListener(new MyPacketListener());
+    public void onEnable() {
+    Bot.Instance.addPacketListener(new MyPacketListener());
 }
 ```
 
@@ -150,7 +150,7 @@ Register your event listener in the plugin's `onEnable()` method:
 ```java
 @Override
 public void onEnable() {
-Bot.Instance.getPluginManager().registerEvents(new MyEventListener(), this);
+    Bot.Instance.getPluginManager().registerEvents(new MyEventListener(), this);
 }
 ```
 
@@ -207,14 +207,14 @@ import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 
 public class MyCommandExecutor implements CommandExecutor {
-@Override
-public void onCommand(Command command, String label, String[] args) {
-if (args.length > 0) {
-System.out.println("Received argument: " + args[0]);
-} else {
-System.out.println("No arguments provided");
-}
-}
+    @Override
+    public void onCommand(Command command, String label, String[] args) {
+        if (args.length > 0) {
+            System.out.println("Received argument: " + args[0]);
+        } else {
+            System.out.println("No arguments provided");
+        }
+    }
 }
 ```
 
@@ -222,11 +222,11 @@ Register the command in your plugin's `onEnable()`:
 ```java
 @Override
 public void onEnable() {
-Bot.Instance.getPluginManager().registerCommand(
-new MyCommand(),
-new MyCommandExecutor(),
-this
-);
+    Bot.Instance.getPluginManager().registerCommand(
+        new MyCommand(),
+        new MyCommandExecutor(),
+        this
+    );
 }
 ```
 
