@@ -24,7 +24,7 @@
 
     <groupId>xin.bbtt</groupId>
     <artifactId>xinbot</artifactId>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.9-RELEASE</version>
     <packaging>jar</packaging>
 
     <repositories>
