@@ -13,6 +13,9 @@
   <a href="https://github.com/huangdihd/xinbot/stargazers">
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
+  <a href="https://jitpack.io/#huangdihd/xinbot">
+    <img src="https://jitpack.io/v/huangdihd/xinbot.svg" alt="jitpack">
+  </a>
 </p>
 
 ---
