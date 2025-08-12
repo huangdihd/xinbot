@@ -24,7 +24,7 @@ jobs:
           server-password: GITHUB_TOKEN
           settings-path: ${{ github.workspace }}
 
-      # Read version from pom.xml and normalize to base version (strip -SNAPSHOT)
+      # Read version from pom.xml and keep both raw and base (strip -SNAPSHOT)
       - name: Read base version from pom.xml
         id: get_version
         shell: bash
@@ -32,6 +32,7 @@ jobs:
           set -e
           RAW_VER="$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)"
           BASE_VER="${RAW_VER%-SNAPSHOT}"
+          echo "RAW_VERSION=$RAW_VER"   >> $GITHUB_ENV
           echo "BASE_VERSION=$BASE_VER" >> $GITHUB_ENV
           echo "raw_version=$RAW_VER"   >> $GITHUB_OUTPUT
           echo "base_version=$BASE_VER" >> $GITHUB_OUTPUT
@@ -47,11 +48,12 @@ jobs:
           echo "short=$SHORT"     >> $GITHUB_OUTPUT
 
       # Compose final dev version and set it via versions:set
+      # We keep the -SNAPSHOT suffix so deploy goes to <snapshotRepository>
       - name: Set dynamic Maven version
         shell: bash
         run: |
           set -e
-          NEW_VERSION="${BASE_VERSION}-dev-${GITHUB_RUN_NUMBER}-${SHORT_SHA}"
+          NEW_VERSION="${BASE_VERSION}-dev-${GITHUB_RUN_NUMBER}-${SHORT_SHA}-SNAPSHOT"
           echo "Setting version to: ${NEW_VERSION}"
           mvn -B -ntp versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
 
@@ -102,7 +104,7 @@ jobs:
             Automatically generated Dev build.
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.sha }}
-            Version: ${{ steps.get_version.outputs.base_version }}-dev-${{ github.run_number }}-${{ steps.git.outputs.short }}
+            Version: ${{ steps.get_version.outputs.base_version }}-dev-${{ github.run_number }}-${{ steps.git.outputs.short }}-SNAPSHOT
           files: |
             target/*.jar
             target/*-sources.jar
@@ -110,8 +112,9 @@ jobs:
             target/*.zip
           generate_release_notes: false
 
-      # Deploy the SNAPSHOT to GitHub Packages (requires pom.xml distributionManagement)
+      # Deploy the SNAPSHOT to GitHub Packages only if original POM was a SNAPSHOT
       - name: Deploy SNAPSHOT to GitHub Packages
+        if: endsWith(steps.get_version.outputs.raw_version, '-SNAPSHOT')
         run: mvn -B -ntp -DskipTests deploy -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
