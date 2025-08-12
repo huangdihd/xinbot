@@ -102,7 +102,7 @@ public class CommandManager {
     }
 
     public Collection<RegisteredCommand> getCommandsByPlugin(Plugin plugin) {
-        return byPlugin.get(plugin);
+        return byPlugin.getOrDefault(plugin, new ArrayList<>());
     }
 
     public void registerCommand(Command command, CommandExecutor executor, Plugin plugin) {

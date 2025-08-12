@@ -48,7 +48,7 @@ public class AutoJoinListener extends SessionAdapter {
     private void recordContainer(ClientboundOpenScreenPacket openScreenPacket) {
         if (Bot.Instance.getServer() != Server.Login) return;
         if (!(openScreenPacket.getTitle() instanceof TextComponent title)) return;
-        if (!title.content().contains("Join The Game")) return;
+        if (!title.content().contains("Game") && !title.content().contains("戏") && !title.content().contains("队") && !title.content().contains("入")) return;
         containerId = openScreenPacket.getContainerId();
         log.debug("Recorded container id {}", containerId);
     }
@@ -60,7 +60,7 @@ public class AutoJoinListener extends SessionAdapter {
         for (int slot = 0; slot < items.length; slot++) {
             ItemStack itemStack = items[slot];
             if (itemStack == null) continue;
-            if (!itemStack.toString().contains("加入队列")) continue;
+            if (!itemStack.toString().contains("Game") && !itemStack.toString().contains("戏") && !itemStack.toString().contains("队") && !itemStack.toString().contains("入")) continue;
             Int2ObjectMap<ItemStack> changedSlots = new Int2ObjectOpenHashMap<>();
             changedSlots.put(slot, null);
             ClickJoinItemEvent clickJoinItemEvent = new ClickJoinItemEvent();
