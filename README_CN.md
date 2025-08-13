@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
   <a href="https://jitpack.io/#huangdihd/xinbot">
-    <img src="https://jitpack.io/v/huangdihd/xinbot.svg" alt="jitpack">
+    <img src="https://img.shields.io/jitpack/version/com.github.huangdihd/xinbot?style=for-the-badge&label=JitPack&color=b22222" alt="jitpack">
   </a>
 </p>
 
@@ -40,7 +40,7 @@
 ## **快速开始**
 
 ### 1. **下载**
-获取最新版：  
+在[releases](https://github.com/huangdihd/xinbot/releases)中获取最新版：  
 `xinbot-[版本号].jar`
 
 ### 2. **安装 Java**

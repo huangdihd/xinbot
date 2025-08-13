@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
   <a href="https://jitpack.io/#huangdihd/xinbot">
-    <img src="https://jitpack.io/v/huangdihd/xinbot.svg" alt="jitpack">
+    <img src="https://img.shields.io/jitpack/version/com.github.huangdihd/xinbot?style=for-the-badge&label=JitPack&color=b22222" alt="jitpack">
   </a>
 </p>
 
@@ -39,7 +39,7 @@ Built-in plugin framework with a Bukkit-style event system for easy plugin devel
 ## **Getting Started**
 
 ### 1. **Download**
-Get the latest version:  
+Get the latest version in [releases](https://github.com/huangdihd/xinbot/releases):  
 `xinbot-[version].jar`
 
 ### 2. **Install Java**
