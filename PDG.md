@@ -271,9 +271,18 @@ public void onEnable() {
 
 ## 6. Packaging and Deployment
 
-1. Package your plugin as a JAR file
-2. Place the JAR file in the `plugin` directory (configurable in `config.conf`)
-3. Start Xinbot - your plugin will be loaded automatically
+1. Create resource directory structure: Under `src/main/resources`, create `META-INF/services` directory;
+2. In `META-INF/services` directory, create a file named `xin.bbtt.mcbot.plugin.Plugin` (the fully qualified name of the Plugin interface);
+3. In this file, add the fully qualified name of your plugin implementation class (e.g., `com.yourpackage.MyPlugin`);
+4. Package your plugin as a JAR file;
+5. Place the JAR file in the `plugin` directory (configurable in `config.conf`);
+6. Start Xinbot - your plugin will be loaded automatically.
+
+### 6.1 META-INF/services Example
+
+Assuming your plugin main class is `com.example.MyPlugin`:
+- Create file: `src/main/resources/META-INF/services/xin.bbtt.mcbot.plugin.Plugin`
+- Add this line to the file: `com.example.MyPlugin`
 
 ## 7. Notes
 

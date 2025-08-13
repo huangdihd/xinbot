@@ -271,9 +271,18 @@ public void onEnable() {
 
 # 6. 打包与部署
 
-1. 将插件打包为 JAR 文件；
-2. 把 JAR 放到 `plugin` 目录（可在 `config.conf` 中配置）；
-3. 启动 Xinbot —— 插件会被自动加载。
+1. 创建资源目录结构：在 `src/main/resources` 下创建 `META-INF/services` 目录；
+2. 在 `META-INF/services` 目录中创建文件，文件名为 `xin.bbtt.mcbot.plugin.Plugin`（即 Plugin 接口的全限定名）；
+3. 在该文件中添加插件实现类的全限定名（例如 `com.yourpackage.MyPlugin`）；
+4. 将插件打包为 JAR 文件；
+5. 把 JAR 放到 `plugin` 目录（可在 `config.conf` 中配置）；
+6. 启动 Xinbot —— 插件会被自动加载。
+
+### 6.1 META-INF/services 示例
+
+假设你的插件主类为 `com.example.MyPlugin`，则需要：
+- 创建文件：`src/main/resources/META-INF/services/xin.bbtt.mcbot.plugin.Plugin`
+- 在文件中添加一行：`com.example.MyPlugin`
 
 # 7. 备注
 

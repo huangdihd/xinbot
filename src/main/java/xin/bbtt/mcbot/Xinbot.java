@@ -39,7 +39,7 @@ public class Xinbot {
         try {
             if (args.length == 1) {
                 if (args[0].equals("--version") || args[0].equals("-v")) {
-                    log.info("xinbot: {}", version);
+                    log.info("version: {}", version);
                     System.exit(0);
                 }
                 configPath = args[0];
