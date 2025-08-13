@@ -37,7 +37,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class AnswerQuestionListener extends SessionAdapter {
-    private static final JsonObject questions = JsonParser.parseString(new BufferedReader(new InputStreamReader(Objects.requireNonNull(AnswerQuestionListener.class.getClassLoader().getResourceAsStream("questions.json")), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).getAsJsonObject();
+private static final JsonObject questions;
+
+static {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+            Objects.requireNonNull(AnswerQuestionListener.class.getClassLoader().getResourceAsStream("questions.json")),
+            StandardCharsets.UTF_8))) {
+        String content = reader.lines().collect(Collectors.joining("\n"));
+        questions = JsonParser.parseString(content).getAsJsonObject();
+    } catch (Exception e) {
+        throw new RuntimeException("Failed to load questions.json", e);
+    }
+}
 
     @Override
     public void packetReceived(Session session, Packet packet) {
