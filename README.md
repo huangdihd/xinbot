@@ -1,19 +1,19 @@
 # Xinbot
 <!-- Badges -->
 <p>
-  <a href="https://github.com/huangdihd/xinbot/releases">
+  <a href="https://github.com/huangdihd/xinbot/releases" target="_blank">
     <img src="https://img.shields.io/github/v/release/huangdihd/xinbot?style=for-the-badge&label=Release&color=brightgreen" alt="Latest Release">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/issues">
+  <a href="https://github.com/huangdihd/xinbot/issues" target="_blank">
     <img src="https://img.shields.io/github/issues/huangdihd/xinbot?style=for-the-badge&label=Issues&color=yellow" alt="Issues">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/blob/master/LICENSE">
+  <a href="https://github.com/huangdihd/xinbot/blob/master/LICENSE" target="_blank">
     <img src="https://img.shields.io/github/license/huangdihd/xinbot?style=for-the-badge&label=License&color=blue" alt="License">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/stargazers">
+  <a href="https://github.com/huangdihd/xinbot/stargazers" target="_blank">
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
-  <a href="https://jitpack.io/#huangdihd/xinbot">
+  <a href="https://jitpack.io/#huangdihd/xinbot" target="_blank">
     <img src="https://img.shields.io/jitpack/version/com.github.huangdihd/xinbot?style=for-the-badge&label=JitPack&color=b22222" alt="jitpack">
   </a>
 </p>
