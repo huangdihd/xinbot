@@ -78,11 +78,11 @@ public class Utils {
 
     public static String getStyleAnsi(TextComponent text) {
         StringBuilder sb = new StringBuilder();
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.BOLD))) sb.append("§l");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.ITALIC))) sb.append("§o");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.UNDERLINED))) sb.append("§n");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.STRIKETHROUGH))) sb.append("§m");
-        if (Boolean.TRUE.equals(text.style().hasDecoration(TextDecoration.OBFUSCATED))) sb.append("░"); // §k 无法用 ANSI 实现
+        if (text.style().hasDecoration(TextDecoration.BOLD)) sb.append("§l");
+        if (text.style().hasDecoration(TextDecoration.ITALIC)) sb.append("§o");
+        if (text.style().hasDecoration(TextDecoration.UNDERLINED)) sb.append("§n");
+        if (text.style().hasDecoration(TextDecoration.STRIKETHROUGH)) sb.append("§m");
+        if (text.style().hasDecoration(TextDecoration.OBFUSCATED)) sb.append("░"); // §k 无法用 ANSI 实现
         return sb.toString();
     }
 
