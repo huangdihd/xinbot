@@ -89,7 +89,11 @@ public class PluginManager {
     }
 
     public void unloadPlugin(Plugin plugin) {
-        plugin.onUnload();
+        try {
+            plugin.onUnload();
+        } catch (Exception e) {
+            log.error("Failed to unload plugin: {}", plugin.getName(), e);
+        }
         plugins.remove(plugin.getName());
         log.info("Unloaded plugin: {}", plugin.getClass().getName());
     }
