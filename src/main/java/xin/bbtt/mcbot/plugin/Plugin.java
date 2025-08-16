@@ -23,6 +23,7 @@ public interface Plugin {
         return this.getClass().getSimpleName();
     }
     void onLoad();
+    void onUnload();
     void onEnable();
     void onDisable();
 }

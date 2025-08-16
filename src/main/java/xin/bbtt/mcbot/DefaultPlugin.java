@@ -36,6 +36,11 @@ public class DefaultPlugin implements Plugin {
     }
 
     @Override
+    public void onUnload() {
+
+    }
+
+    @Override
     public void onEnable() {
 
         // Packet listeners

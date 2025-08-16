@@ -88,6 +88,18 @@ public class PluginManager {
         }
     }
 
+    public void unloadPlugin(Plugin plugin) {
+        plugin.onUnload();
+        plugins.remove(plugin.getName());
+        log.info("Unloaded plugin: {}", plugin.getClass().getName());
+    }
+
+    public void unloadPlugins() {
+        for (Plugin plugin : plugins.values()) {
+            unloadPlugin(plugin);
+        }
+    }
+
     public void enableAll() {
         for (Plugin plugin : plugins.values()) {
             try {

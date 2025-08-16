@@ -84,6 +84,7 @@ public class Bot {
 
     public void stop() {
         pluginManager.disableAll();
+        pluginManager.unloadPlugins();
         mainThread.interrupt();
         inputThread.interrupt();
         disconnect("Bot stopped.");
