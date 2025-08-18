@@ -99,7 +99,8 @@ public class PluginManager {
     }
 
     public void unloadPlugins() {
-        for (Plugin plugin : plugins.values()) {
+        List<Plugin> plugins = new ArrayList<>(this.plugins.values());
+        for (Plugin plugin : plugins) {
             unloadPlugin(plugin);
         }
     }
