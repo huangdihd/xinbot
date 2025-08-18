@@ -82,6 +82,7 @@ public class Xinbot {
         }
         Bot.Instance.init(config);
         Bot.Instance.start();
-
+        log.info("Bot stopped.");
+        log.info("Bye!");
     }
 }

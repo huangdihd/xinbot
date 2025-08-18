@@ -46,7 +46,6 @@ public class Bot {
     private MinecraftProtocol protocol;
     @Getter
     private Session session;
-    private final Thread mainThread = new Thread(this::mainLoop);
     private final Thread inputThread = new Thread(this::getInput);
     @Getter
     private BotConfig config;
@@ -79,16 +78,16 @@ public class Bot {
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        mainThread.start();
+        mainLoop();
     }
 
     public void stop() {
         pluginManager.disableAll();
         pluginManager.unloadPlugins();
-        mainThread.interrupt();
-        inputThread.interrupt();
-        disconnect("Bot stopped.");
         running = false;
+        disconnect("Bot stopped.");
+        inputThread.interrupt();
+        Thread.currentThread().interrupt();
     }
 
     private void mainLoop() {
