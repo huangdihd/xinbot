@@ -82,12 +82,19 @@ public class Bot {
     }
 
     public void stop() {
-        pluginManager.disableAll();
-        pluginManager.unloadPlugins();
-        running = false;
-        disconnect("Bot stopped.");
-        inputThread.interrupt();
-        Thread.currentThread().interrupt();
+        try {
+            pluginManager.disableAll();
+            pluginManager.unloadPlugins();
+            running = false;
+            disconnect("Bot stopped.");
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        finally {
+            inputThread.interrupt();
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void mainLoop() {

@@ -101,7 +101,11 @@ public class PluginManager {
     public void unloadPlugins() {
         List<Plugin> plugins = new ArrayList<>(this.plugins.values());
         for (Plugin plugin : plugins) {
-            unloadPlugin(plugin);
+            try {
+                unloadPlugin(plugin);
+            } catch (Exception e) {
+                log.error("Failed to unload plugin: {}", plugin.getName(), e);
+            }
         }
     }
 
