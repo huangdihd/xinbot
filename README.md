@@ -20,8 +20,8 @@
 
 ---
 
-A lightweight, extensible Minecraft bot client built for 2b2t.xin — designed to be reliable, readable, and ready for customization.
-
+> A lightweight, extensible Minecraft bot client built for 2b2t.xin — designed to be reliable, readable, and ready for customization.
+> 
 English / [简体中文](README_CN.md)
 
 ## Why Xinbot?
@@ -83,13 +83,16 @@ English / [简体中文](README_CN.md)
 ---
 
 ## FAQ
-- Does Xinbot require a premium account?
+- Does Xinbot require a premium account?  
   No, but you can enable official account login for added trust and compatibility.
 
-- Can I write my own plugins?
+- Can I write my own plugins?  
   Yes — Xinbot exposes a simple, Bukkit-style event system to build on.For details, see the [Plugin Development Guide](PDG.md)
 
-- How do I report issues or request features?
+- How can I manage multiple bots?
+  Xinbot supports using [xinManager](https://github.com/huangdihd/xinManager) to manage multiple bots.
+
+- How do I report issues or request features?  
   Open an issue on GitHub Issues. Clear steps to reproduce are appreciated.
 
 ---

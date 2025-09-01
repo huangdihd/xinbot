@@ -20,7 +20,7 @@
 
 ---
 
-一个为 2b2t.xin 打造的轻量、可扩展的 Minecraft 机器人客户端——稳定、可读、易扩展。
+> 一个为 2b2t.xin 打造的轻量、可扩展的 Minecraft 机器人客户端——稳定、可读、易扩展。
 
 [English](README.md) / 简体中文
 
@@ -88,6 +88,9 @@
 
 - 我能写自己的插件吗？
   可以。Xinbot 提供类 Bukkit 的事件系统，方便扩展。详细参考[插件开发指南](PDG_CN.md)。
+
+- 如何管理多个机器人？
+  Xinbot 支持使用 [xinManager](https://github.com/huangdihd/xinManager) 管理多个机器人。
 
 - 如何反馈问题或提建议？
   请在 GitHub Issues 提交，附上复现步骤更佳。
