@@ -61,6 +61,11 @@ public class MyPlugin implements Plugin {
     public void onLoad() {
         // Called when plugin is loaded
     }
+    
+    @Override
+    public void onUnload() {
+        // Called when plugin is unloaded
+    }
 
     @Override
     public void onEnable() {
@@ -95,7 +100,7 @@ public class MyPacketListener extends SessionAdapter {
 // Register in your plugin's onEnable()
 @Override
     public void onEnable() {
-    Bot.Instance.addPacketListener(new MyPacketListener());
+    Bot.Instance.addPacketListener(new MyPacketListener(), this);
 }
 ```
 

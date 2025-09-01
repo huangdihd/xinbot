@@ -19,9 +19,11 @@
 
 package xin.bbtt.mcbot.plugin;
 
+import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.CommandManager;
@@ -36,6 +38,8 @@ import java.util.ServiceLoader;
 // Plugin Manager
 public class PluginManager {
     private final Map<String, Plugin> plugins = new HashMap<>();
+    private final Map<String, Plugin> enabledPlugins = new HashMap<>();
+    private final Map<String, List<SessionListener>> sessionListeners = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class.getSimpleName());
 
     // Event manager
@@ -57,7 +61,23 @@ public class PluginManager {
     public void loadPlugin(Plugin plugin) {
         plugins.put(plugin.getName(), plugin);
         plugin.onLoad();
+        if (Bot.Instance.getSession() != null) {
+            enablePlugin(plugin);
+        }
         log.info("Loaded plugin: {}", plugin.getClass().getName());
+    }
+
+    public void loadPlugin(File pluginFile) throws MalformedURLException {
+        URL[] urls = { pluginFile.toURI().toURL() };
+        URLClassLoader classLoader = new URLClassLoader(urls);
+        ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
+        for (Plugin plugin : serviceLoader) {
+            if (plugins.containsValue(plugin)) {
+                log.error("Plugin {} is already loaded.", plugin.getName());
+                continue;
+            }
+            loadPlugin(plugin);
+        }
     }
 
     public void loadPlugins(String pluginsDirectory) {
@@ -74,22 +94,46 @@ public class PluginManager {
         }
 
         for (File file : files) {
+            log.info("Trying to load plugin: {}", file.getName());
             try {
-                log.info("Trying to load plugin: {}", file.getName());
-                URL[] urls = { file.toURI().toURL() };
-                URLClassLoader classLoader = new URLClassLoader(urls);
-                ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
-                for (Plugin plugin : serviceLoader) {
-                    loadPlugin(plugin);
-                }
-            } catch (Exception e) {
+                loadPlugin(file);
+            }
+            catch (Exception e) {
                 log.error("Failed to load plugin: {}", file.getName(), e);
             }
         }
     }
 
+    public void enablePlugin(Plugin plugin) {
+        try {
+            sessionListeners.put(plugin.getName(), new ArrayList<>());
+            plugin.onEnable();
+            enabledPlugins.put(plugin.getName(), plugin);
+        } catch (Exception e) {
+            log.error("Failed to enable plugin: {}", plugin.getName(), e);
+        }
+    }
+
+    public void disablePlugin(Plugin plugin) {
+        if (!enabledPlugins.containsKey(plugin.getName())) {
+            log.error("Plugin {} is not enabled.", plugin.getName());
+            return;
+        }
+        eventManager.unregisterAll(plugin);
+        commandManager.unregisterAll(plugin);
+        for (SessionListener sessionListener : sessionListeners.get(plugin.getName())) {
+            Bot.Instance.getSession().removeListener(sessionListener);
+        }
+        sessionListeners.remove(plugin.getName());
+        plugin.onDisable();
+        enabledPlugins.remove(plugin.getName());
+    }
+
     public void unloadPlugin(Plugin plugin) {
         try {
+            if (enabledPlugins.containsKey(plugin.getName())) {
+                disablePlugin(plugin);
+            }
             plugin.onUnload();
         } catch (Exception e) {
             log.error("Failed to unload plugin: {}", plugin.getName(), e);
@@ -112,7 +156,7 @@ public class PluginManager {
     public void enableAll() {
         for (Plugin plugin : plugins.values()) {
             try {
-                plugin.onEnable();
+                enablePlugin(plugin);
             } catch (Exception e) {
                 log.error("Failed to enable plugin: {}", plugin.getName(), e);
             }
@@ -122,17 +166,7 @@ public class PluginManager {
     public void disableAll() {
         for (Plugin plugin : plugins.values()) {
             try {
-                eventManager.unregisterAll(plugin);
-            } catch (Exception ex) {
-                log.warn("Error while unregistering listeners for plugin {}", plugin.getName(), ex);
-            }
-            try {
-                commandManager.unregisterAll(plugin);
-            } catch (Exception ex) {
-                log.warn("Error while unregistering commands for plugin {}", plugin.getName(), ex);
-            }
-            try {
-                plugin.onDisable();
+                disablePlugin(plugin);
             } catch (Exception e) {
                 log.error("Failed to disable plugin: {}", plugin.getName(), e);
             }
@@ -145,5 +179,15 @@ public class PluginManager {
 
     public Collection<Plugin> getPlugins() {
         return plugins.values();
+    }
+
+    public void addListener(SessionListener sessionListener, Plugin plugin) {
+        sessionListeners.get(plugin.getName()).add(sessionListener);
+        Bot.Instance.getSession().addListener(sessionListener);
+    }
+
+    public void removeListener(SessionListener sessionListener, Plugin plugin) {
+        sessionListeners.get(plugin.getName()).remove(sessionListener);
+        Bot.Instance.getSession().removeListener(sessionListener);
     }
 }

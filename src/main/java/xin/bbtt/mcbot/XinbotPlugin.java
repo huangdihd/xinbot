@@ -18,18 +18,12 @@
 
 package xin.bbtt.mcbot;
 
-import xin.bbtt.mcbot.commands.command.CommandCommand;
-import xin.bbtt.mcbot.commands.command.HelpCommand;
-import xin.bbtt.mcbot.commands.command.SayCommand;
-import xin.bbtt.mcbot.commands.command.StopCommand;
-import xin.bbtt.mcbot.commands.executor.CommandCommandExecutor;
-import xin.bbtt.mcbot.commands.executor.HelpCommandExecutor;
-import xin.bbtt.mcbot.commands.executor.SayCommandExecutor;
-import xin.bbtt.mcbot.commands.executor.StopCommandExecutor;
+import xin.bbtt.mcbot.commands.command.*;
+import xin.bbtt.mcbot.commands.executor.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.listeners.*;
 
-public class DefaultPlugin implements Plugin {
+public class XinbotPlugin implements Plugin {
 
     @Override
     public void onLoad() {
@@ -42,26 +36,29 @@ public class DefaultPlugin implements Plugin {
 
     @Override
     public void onEnable() {
-
         // Packet listeners
-        Bot.Instance.addPacketListener(new MessageSender());
-        Bot.Instance.addPacketListener(new AutoLoginListener());
-        Bot.Instance.addPacketListener(new AutoJoinListener());
-        Bot.Instance.addPacketListener(new ServerRecorder());
-        Bot.Instance.addPacketListener(new ChatMessagePrinter());
-        Bot.Instance.addPacketListener(new CaptchaListener());
-        Bot.Instance.addPacketListener(new AnswerQuestionListener());
-        Bot.Instance.addPacketListener(new PositionInQueueListener());
-        Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter());
-        Bot.Instance.addPacketListener(new DisconnectReasonPrinter());
-        Bot.Instance.addPacketListener(new JoinButtonRecorder());
-        Bot.Instance.addPacketListener(new CommandsRecorder());
+        Bot.Instance.addPacketListener(new MessageSender(), this);
+        Bot.Instance.addPacketListener(new AutoLoginListener(), this);
+        Bot.Instance.addPacketListener(new AutoJoinListener(), this);
+        Bot.Instance.addPacketListener(new ServerRecorder(), this);
+        Bot.Instance.addPacketListener(new ChatMessagePrinter(), this);
+        Bot.Instance.addPacketListener(new CaptchaListener(), this);
+        Bot.Instance.addPacketListener(new AnswerQuestionListener(), this);
+        Bot.Instance.addPacketListener(new PositionInQueueListener(), this);
+        Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter(), this);
+        Bot.Instance.addPacketListener(new DisconnectReasonPrinter(), this);
+        Bot.Instance.addPacketListener(new JoinButtonRecorder(), this);
+        Bot.Instance.addPacketListener(new CommandsRecorder(), this);
 
         // Commands
         Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new CommandCommand(), new CommandCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new StopCommand(), new StopCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new HelpCommand(), new HelpCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new DisconnectCommand(), new DisconnectExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new ListCommand(), new ListCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new PluginManagerCommand(), new PluginManagerCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
     }
 
     @Override

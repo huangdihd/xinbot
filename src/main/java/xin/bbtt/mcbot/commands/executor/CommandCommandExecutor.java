@@ -48,7 +48,7 @@ public class CommandCommandExecutor extends TabExecutor {
         }
         String cmd = String.join(" ", args);
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bot.Instance.addPacketListener(new CommandSuggestionsListener(future, transactionId));
+        Bot.Instance.getSession().addListener(new CommandSuggestionsListener(future, transactionId));
         Bot.Instance.getSession().send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
         List<String> results;
         try {

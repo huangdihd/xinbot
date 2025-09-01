@@ -61,6 +61,11 @@ public class MyPlugin implements Plugin {
     public void onLoad() {
         // 插件被加载时调用
     }
+    
+    @Override
+    public void onUnload() {
+        // 插件被卸载时调用
+    }
 
     @Override
     public void onEnable() {
@@ -95,7 +100,7 @@ public class MyPacketListener extends SessionAdapter {
 // 在插件的 onEnable() 中注册
 @Override
 public void onEnable() {
-    Bot.Instance.addPacketListener(new MyPacketListener());
+    Bot.Instance.addPacketListener(new MyPacketListener(), this);
 }
 ```
 

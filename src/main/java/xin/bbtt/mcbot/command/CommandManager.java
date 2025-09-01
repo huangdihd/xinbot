@@ -170,6 +170,10 @@ public class CommandManager {
             return getCommandNames(tokens.get(0));
         }
 
+        if (command.endsWith(" ")) {
+            tokens.add("");
+        }
+
         String label = tokens.get(0);
         String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
 

@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.JLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
 import java.util.*;
@@ -66,7 +67,7 @@ public class Bot {
 
     public void init(BotConfig config) {
         this.config = config;
-        this.pluginManager.loadPlugin(new DefaultPlugin());
+        this.pluginManager.loadPlugin(new XinbotPlugin());
         this.pluginManager.loadPlugins(this.config.getPlugin().getDirectory());
         this.inputThread.setDaemon(true);
         this.inputThread.start();
@@ -102,6 +103,7 @@ public class Bot {
         while (!Thread.currentThread().isInterrupted() && running) {
             if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) {
                 if (session.isConnected()) continue;
+                players.clear();
                 pluginManager.disableAll();
                 connect();
             }
@@ -128,6 +130,7 @@ public class Bot {
 
     private void on_disconnect() {
         if (!running) return;
+        players.clear();
         pluginManager.disableAll();
         server = null;
         connect();
@@ -155,16 +158,16 @@ public class Bot {
         log.info("connect complete.");
     }
 
-    private void disconnect(String reason){
+    public void disconnect(String reason){
         session.disconnect(reason);
     }
 
-    public void addPacketListener(SessionListener listener){
-        session.addListener(listener);
+    public void addPacketListener(SessionListener listener, Plugin plugin){
+        getPluginManager().addListener(listener, plugin);
     }
 
-    public void removeListener(SessionListener listener){
-        session.removeListener(listener);
+    public void removeListener(SessionListener listener, Plugin plugin){
+        getPluginManager().removeListener(listener, plugin);
     }
 
     public void sendCommand(String command) {
