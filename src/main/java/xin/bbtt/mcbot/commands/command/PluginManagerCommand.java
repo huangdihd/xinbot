@@ -20,6 +20,6 @@ public class PluginManagerCommand extends Command {
 
     @Override
     public String getUsage() {
-        return "PluginManager list / PluginManager load <plugin file name> / PluginManager unload <plugin name> / PluginManager reload <plugin name> / PluginManager enable <plugin name> / PluginManager disable <plugin name> / PluginManager reenable <plugin name>";
+        return "PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...";
     }
 }
