@@ -1,2 +1,2 @@
-lang.json filter=lfs diff=lfs merge=lfs -text
+lang.json eol=crlf filter=lfs diff=lfs merge=lfs -text
 * text eol=crlf
