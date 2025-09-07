@@ -89,7 +89,7 @@ English / [简体中文](README_CN.md)
 - Can I write my own plugins?  
   Yes — Xinbot exposes a simple, Bukkit-style event system to build on.For details, see the [Plugin Development Guide](PDG.md)
 
-- How can I manage multiple bots?
+- How can I manage multiple bots?  
   Xinbot supports using [xinManager](https://github.com/huangdihd/xinManager) to manage multiple bots.
 
 - How do I report issues or request features?  
