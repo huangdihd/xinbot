@@ -31,7 +31,6 @@ public class XinbotPlugin implements Plugin {
 
     @Override
     public void onUnload() {
-
     }
 
     @Override
@@ -59,6 +58,7 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.getPluginManager().registerCommand(new ListCommand(), new ListCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new PluginManagerCommand(), new PluginManagerCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new LicenseCommand(), new LicenseExecutor(), this);
     }
 
     @Override
