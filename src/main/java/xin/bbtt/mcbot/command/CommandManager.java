@@ -86,8 +86,9 @@ public class CommandManager {
             if (parts.length == 2) {
                 String pluginName = parts[0];
                 commandName = parts[1];
-                if (Bot.Instance.getPluginManager().getPlugin(pluginName) != null) {
-                    commandList = byPlugin.get(Bot.Instance.getPluginManager().getPlugin(pluginName));
+                Plugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
+                if (plugin != null) {
+                    commandList = byPlugin.get(plugin);
                 }
             }
         }
@@ -149,12 +150,13 @@ public class CommandManager {
         for (List<RegisteredCommand> commands : byPlugin.values()) {
             commandList.addAll(commands);
         }
+        prefix = prefix.toLowerCase();
         for (RegisteredCommand registeredCommand : commandList) {
             for (String commandName : registeredCommand.command().getAliases()) {
-                if (registeredCommand.plugin().getName().startsWith(prefix)) {
+                if (registeredCommand.plugin().getName().toLowerCase().startsWith(prefix)) {
                     names.add(registeredCommand.plugin().getName() + ":" + commandName);
                 }
-                if (commandName.startsWith(prefix)) {
+                if (commandName.toLowerCase().startsWith(prefix)) {
                     names.add(commandName);
                 }
             }

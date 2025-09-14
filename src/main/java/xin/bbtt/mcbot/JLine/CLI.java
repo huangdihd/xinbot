@@ -37,6 +37,7 @@ public class CLI {
 
             lineReader = LineReaderBuilder.builder()
                     .terminal(terminal)
+                    .option(LineReader.Option.CASE_INSENSITIVE, true)
                     .completer(new JLineCommandCompleter())
                     .build();
 

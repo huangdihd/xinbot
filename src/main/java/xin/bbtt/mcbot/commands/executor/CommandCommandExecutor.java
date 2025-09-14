@@ -43,7 +43,7 @@ public class CommandCommandExecutor extends TabExecutor {
 
     @Override
     public List<String> onTabComplete(Command command, String label, String[] args) {
-        if (args.length == 0) {
+        if (args.length == 1 && args[0].isEmpty()) {
             return rootCommands;
         }
         String cmd = String.join(" ", args);
