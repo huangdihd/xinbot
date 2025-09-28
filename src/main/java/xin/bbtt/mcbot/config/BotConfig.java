@@ -94,4 +94,3 @@ public class  BotConfig {
         private boolean enableHighStability;
     }
 }
-

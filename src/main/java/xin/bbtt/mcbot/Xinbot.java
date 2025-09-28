@@ -49,19 +49,21 @@ public class Xinbot {
 
     public static void main(String[] args){
         BotConfig config = null;
-        try {
-            if (args.length == 1) {
-                if (args[0].equals("--version") || args[0].equals("-v")) {
-                    log.info("version: {}", version);
-                    System.exit(0);
-                }
-                if (args[0].equals("--license") || args[0].equals("-l")) {
-                    Arrays.stream(license.split("\n")).toList().forEach(log::info);
-                    System.exit(0);
-                }
-                configPath = args[0];
+
+        if (args.length == 1) {
+            if (args[0].equals("--version") || args[0].equals("-v")) {
+                log.info("version: {}", version);
+                System.exit(0);
             }
-            log.info("Loading config file: {}", configPath);
+            if (args[0].equals("--license") || args[0].equals("-l")) {
+                Arrays.stream(license.split("\n")).toList().forEach(log::info);
+                System.exit(0);
+            }
+            configPath = args[0];
+        }
+        log.info("Loading config file: {}", configPath);
+
+        try {
             config = BotConfig.loadFromFile(configPath);
         }
         catch (Exception e) {

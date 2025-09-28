@@ -18,9 +18,18 @@
 
 package xin.bbtt.mcbot.plugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public interface Plugin {
     default String getName(){
         return this.getClass().getSimpleName();
+    }
+    default String getVersion(){
+        return this.getClass().getPackage().getImplementationVersion();
+    }
+    default Logger getLogger(){
+        return LoggerFactory.getLogger(this.getName());
     }
     void onLoad();
     void onUnload();

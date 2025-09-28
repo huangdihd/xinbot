@@ -20,7 +20,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
     private void listPlugins() {
         log.info("Plugins:");
         for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
-            log.info(plugin.getName());
+            log.info("{}({})", plugin.getName(), plugin.getVersion());
         }
     }
 
