@@ -72,7 +72,7 @@ public class PluginManager {
         URLClassLoader classLoader = new URLClassLoader(urls);
         ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
         for (Plugin plugin : serviceLoader) {
-            if (plugins.containsValue(plugin)) {
+            if (plugins.containsKey(plugin.getName())) {
                 log.error("Plugin {} is already loaded.", plugin.getName());
                 continue;
             }
