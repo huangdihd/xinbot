@@ -19,6 +19,7 @@ package xin.bbtt.mcbot;
 
 import xin.bbtt.mcbot.commands.command.*;
 import xin.bbtt.mcbot.commands.executor.*;
+import xin.bbtt.mcbot.eventListeners.PositonInQueueOverlayListener;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.listeners.*;
 
@@ -58,6 +59,9 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.getPluginManager().registerCommand(new PluginManagerCommand(), new PluginManagerCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new LicenseCommand(), new LicenseExecutor(), this);
+
+        // Event listeners
+        Bot.Instance.getPluginManager().registerEvents(new PositonInQueueOverlayListener(), this);
     }
 
     @Override

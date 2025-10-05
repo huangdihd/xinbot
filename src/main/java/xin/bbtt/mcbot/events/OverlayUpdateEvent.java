@@ -1,4 +1,3 @@
-
 /*
  *   Copyright (C) 2024-2025 huangdihd
  *
@@ -16,19 +15,22 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.event;
-import java.lang.reflect.Method;
+package xin.bbtt.mcbot.events;
 
-public record ReflectiveEventExecutor(Method method, Class<?> eventParamType) implements EventExecutor {
-    public ReflectiveEventExecutor(Method method, Class<?> eventParamType) {
-        this.method = method;
-        this.eventParamType = eventParamType;
-        this.method.setAccessible(true);
-    }
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import xin.bbtt.mcbot.event.Event;
+import xin.bbtt.mcbot.event.HandlerList;
 
-    @Override
-    public void execute(Listener listener, Event event) throws Exception {
-        if (!eventParamType.isInstance(event)) return;
-        method.invoke(listener, event);
+public class OverlayUpdateEvent extends Event {
+    @Getter
+    private final Component content;
+    private static final HandlerList HANDLERS = new HandlerList();
+
+    @Override public HandlerList getHandlers() { return HANDLERS; }
+    public static HandlerList getHandlerList() { return HANDLERS; }
+
+    public OverlayUpdateEvent(Component textComponent) {
+        this.content = textComponent;
     }
 }

@@ -27,6 +27,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Utils;
+import xin.bbtt.mcbot.events.OverlayUpdateEvent;
 import xin.bbtt.mcbot.events.SystemChatMessageEvent;
 
 import java.util.Arrays;
@@ -49,6 +50,8 @@ public class ChatMessagePrinter extends SessionAdapter {
         if (overlay) {
             if (Utils.toString(systemChatPacket.getContent()).equals(overlayMessage)) return;
             overlayMessage = Utils.toString(systemChatPacket.getContent());
+            OverlayUpdateEvent overlayUpdateEvent = new OverlayUpdateEvent(systemChatPacket.getContent());
+            Bot.Instance.getPluginManager().events().callEvent(overlayUpdateEvent);
         }
         Arrays.stream(event.getText().split("\n"))
                 .forEach((line) -> log.info(marker, parseColors(line)));

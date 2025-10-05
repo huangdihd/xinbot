@@ -1,4 +1,3 @@
-
 /*
  *   Copyright (C) 2024-2025 huangdihd
  *
@@ -16,19 +15,26 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.event;
-import java.lang.reflect.Method;
+package xin.bbtt.mcbot.events;
 
-public record ReflectiveEventExecutor(Method method, Class<?> eventParamType) implements EventExecutor {
-    public ReflectiveEventExecutor(Method method, Class<?> eventParamType) {
-        this.method = method;
-        this.eventParamType = eventParamType;
-        this.method.setAccessible(true);
+import lombok.Getter;
+import xin.bbtt.mcbot.event.Event;
+import xin.bbtt.mcbot.event.HandlerList;
+
+public class PositionInQueueUpdateEvent extends Event {
+    private final static HandlerList HANDLERS = new HandlerList();
+    @Getter
+    private final int positionInQueue;
+
+    public PositionInQueueUpdateEvent(int positionInQueue) {
+        this.positionInQueue = positionInQueue;
     }
 
     @Override
-    public void execute(Listener listener, Event event) throws Exception {
-        if (!eventParamType.isInstance(event)) return;
-        method.invoke(listener, event);
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 }
