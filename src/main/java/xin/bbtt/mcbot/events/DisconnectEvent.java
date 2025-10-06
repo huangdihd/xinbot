@@ -19,23 +19,19 @@ package xin.bbtt.mcbot.events;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import xin.bbtt.mcbot.Utils;
-import xin.bbtt.mcbot.event.HandlerList;
 import xin.bbtt.mcbot.event.Event;
+import xin.bbtt.mcbot.event.HandlerList;
 
-@Getter
-public class SystemChatMessageEvent extends Event {
+public class DisconnectEvent extends Event {
+    @Getter
+    private final Component reason;
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Component content;
-    private final String text;
-    private final boolean overlay;
-
-    public SystemChatMessageEvent(Component content, boolean overlay) {
-        this.content = content;
-        this.text = Utils.toString(content);
-        this.overlay = overlay;
-    }
 
     @Override public HandlerList getHandlers() { return HANDLERS; }
     public static HandlerList getHandlerList() { return HANDLERS; }
+
+    public DisconnectEvent(Component reason) {
+        this.reason = reason;
+
+    }
 }

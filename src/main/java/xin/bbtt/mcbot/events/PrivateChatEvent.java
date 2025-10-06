@@ -18,24 +18,27 @@
 package xin.bbtt.mcbot.events;
 
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import xin.bbtt.mcbot.Utils;
-import xin.bbtt.mcbot.event.HandlerList;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import xin.bbtt.mcbot.event.Event;
+import xin.bbtt.mcbot.event.HandlerList;
 
-@Getter
-public class SystemChatMessageEvent extends Event {
-    private static final HandlerList HANDLERS = new HandlerList();
-    private final Component content;
-    private final String text;
-    private final boolean overlay;
+public class PrivateChatEvent extends Event {
+    private final static HandlerList HANDLERS = new HandlerList();
+    @Getter
+    private final GameProfile sender;
+    @Getter
+    private final String message;
 
-    public SystemChatMessageEvent(Component content, boolean overlay) {
-        this.content = content;
-        this.text = Utils.toString(content);
-        this.overlay = overlay;
+    public PrivateChatEvent(GameProfile sender, String message) {
+        this.sender = sender;
+        this.message = message;
     }
 
-    @Override public HandlerList getHandlers() { return HANDLERS; }
-    public static HandlerList getHandlerList() { return HANDLERS; }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }

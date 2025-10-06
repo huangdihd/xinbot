@@ -30,7 +30,7 @@ public class EventManager {
 
     private static final Logger log = LoggerFactory.getLogger(EventManager.class.getSimpleName());
 
-    Marker eventErrorMarker = MarkerFactory.getMarker("[EventError]");
+    final Marker eventErrorMarker = MarkerFactory.getMarker("[EventError]");
 
     private static HandlerList getHandlerListForEventClass(Class<?> eventClass) {
         try {

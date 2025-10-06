@@ -19,7 +19,7 @@ package xin.bbtt.mcbot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xin.bbtt.mcbot.JLine.CLI;
+import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.auth.OnlineAccountDumper;
 import xin.bbtt.mcbot.config.BotConfig;

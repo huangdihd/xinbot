@@ -19,6 +19,7 @@ package xin.bbtt.mcbot;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -30,9 +31,10 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xin.bbtt.mcbot.JLine.CLI;
+import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.events.DisconnectEvent;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
@@ -53,7 +55,7 @@ public class Bot {
     private final PluginManager pluginManager;
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
-    public static Bot Instance = new Bot();
+    public final static Bot Instance = new Bot();
     @Getter
     @Setter
     private Server server = null;
@@ -127,8 +129,11 @@ public class Bot {
         }
     }
 
-    private void on_disconnect() {
+    private void on_disconnect(Component reason) {
         if (!running) return;
+        DisconnectEvent event = new DisconnectEvent(reason);
+        getPluginManager().events().callEvent(event);
+        if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
         server = null;
@@ -137,13 +142,12 @@ public class Bot {
 
     private void connect(){
         session = new TcpClientSession("2b2t.xin", 25565, protocol);
-        if (!Bot.Instance.getConfig().getAdvances().isEnableHighStability())
-            session.addListener(new SessionAdapter() {
-            @Override
-            public void disconnected(DisconnectedEvent event) {
-                on_disconnect();
-            }
-        });
+        session.addListener(new SessionAdapter() {
+        @Override
+        public void disconnected(DisconnectedEvent event) {
+            on_disconnect(event.getReason());
+        }
+    });
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
@@ -165,6 +169,7 @@ public class Bot {
         getPluginManager().addListener(listener, plugin);
     }
 
+    @SuppressWarnings("unused")
     public void removeListener(SessionListener listener, Plugin plugin){
         getPluginManager().removeListener(listener, plugin);
     }

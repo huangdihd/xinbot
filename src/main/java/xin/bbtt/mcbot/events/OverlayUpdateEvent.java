@@ -19,12 +19,15 @@ package xin.bbtt.mcbot.events;
 
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.event.Event;
 import xin.bbtt.mcbot.event.HandlerList;
 
 public class OverlayUpdateEvent extends Event {
     @Getter
     private final Component content;
+    @Getter
+    private final String text;
     private static final HandlerList HANDLERS = new HandlerList();
 
     @Override public HandlerList getHandlers() { return HANDLERS; }
@@ -32,5 +35,6 @@ public class OverlayUpdateEvent extends Event {
 
     public OverlayUpdateEvent(Component textComponent) {
         this.content = textComponent;
+        this.text = Utils.toString(textComponent);
     }
 }

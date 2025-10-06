@@ -29,7 +29,7 @@ import java.util.*;
 public class CommandManager {
     private static final Logger log = LoggerFactory.getLogger(CommandManager.class.getSimpleName());
 
-    Marker commandErrorMarker = MarkerFactory.getMarker("[CommandError]");
+    final Marker commandErrorMarker = MarkerFactory.getMarker("[CommandError]");
 
     private final Map<Plugin, List<RegisteredCommand>> byPlugin = new HashMap<>();
 

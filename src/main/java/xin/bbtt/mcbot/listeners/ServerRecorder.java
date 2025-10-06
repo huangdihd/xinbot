@@ -23,13 +23,18 @@ import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
+import xin.bbtt.mcbot.events.ServerChangeEvent;
 
 public class ServerRecorder extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;
-        if (loginPacket.toString().contains(", gameMode=ADVENTURE")) Bot.Instance.setServer(Server.Login);
-        if (loginPacket.toString().contains(", gameMode=SURVIVAL")) Bot.Instance.setServer(Server.Xin);
+        Server newServer = null;
+        if (loginPacket.toString().contains(", gameMode=ADVENTURE")) newServer = Server.Login;
+        if (loginPacket.toString().contains(", gameMode=SURVIVAL")) newServer = Server.Xin;
+        ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.Instance.getServer());
+        Bot.Instance.getPluginManager().events().callEvent(event);
+        if (newServer != null) Bot.Instance.setServer(newServer);
     }
 }

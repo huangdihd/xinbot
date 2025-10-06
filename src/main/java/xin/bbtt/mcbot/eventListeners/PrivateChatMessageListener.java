@@ -17,19 +17,28 @@
 
 package xin.bbtt.mcbot.eventListeners;
 
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.event.EventHandler;
 import xin.bbtt.mcbot.event.Listener;
-import xin.bbtt.mcbot.events.OverlayUpdateEvent;
-import xin.bbtt.mcbot.events.PositionInQueueUpdateEvent;
+import xin.bbtt.mcbot.events.PrivateChatEvent;
+import xin.bbtt.mcbot.events.SystemChatMessageEvent;
 
-public class PositonInQueueOverlayListener implements Listener {
+public class PrivateChatMessageListener implements Listener {
     @EventHandler
-    public void onOverlay(OverlayUpdateEvent event) {
+    public void onChatMessage(SystemChatMessageEvent event) {
+        if (event.isOverlay()) return;
         String text = event.getText();
-        if(!text.startsWith("§0§lPosition in queue: §6§l")) return;
-        String positionInQueue = text.replace("§0§lPosition in queue: §6§l", "");
-        PositionInQueueUpdateEvent positionInQueueUpdateEvent = new PositionInQueueUpdateEvent(Integer.parseInt(positionInQueue));
-        Bot.Instance.getPluginManager().events().callEvent(positionInQueueUpdateEvent);
+        if (!text.startsWith("§d来自 ")) return;
+        text = text.replaceFirst("§d来自 ", "");
+        String playerName = text.split(": ")[0];
+        String message = text.replaceFirst(playerName + ": §d", "");
+        for (GameProfile profile : Bot.Instance.players.values()) {
+            if (profile.getName().equals(playerName)) {
+                PrivateChatEvent privateChatEvent = new PrivateChatEvent(profile, message);
+                Bot.Instance.getPluginManager().events().callEvent(privateChatEvent);
+                break;
+            }
+        }
     }
 }

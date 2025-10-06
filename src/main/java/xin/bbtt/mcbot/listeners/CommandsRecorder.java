@@ -29,7 +29,7 @@ import java.util.List;
 
 public class CommandsRecorder extends SessionAdapter {
 
-    public static List<String> rootCommands = new ArrayList<>();
+    public final static List<String> rootCommands = new ArrayList<>();
 
     @Override
     public void packetReceived(Session session, Packet packet) {
@@ -40,6 +40,5 @@ public class CommandsRecorder extends SessionAdapter {
             CommandNode child = commandsPacket.getNodes()[childIndex];
             rootCommands.add(child.getName());
         }
-
     }
 }
