@@ -16,8 +16,8 @@
  */
 
 package xin.bbtt.mcbot.auth;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.Getter;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
@@ -28,7 +28,7 @@ import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.config.BotConfigData;
 
 public class AccountLoader {
     private static final Logger log = LoggerFactory.getLogger(AccountLoader.class.getSimpleName());
@@ -36,7 +36,8 @@ public class AccountLoader {
     private static StepFullJavaSession.FullJavaSession javaSession;
     @Getter
     private static MinecraftProtocol protocol;
-    public static void init(@NotNull BotConfig.Account account) throws Exception {
+    private static final Gson gson = new Gson();
+    public static void init(@NotNull BotConfigData.Account account) throws Exception {
         if (!account.isOnlineMode()) {
             protocol = new MinecraftProtocol(account.getName());
             return;
@@ -52,8 +53,9 @@ public class AccountLoader {
             javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, callback);
         }
         else {
-            JsonObject jsonObject = JsonParser.parseString(account.getFullSession()).getAsJsonObject();
-            javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(jsonObject);
+            String sessionJson = account.getFullSession().toString();
+            JsonObject gsonObject = gson.fromJson(sessionJson, JsonObject.class);
+            javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(gsonObject);
         }
         GameProfile gameProfile = new GameProfile(javaSession.getMcProfile().getId(), javaSession.getMcProfile().getName());
         String accessToken = javaSession.getMcProfile().getMcToken().getAccessToken();

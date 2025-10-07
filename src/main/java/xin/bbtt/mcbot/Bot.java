@@ -69,7 +69,7 @@ public class Bot {
     public void init(BotConfig config) {
         this.config = config;
         this.pluginManager.loadPlugin(new XinbotPlugin());
-        this.pluginManager.loadPlugins(this.config.getPlugin().getDirectory());
+        this.pluginManager.loadPlugins(this.config.getConfigData().getPlugin().getDirectory());
         this.inputThread.setDaemon(true);
         this.inputThread.start();
     }
@@ -102,7 +102,7 @@ public class Bot {
     private void mainLoop() {
         connect();
         while (!Thread.currentThread().isInterrupted() && running) {
-            if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) {
+            if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) {
                 if (session.isConnected()) continue;
                 players.clear();
                 pluginManager.disableAll();
@@ -133,7 +133,7 @@ public class Bot {
         if (!running) return;
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
-        if (Bot.Instance.getConfig().getAdvances().isEnableHighStability()) return;
+        if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
         server = null;

@@ -56,14 +56,14 @@ public class AutoLoginListener extends SessionAdapter {
             Bot.Instance.login = true;
         }
         else if (titlePacket.toString().contains("注册")) {
-            String registerCommand = "reg " + Bot.Instance.getConfig().getAccount().getPassword() + " " + Bot.Instance.getConfig().getAccount().getPassword();
+            String registerCommand = "reg " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword() + " " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword();
             SendRegisterCommandEvent registerCommandEvent = new SendRegisterCommandEvent(registerCommand);
             Bot.Instance.getPluginManager().events().callEvent(registerCommandEvent);
             if (!registerCommandEvent.isDefaultActionCancelled())
                 Bot.Instance.sendCommand(registerCommandEvent.getCommand());
         }
         else {
-            String loginCommand = "l " + Bot.Instance.getConfig().getAccount().getPassword();
+            String loginCommand = "l " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword();
             SendLoginCommandEvent loginCommandEvent = new SendLoginCommandEvent(loginCommand);
             if (!loginCommandEvent.isDefaultActionCancelled())
                 Bot.Instance.sendCommand(loginCommandEvent.getCommand());

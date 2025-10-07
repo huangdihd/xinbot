@@ -18,19 +18,23 @@
 
 package xin.bbtt.mcbot.auth;
 
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
-import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.config.BotConfigData;
 
 public class OnlineAccountDumper {
-    public static BotConfig.Account DumpAccount(StepFullJavaSession.FullJavaSession session) {
-        JsonObject serializedSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.toJson(session);
-        BotConfig.Account account = new BotConfig.Account();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static BotConfigData.Account DumpAccount(StepFullJavaSession.FullJavaSession session) throws JsonProcessingException {
+        String sessionJson = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.toJson(session).toString();
+        JsonNode serializedSession = objectMapper.readTree(sessionJson);
+        BotConfigData.Account account = new BotConfigData.Account();
         account.setOnlineMode(true);
         account.setName(session.getMcProfile().getName());
         account.setPassword("");
-        account.setFullSession(serializedSession.toString());
+        account.setFullSession(serializedSession);
         return account;
     }
 }

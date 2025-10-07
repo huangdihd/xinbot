@@ -46,7 +46,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             log.error("PluginManager load <plugin file name1> <plugin file name2> ...");
             return;
         }
-        File dir = new File(Bot.Instance.getConfig().getPlugin().getDirectory());
+        File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
         if (!dir.exists() || !dir.isDirectory()) {
             log.error("Plugin directory not found.");
             return;
@@ -190,7 +190,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
                 return result;
             }
             case "load" -> {
-                File dir = new File(Bot.Instance.getConfig().getPlugin().getDirectory());
+                File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
                 if (!dir.exists() || !dir.isDirectory()) {
                     return List.of();
                 }

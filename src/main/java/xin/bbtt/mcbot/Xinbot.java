@@ -63,17 +63,18 @@ public class Xinbot {
         log.info("Loading config file: {}", configPath);
 
         try {
-            config = BotConfig.loadFromFile(configPath);
+            //noinspection JvmTaintAnalysis
+            config = new BotConfig(configPath);
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
             System.exit(1);
         }
 
-        if (config.getAdvances().isEnableJLine()) CLI.init();
-        if (config.getAdvances().isEnableTranslation()) LangManager.Init();
+        if (config.getConfigData().getAdvances().isEnableJLine()) CLI.init();
+        if (config.getConfigData().getAdvances().isEnableTranslation()) LangManager.Init();
         log.info("version: {}", version);
-        File pluginDir = new File(config.getPlugin().getDirectory());
+        File pluginDir = new File(config.getConfigData().getPlugin().getDirectory());
         if (!pluginDir.exists() || !pluginDir.isDirectory()) {
             if (pluginDir.mkdir()) {
                 log.info("Created plugins directory: {}", pluginDir.isDirectory());
@@ -84,16 +85,24 @@ public class Xinbot {
             }
         }
         try {
-            AccountLoader.init(config.getAccount());
+            AccountLoader.init(config.getConfigData().getAccount());
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
             System.exit(1);
         }
-        if (config.getAccount().isOnlineMode())
-            config.setAccount(OnlineAccountDumper.DumpAccount(AccountLoader.getJavaSession()));
+        if (config.getConfigData().getAccount().isOnlineMode()) {
+            try {
+                config.getConfigData().setAccount(
+                        OnlineAccountDumper.DumpAccount(AccountLoader.getJavaSession())
+                );
+            }
+            catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        }
         try {
-            BotConfig.saveToFile(configPath, config);
+            config.saveToFile();
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
