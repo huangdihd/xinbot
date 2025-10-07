@@ -3,7 +3,6 @@
 /plugin
 /plugin/*
 /config.conf
-/config.json
 /remote_config.json
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
