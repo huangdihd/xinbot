@@ -77,7 +77,7 @@ English / [简体中文](README_CN.md)
     ```
 
 5) Official Login (Optional)
-   If onlineMode=true and fullSession is empty, the console will guide you through a browser-based login flow.
+   If onlineMode=true and fullSession is null, the console will guide you through a browser-based login flow.
 
 6) Develop Plugins
    Add features with plugins. See the Plugin Development Guide (PDG.md).

@@ -63,7 +63,6 @@ public class Xinbot {
         log.info("Loading config file: {}", configPath);
 
         try {
-            //noinspection JvmTaintAnalysis
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
