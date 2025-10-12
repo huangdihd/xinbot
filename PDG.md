@@ -56,6 +56,18 @@ package com.yourpackage;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 public class MyPlugin implements Plugin {
+    
+    @Override
+    public String getName() {
+        return "MyPlugin";
+        // Return the name of your plugin
+    }
+    
+    @Override
+    public String getVersion() {
+        return "1.0.0";
+        // Return the version of your plugin
+    }
 
     @Override
     public void onLoad() {

@@ -51,20 +51,22 @@
 3) 配置
    在 JAR 同目录创建 config.conf（示例）：
     ```hocon
-    account {
-      fullSession=""         // 由 Xinbot 自动生成；保持为空
-      name="[机器人名称]"      // 机器人用户名
-      onlineMode=false       // true = 使用正版账号登录
-      password=""            // 2b2t.xin 密码
-    }
-    advances {
-      enableHighStability=false  // 高稳定模式（更高 CPU 占用）
-      enableJLine=true           // 使用 JLine 输入处理（更高内存占用）
-      enableTranslation=true     // 加载语言文件（更高内存占用）
-    }
-    owner="[主人名称]"       // 机器人的主人名称
-    plugin {
-      directory=plugin        // 插件目录
+       {
+        "account" : {
+            "fullSession" : null,           // 由 Xinbot 自动生成；保持为空
+            "name" : "[Bot name]",          // 机器人用户名
+            "onlineMode" : false,           // true = 使用正版账号登录
+            "password" : ""                 // 2b2t.xin 密码
+        },
+        "advances" : {
+            "enableHighStability" : false,  // 高稳定模式（更高 CPU 占用）
+            "enableJLine" : true,           // 使用 JLine 输入处理（更高内存占用）
+            "enableTranslation" : true      // 加载语言文件（更高内存占用）
+        },
+        "owner" : "[Owner name]",           // 机器人的主人名称
+        "plugin" : {
+            "directory" : "plugin"          // 插件目录
+        }
     }
     ```
 
