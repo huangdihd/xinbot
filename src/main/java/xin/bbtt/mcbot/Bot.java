@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
@@ -53,6 +54,8 @@ public class Bot {
     private BotConfig config;
     @Getter
     private final PluginManager pluginManager;
+    @Getter
+    private ProxyInfo proxyInfo;
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
     public final static Bot Instance = new Bot();
@@ -77,7 +80,10 @@ public class Bot {
     public void start() {
         running = true;
         protocol = AccountLoader.getProtocol();
-        session = new TcpClientSession("2b2t.xin", 25565, protocol);
+        if (config.getConfigData().getProxy().isEnable()) {
+            proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
+        }
+        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
         mainLoop();
@@ -141,7 +147,7 @@ public class Bot {
     }
 
     private void connect(){
-        session = new TcpClientSession("2b2t.xin", 25565, protocol);
+        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
         @Override
         public void disconnected(DisconnectedEvent event) {

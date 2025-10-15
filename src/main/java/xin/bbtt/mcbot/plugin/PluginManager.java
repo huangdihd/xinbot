@@ -80,13 +80,13 @@ public class PluginManager {
     }
 
     public void loadPlugins(String pluginsDirectory) {
-        File dir = new File(pluginsDirectory);
-        if (!dir.exists() || !dir.isDirectory()) {
+        File pluginsDir = new File(pluginsDirectory);
+        if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
             log.error("The plugins directory does not exist or is invalid: {}", pluginsDirectory);
             return;
         }
 
-        File[] files = dir.listFiles((dir1, name) -> name.endsWith(".jar"));
+        File[] files = pluginsDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (files == null || files.length == 0) {
             log.info("No plugins found.");
             return;

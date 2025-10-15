@@ -19,12 +19,15 @@ package xin.bbtt.mcbot.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
+import java.net.InetSocketAddress;
+
 @Data
 public class  BotConfigData {
     private Account account;
     private String owner;
     private Plugin plugin;
     private Advances advances;
+    private Proxy proxy;
 
     @Data
     public static class Account {
@@ -44,5 +47,21 @@ public class  BotConfigData {
         private boolean enableJLine;
         private boolean enableTranslation;
         private boolean enableHighStability;
+    }
+
+    @Data
+    public static class Proxy {
+        private boolean enable;
+        private ProxyInfo info;
+        @Data
+        public static class ProxyInfo {
+            org.geysermc.mcprotocollib.network.ProxyInfo.Type type;
+            InetSocketAddress address;
+            String username;
+            String password;
+            public org.geysermc.mcprotocollib.network.ProxyInfo toMcProtocolLibProxyInfo() {
+                return new org.geysermc.mcprotocollib.network.ProxyInfo(type, address, username, password);
+            }
+        }
     }
 }
