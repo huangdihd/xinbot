@@ -1,0 +1,13 @@
+root = true
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.{conf,json}]
+indent_size = 4
+indent_style = space
+
+[*.java]
+indent_size = 4
+indent_style = space
+charset = utf-8
