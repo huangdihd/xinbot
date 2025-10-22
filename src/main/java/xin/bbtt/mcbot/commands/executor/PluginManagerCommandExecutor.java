@@ -78,6 +78,10 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             return;
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
+            if (pluginName.equals("XinbotPlugin")) {
+                log.error("Failed to load plugin: XinbotPlugin because you can't unload the XinbotPlugin by sending commands.");
+                continue;
+            }
             Plugin plugin = findPlugin(pluginName);
             if (plugin == null) continue;
             try {
@@ -130,6 +134,10 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             log.error("PluginManager disable <plugin name1> <plugin name2> ...");
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
+            if (pluginName.equals("XinbotPlugin")) {
+                log.error("Failed to load plugin: XinbotPlugin because you can't disable the XinbotPlugin by sending commands.");
+                continue;
+            }
             Plugin plugin = findPlugin(pluginName);
             if (plugin == null) continue;
             try {
@@ -184,9 +192,15 @@ public class PluginManagerCommandExecutor extends TabExecutor {
     public List<String> onTabComplete(Command cmd, String label, String[] args) {
         if (args.length == 1) return List.of("list", "load", "unload", "reload", "enable", "disable", "re-enable");
         switch (args[0]) {
-            case "disable", "unload", "reload", "enable", "re-enable" -> {
+            case "reload", "enable", "re-enable" -> {
                 List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
                 result.removeAll(List.of(args).subList(1, args.length));
+                return result;
+            }
+            case "disable", "unload" -> {
+                List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+                result.removeAll(List.of(args).subList(1, args.length));
+                result.remove("XinbotPlugin");
                 return result;
             }
             case "load" -> {
