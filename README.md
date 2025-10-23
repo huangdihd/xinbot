@@ -66,6 +66,15 @@ English / [简体中文](README_CN.md)
         "owner" : "[Owner name]",           // Bot owner's name
         "plugin" : {
             "directory" : "plugin"          // Plugin directory
+        },
+        "proxy" : {
+            "enable" : false,               // Whether enable proxy to connect the server
+            "info" : {
+                "address" : "",             // The address of the proxy server
+                "type" : "",                // The type of proxy(HTTP, SOCKS4, SOCKS5)
+                "password" : "",            // The password of the proxy
+                "username" : ""             // The username of the proxy
+            }
         }
     }
     ```
