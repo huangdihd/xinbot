@@ -66,6 +66,15 @@
         "owner" : "[Owner name]",           // 机器人的主人名称
         "plugin" : {
             "directory" : "plugin"          // 插件目录
+        },
+        "proxy" : {
+            "enable" : false,               // 是否启用代理链接服务器
+            "info" : {
+                "address" : "",             // 代理服务器的地址
+                "type" : "",                // 代理的类型(HTTP, SOCKS4, SOCKS5)
+                "password" : "",            // 代理的密码
+                "username" : ""             // 代理的用户名
+            }
         }
     }
     ```
