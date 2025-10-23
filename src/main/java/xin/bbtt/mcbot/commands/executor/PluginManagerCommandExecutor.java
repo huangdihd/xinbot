@@ -79,7 +79,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             if (pluginName.equals("XinbotPlugin")) {
-                log.error("Failed to load plugin: XinbotPlugin because you can't unload the XinbotPlugin by sending commands.");
+                log.error("Failed to unload plugin: XinbotPlugin because unloading the XinbotPlugin by commands is not allowed.");
                 continue;
             }
             Plugin plugin = findPlugin(pluginName);
@@ -135,7 +135,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             if (pluginName.equals("XinbotPlugin")) {
-                log.error("Failed to load plugin: XinbotPlugin because you can't disable the XinbotPlugin by sending commands.");
+                log.error("Failed to disable plugin: XinbotPlugin because disabling the XinbotPlugin by commands is not allowed.");
                 continue;
             }
             Plugin plugin = findPlugin(pluginName);
