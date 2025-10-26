@@ -37,10 +37,10 @@ public class AccountLoader {
     @Getter
     private static MinecraftProtocol protocol;
     private static final Gson gson = new Gson();
-    public static void init(@NotNull BotConfigData.Account account) throws Exception {
+    public static BotConfigData.Account init(@NotNull BotConfigData.Account account) throws Exception {
         if (!account.isOnlineMode()) {
             protocol = new MinecraftProtocol(account.getName());
-            return;
+            return account;
         }
         if (account.getFullSession() == null || account.getFullSession().isEmpty()) {
             log.warn("No session found for the online account");
@@ -61,6 +61,8 @@ public class AccountLoader {
         String accessToken = javaSession.getMcProfile().getMcToken().getAccessToken();
 
         protocol = new MinecraftProtocol(gameProfile, accessToken);
+
+        return OnlineAccountDumper.DumpAccount(AccountLoader.getJavaSession());
     }
 
 }

@@ -49,6 +49,7 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.addPacketListener(new DisconnectReasonPrinter(), this);
         Bot.Instance.addPacketListener(new JoinButtonRecorder(), this);
         Bot.Instance.addPacketListener(new CommandsRecorder(), this);
+        Bot.Instance.addPacketListener(new PacketListener(), this);
 
         // Commands
         Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);

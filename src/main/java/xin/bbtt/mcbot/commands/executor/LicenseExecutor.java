@@ -29,6 +29,6 @@ public class LicenseExecutor extends CommandExecutor {
     private static final Logger log = LoggerFactory.getLogger(LicenseExecutor.class.getSimpleName());
     @Override
     public void onCommand(Command command, String label, String[] args) {
-        Arrays.stream(Xinbot.license.split("\n")).toList().forEach(log::info);
+        Arrays.stream(Xinbot.license.split("\n")).forEach(log::info);
     }
 }
