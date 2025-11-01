@@ -24,7 +24,14 @@ import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 
 public class Xinbot {
     private static final Logger log = LoggerFactory.getLogger(Xinbot.class.getSimpleName());
@@ -66,6 +73,26 @@ public class Xinbot {
         return true;
     }
 
+    // Copy the default config file to the specified path
+    private static void copyDefaultConfig(String configPath) {
+        try (InputStream is = Xinbot.class.getClassLoader().getResourceAsStream("config.conf")) {
+            if (is == null) {
+                log.error("Default config file not found in resources!");
+                return;
+            }
+
+            Path configFilePath = Paths.get(configPath);
+            if (configFilePath.getParent() != null) {
+                Files.createDirectories(configFilePath.getParent());
+            }
+            Files.copy(is, configFilePath, StandardCopyOption.REPLACE_EXISTING);
+            log.info("Default config file copied to: {}", configPath);
+        } catch (IOException e) {
+            log.error("Failed to copy default config file: {}", e.getMessage(), e);
+        }
+    }
+
+
     public static void main(String[] args){
         BotConfig config = null;
 
@@ -92,6 +119,12 @@ public class Xinbot {
 
         // Load the configuration file
         configPath = args[0];
+        // Check if config file exists, if not copy from resources
+        Path configFilePath = Paths.get(configPath);
+        if (!Files.exists(configFilePath)) {
+            log.info("Config file not found, copying default config...");
+            copyDefaultConfig(configPath);
+        }
         log.info("Loading config file: {}", configPath);
         try {
             config = new BotConfig(configPath);
