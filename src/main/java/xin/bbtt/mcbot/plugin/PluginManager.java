@@ -1,4 +1,3 @@
-
 /*
  *   Copyright (C) 2024-2025 huangdihd
  *
@@ -63,7 +62,7 @@ public class PluginManager {
         if (Bot.Instance.getSession() != null) {
             enablePlugin(plugin);
         }
-        log.info("Loaded plugin: {}", plugin.getClass().getName());
+        log.info("已加载插件: {}", plugin.getClass().getName());
     }
 
     public void loadPlugin(File pluginFile) throws MalformedURLException {
@@ -72,7 +71,7 @@ public class PluginManager {
         ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
         for (Plugin plugin : serviceLoader) {
             if (plugins.containsKey(plugin.getName())) {
-                log.error("Plugin {} is already loaded.", plugin.getName());
+                log.error("插件 {} 已经加载。", plugin.getName());
                 continue;
             }
             loadPlugin(plugin);
@@ -82,23 +81,23 @@ public class PluginManager {
     public void loadPlugins(String pluginsDirectory) {
         File pluginsDir = new File(pluginsDirectory);
         if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-            log.error("The plugins directory does not exist or is invalid: {}", pluginsDirectory);
+            log.error("插件目录不存在或无效: {}", pluginsDirectory);
             return;
         }
 
         File[] files = pluginsDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (files == null || files.length == 0) {
-            log.info("No plugins found.");
+            log.info("未找到插件。");
             return;
         }
 
         for (File file : files) {
-            log.info("Trying to load plugin: {}", file.getName());
+            log.info("正在尝试加载插件: {}", file.getName());
             try {
                 loadPlugin(file);
             }
             catch (Exception e) {
-                log.error("Failed to load plugin: {}", file.getName(), e);
+                log.error("无法加载插件: {}", file.getName(), e);
             }
         }
     }
@@ -109,13 +108,13 @@ public class PluginManager {
             plugin.onEnable();
             enabledPlugins.put(plugin.getName(), plugin);
         } catch (Exception e) {
-            log.error("Failed to enable plugin: {}", plugin.getName(), e);
+            log.error("无法启用插件: {}", plugin.getName(), e);
         }
     }
 
     public void disablePlugin(Plugin plugin) {
         if (!enabledPlugins.containsKey(plugin.getName())) {
-            log.error("Plugin {} is not enabled.", plugin.getName());
+            log.error("插件 {} 未启用。", plugin.getName());
             return;
         }
         eventManager.unregisterAll(plugin);
@@ -135,10 +134,10 @@ public class PluginManager {
             }
             plugin.onUnload();
         } catch (Exception e) {
-            log.error("Failed to unload plugin: {}", plugin.getName(), e);
+            log.error("无法卸载插件: {}", plugin.getName(), e);
         }
         plugins.remove(plugin.getName());
-        log.info("Unloaded plugin: {}", plugin.getClass().getName());
+        log.info("已卸载插件: {}", plugin.getClass().getName());
     }
 
     public void unloadPlugins() {
@@ -147,7 +146,7 @@ public class PluginManager {
             try {
                 unloadPlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                log.error("无法卸载插件: {}", plugin.getName(), e);
             }
         }
     }
@@ -157,7 +156,7 @@ public class PluginManager {
             try {
                 enablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                log.error("无法启用插件: {}", plugin.getName(), e);
             }
         }
     }
@@ -167,7 +166,7 @@ public class PluginManager {
             try {
                 disablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                log.error("无法禁用插件: {}", plugin.getName(), e);
             }
         }
     }

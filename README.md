@@ -1,16 +1,16 @@
 # Xinbot
 <!-- Badges -->
 <p>
-  <a href="https://github.com/huangdihd/xinbot/releases" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/releases" target="_blank">
     <img src="https://img.shields.io/github/v/release/huangdihd/xinbot?style=for-the-badge&label=Release&color=brightgreen" alt="Latest Release">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/issues" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/issues" target="_blank">
     <img src="https://img.shields.io/github/issues/huangdihd/xinbot?style=for-the-badge&label=Issues&color=yellow" alt="Issues">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/blob/master/LICENSE" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/blob/master/LICENSE" target="_blank">
     <img src="https://img.shields.io/github/license/huangdihd/xinbot?style=for-the-badge&label=License&color=blue" alt="License">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/stargazers" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/stargazers" target="_blank">
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
   <a href="https://jitpack.io/#huangdihd/xinbot" target="_blank">
@@ -36,6 +36,7 @@ English / [简体中文](README_CN.md)
 - Extensible Plugin System — Built-in plugin lifecycle and event bus for custom features.
 - Stability Options — Tune for high stability or low footprint based on your environment.
 - Localized Experience — Optional language file loading for a better UX.
+- Automatic Config Creation — Automatically creates default config file on first run.
 
 ---
 
@@ -75,6 +76,10 @@ English / [简体中文](README_CN.md)
                 "password" : "",            // The password of the proxy
                 "username" : ""             // The username of the proxy
             }
+        },
+        "server" : {
+            "address" : "127.0.0.1",        // Server address
+            "port" : 25565                  // Server port
         }
     }
     ```
@@ -84,12 +89,16 @@ English / [简体中文](README_CN.md)
     # default config path: ./config.conf
     java -jar xinbot-[version].jar [config path]
     ```
+    
+    > Note: If no config file is found, Xinbot will automatically create a default config file.
 
 5) Official Login (Optional)
    If onlineMode=true and fullSession is null, the console will guide you through a browser-based login flow.
 
 6) Develop Plugins
    Add features with plugins. See the Plugin Development Guide (PDG.md).
+   
+   > Note: Auto-login and question-answering features have been removed from the core and can be implemented via plugins.
 
 ---
 
@@ -122,4 +131,4 @@ GPL-3.0-or-later — see LICENSE for the full text.
 - If you distribute modified versions, you must disclose the source and keep the same license.
 - Include copyright and license notices in redistributions.
 
-Made with ❤️ by huangdihd
+Made with ❤️ by huangdihd and MCOCET

@@ -83,9 +83,9 @@ public class Bot {
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
+        session = new TcpClientSession(config.getConfigData().getServer().getAddress(), config.getConfigData().getServer().getPort(), protocol, proxyInfo);
         login = false;
-        log.info("Starting bot with username: {}", protocol.getProfile().getName());
+        log.info("正在启动机器人，用户名: {}", protocol.getProfile().getName());
         mainLoop();
     }
 
@@ -94,7 +94,7 @@ public class Bot {
             pluginManager.disableAll();
             pluginManager.unloadPlugins();
             running = false;
-            disconnect("Bot stopped.");
+            disconnect("机器人已停止");
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -147,7 +147,7 @@ public class Bot {
     }
 
     private void connect(){
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
+        session = new TcpClientSession(config.getConfigData().getServer().getAddress(), config.getConfigData().getServer().getPort(), protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
         @Override
         public void disconnected(DisconnectedEvent event) {
@@ -155,16 +155,16 @@ public class Bot {
         }
     });
         pluginManager.enableAll();
-        log.info("connecting.");
+        log.info("正在连接服务器");
         session.connect();
         long start_time = System.currentTimeMillis();
         while (server == null && !running){
             if (System.currentTimeMillis() - start_time > 2000) {
-                disconnect("connect timed out.");
+                disconnect("连接超时");
                 break;
             }
         }
-        log.info("connect complete.");
+        log.info("连接完成");
     }
 
     public void disconnect(String reason){

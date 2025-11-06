@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
-import xin.bbtt.mcbot.events.ClickJoinItemEvent;
 
 public class AutoJoinListener extends SessionAdapter {
     private static final Logger log = LoggerFactory.getLogger(AutoJoinListener.class.getSimpleName());
@@ -62,9 +61,7 @@ public class AutoJoinListener extends SessionAdapter {
             if (!itemStack.toString().contains("Game") && !itemStack.toString().contains("戏") && !itemStack.toString().contains("队") && !itemStack.toString().contains("入")) continue;
             Int2ObjectMap<ItemStack> changedSlots = new Int2ObjectOpenHashMap<>();
             changedSlots.put(slot, null);
-            ClickJoinItemEvent clickJoinItemEvent = new ClickJoinItemEvent();
-            Bot.Instance.getPluginManager().events().callEvent(clickJoinItemEvent);
-            if (clickJoinItemEvent.isDefaultActionCancelled()) return;
+            // Removed ClickJoinItemEvent since it's no longer used
             session.send(new ServerboundContainerClickPacket(
                     containerId,
                     containerSetContentPacket.getStateId(),

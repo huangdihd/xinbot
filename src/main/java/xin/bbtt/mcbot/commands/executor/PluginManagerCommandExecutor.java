@@ -6,7 +6,7 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
+ *   This程序 is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
@@ -35,7 +35,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
     private final static Logger log = LoggerFactory.getLogger(PluginManagerCommandExecutor.class.getSimpleName());
 
     private void listPlugins() {
-        log.info("Plugins:");
+        log.info("插件列表:");
         for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
             log.info("{}({})", plugin.getName(), plugin.getVersion());
         }
@@ -43,23 +43,23 @@ public class PluginManagerCommandExecutor extends TabExecutor {
 
     private void loadPlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager load <plugin file name1> <plugin file name2> ...");
+            log.error("PluginManager load <插件文件名1> <插件文件名2> ...");
             return;
         }
         File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
         if (!dir.exists() || !dir.isDirectory()) {
-            log.error("Plugin directory not found.");
+            log.error("未找到插件目录。");
             return;
         }
         File file = new File(dir, args[1]);
         if (!file.exists() || !file.isFile()) {
-            log.error("Plugin file not found.");
+            log.error("未找到插件文件。");
             return;
         }
         try {
             Bot.Instance.getPluginManager().loadPlugin(file);
         } catch (Exception e) {
-            log.error("Failed to load plugin: {}", file.getName(), e);
+            log.error("无法加载插件: {}", file.getName(), e);
         }
     }
 
@@ -67,19 +67,19 @@ public class PluginManagerCommandExecutor extends TabExecutor {
     private Plugin findPlugin(String pluginName) {
         Plugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
         if (plugin == null) {
-            log.error("Plugin {} not found.",  pluginName);
+            log.error("插件 {} 未找到。",  pluginName);
         }
         return plugin;
     }
 
     private void unloadPlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager unload <plugin name1> <plugin name2> ...");
+            log.error("PluginManager unload <插件名1> <插件名2> ...");
             return;
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             if (pluginName.equals("XinbotPlugin")) {
-                log.error("Failed to unload plugin: XinbotPlugin because unloading the XinbotPlugin by commands is not allowed.");
+                log.error("无法卸载插件: XinbotPlugin，因为不允许通过命令卸载 XinbotPlugin。");
                 continue;
             }
             Plugin plugin = findPlugin(pluginName);
@@ -87,14 +87,14 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             try {
                 Bot.Instance.getPluginManager().unloadPlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                log.error("无法卸载插件: {}", plugin.getName(), e);
             }
         }
     }
 
     private void reloadPlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager reload <plugin name1> <plugin name2> ...");
+            log.error("PluginManager reload <插件名1> <插件名2> ...");
             return;
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
@@ -103,20 +103,20 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             try {
                 Bot.Instance.getPluginManager().unloadPlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                log.error("无法卸载插件: {}", plugin.getName(), e);
                 continue;
             }
             try {
                 Bot.Instance.getPluginManager().loadPlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to load plugin: {}", plugin.getName(), e);
+                log.error("无法加载插件: {}", plugin.getName(), e);
             }
         }
     }
 
     private void enablePlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager enable <plugin name1> <plugin name2> ...");
+            log.error("PluginManager enable <插件名1> <插件名2> ...");
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             Plugin plugin = findPlugin(pluginName);
@@ -124,18 +124,18 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             try {
                 Bot.Instance.getPluginManager().enablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                log.error("无法启用插件: {}", plugin.getName(), e);
             }
         }
     }
 
     private void disablePlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager disable <plugin name1> <plugin name2> ...");
+            log.error("PluginManager disable <插件名1> <插件名2> ...");
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             if (pluginName.equals("XinbotPlugin")) {
-                log.error("Failed to disable plugin: XinbotPlugin because disabling the XinbotPlugin by commands is not allowed.");
+                log.error("无法禁用插件: XinbotPlugin，因为不允许通过命令禁用 XinbotPlugin。");
                 continue;
             }
             Plugin plugin = findPlugin(pluginName);
@@ -143,14 +143,14 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             try {
                 Bot.Instance.getPluginManager().disablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                log.error("无法禁用插件: {}", plugin.getName(), e);
             }
         }
     }
 
     private void reEnablePlugins(String[] args) {
         if (args.length < 2) {
-            log.error("PluginManager re-enable <plugin name1> <plugin name2> ...");
+            log.error("PluginManager re-enable <插件名1> <插件名2> ...");
         }
         for (String pluginName : Arrays.asList(args).subList(1, args.length)) {
             Plugin plugin = findPlugin(pluginName);
@@ -158,13 +158,13 @@ public class PluginManagerCommandExecutor extends TabExecutor {
             try {
                 Bot.Instance.getPluginManager().disablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                log.error("无法禁用插件: {}", plugin.getName(), e);
                 continue;
             }
             try {
                 Bot.Instance.getPluginManager().enablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                log.error("无法启用插件: {}", plugin.getName(), e);
             }
         }
     }
@@ -173,7 +173,7 @@ public class PluginManagerCommandExecutor extends TabExecutor {
     public void onCommand(Command command, String label, String[] args) {
         if (args.length == 0) {
             // Show usage
-            log.error("PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...");
+            log.error("PluginManager list / PluginManager load <插件文件名1> <插件文件名2> ... / PluginManager unload <插件名1> <插件名2> ... / PluginManager reload <插件名1> <插件名2> ... / PluginManager enable <插件名1> <插件名2> ... / PluginManager disable <插件名1> <插件名2> ... / PluginManager re-enable <插件名1> <插件名2> ...");
             return;
         }
         // Call sub-command handler

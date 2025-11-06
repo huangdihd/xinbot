@@ -43,12 +43,12 @@ public class AccountLoader {
             return account;
         }
         if (account.getFullSession() == null || account.getFullSession().isEmpty()) {
-            log.warn("No session found for the online account");
-            log.info("Starting device code login...");
+            log.warn("未找到在线账户的会话");
+            log.info("正在启动设备代码登录...");
             HttpClient httpClient = MinecraftAuth.createHttpClient();
             StepMsaDeviceCode.MsaDeviceCodeCallback callback = new StepMsaDeviceCode.MsaDeviceCodeCallback(
                     msaDeviceCode ->
-                            log.info("Go to {} to login your minecraft account", msaDeviceCode.getDirectVerificationUri())
+                            log.info("请访问 {} 登录您的 Minecraft 账户", msaDeviceCode.getDirectVerificationUri())
             );
             javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, callback);
         }

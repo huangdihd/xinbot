@@ -58,18 +58,18 @@ public class Xinbot {
             return true;
 
         if (pluginDir.exists()) {
-            log.error("Plugin directory is not a directory!");
+            log.error("插件目录不是一个目录！");
             return false;
         }
 
-        log.info("Plugin directory is not exists, trying to create it.");
+        log.info("插件目录不存在，正在尝试创建。");
 
         if (!pluginDir.mkdir()) {
-            log.error("Failed to create plugins directory: {}", pluginDir.isDirectory());
+            log.error("无法创建插件目录: {}", pluginDir.isDirectory());
             return false;
         }
 
-        log.info("Created plugins directory: {}", pluginDir.isDirectory());
+        log.info("已创建插件目录: {}", pluginDir.isDirectory());
         return true;
     }
 
@@ -77,7 +77,7 @@ public class Xinbot {
     private static void copyDefaultConfig(String configPath) {
         try (InputStream is = Xinbot.class.getClassLoader().getResourceAsStream("config.conf")) {
             if (is == null) {
-                log.error("Default config file not found in resources!");
+                log.error("在资源中找不到默认配置文件！");
                 return;
             }
 
@@ -86,9 +86,9 @@ public class Xinbot {
                 Files.createDirectories(configFilePath.getParent());
             }
             Files.copy(is, configFilePath, StandardCopyOption.REPLACE_EXISTING);
-            log.info("Default config file copied to: {}", configPath);
+            log.info("默认配置文件已复制到: {}", configPath);
         } catch (IOException e) {
-            log.error("Failed to copy default config file: {}", e.getMessage(), e);
+            log.error("无法复制默认配置文件: {}", e.getMessage(), e);
         }
     }
 
@@ -98,7 +98,7 @@ public class Xinbot {
 
         // Handle arguments
         if (args.length > 1) {
-            log.error("You can only run this program with one argument!");
+            log.error("只能使用一个参数运行此程序！");
             return;
         }
 
@@ -109,7 +109,7 @@ public class Xinbot {
 
         // The version and The license sub command
         if (args[0].equals("--version") || args[0].equals("-v")) {
-            log.info("version: {}", version);
+            log.info("版本: {}", version);
             return;
         }
         if (args[0].equals("--license") || args[0].equals("-l")) {
@@ -122,15 +122,15 @@ public class Xinbot {
         // Check if config file exists, if not copy from resources
         Path configFilePath = Paths.get(configPath);
         if (!Files.exists(configFilePath)) {
-            log.info("Config file not found, copying default config...");
+            log.info("未找到配置文件，正在复制默认配置...");
             copyDefaultConfig(configPath);
         }
-        log.info("Loading config file: {}", configPath);
+        log.info("正在加载配置文件: {}", configPath);
         try {
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
-            log.error("Failed to load configuration file: {}", configPath, e);
+            log.error("无法加载配置文件: {}", configPath, e);
             System.exit(1);
         }
 
@@ -140,7 +140,7 @@ public class Xinbot {
         // Initialize the language manager
         if (config.getConfigData().getAdvances().isEnableTranslation()) LangManager.Init();
 
-        log.info("version: {}", version);
+        log.info("版本: {}", version);
 
         // Initialize the plugin directory
         File pluginDir = new File(config.getConfigData().getPlugin().getDirectory());
@@ -151,7 +151,7 @@ public class Xinbot {
             config.getConfigData().setAccount(AccountLoader.init(config.getConfigData().getAccount()));
         }
         catch (Exception e) {
-            log.error("Failed to load your account.", e);
+            log.error("无法加载您的账户。", e);
             System.exit(1);
         }
 
@@ -160,7 +160,7 @@ public class Xinbot {
             config.saveToFile();
         }
         catch (Exception e) {
-            log.error("Failed to save the configuration file.", e);
+            log.error("无法保存配置文件。", e);
         }
 
         // Initialize the bot
@@ -170,7 +170,8 @@ public class Xinbot {
         Bot.Instance.start();
 
         // After the bot stopped
-        log.info("Bot stopped.");
-        log.info("Bye!");
+        log.info("机器人已停止。");
+        log.info("再见！");
+        System.exit(0);
     }
 }

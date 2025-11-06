@@ -1,16 +1,16 @@
 # Xinbot
 <!-- Badges -->
 <p>
-  <a href="https://github.com/huangdihd/xinbot/releases" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/releases" target="_blank">
     <img src="https://img.shields.io/github/v/release/huangdihd/xinbot?style=for-the-badge&label=Release&color=brightgreen" alt="Latest Release">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/issues" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/issues" target="_blank">
     <img src="https://img.shields.io/github/issues/huangdihd/xinbot?style=for-the-badge&label=Issues&color=yellow" alt="Issues">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/blob/main/LICENSE" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/github/license/huangdihd/xinbot?style=for-the-badge&label=License&color=blue" alt="License">
   </a>
-  <a href="https://github.com/huangdihd/xinbot/stargazers" target="_blank">
+  <a href="https://github.com/2698269088/xinbot/stargazers" target="_blank">
     <img src="https://img.shields.io/github/stars/huangdihd/xinbot?style=for-the-badge&label=Stars&color=ff69b4" alt="Stars">
   </a>
   <a href="https://jitpack.io/#huangdihd/xinbot" target="_blank">
@@ -36,6 +36,7 @@
 - 可扩展插件系统 —— 内置插件生命周期与事件总线。
 - 稳定性可调 —— 可在稳定性与资源占用间自由取舍。
 - 多语言支持 —— 可选加载语言文件，提升使用体验。
+- 自动配置创建 —— 首次运行时自动创建默认配置文件。
 
 ---
 
@@ -75,6 +76,10 @@
                 "password" : "",            // 代理的密码
                 "username" : ""             // 代理的用户名
             }
+        },
+        "server" : {
+            "address" : "127.0.0.1",        // 服务器地址
+            "port" : 25565                  // 服务器端口
         }
     }
     ```
@@ -84,12 +89,16 @@
     # 默认配置路径：./config.conf
     java -jar xinbot-[版本号].jar [配置文件路径]
     ```
+    
+    > 注意：如果未找到配置文件，Xinbot 将自动创建默认配置文件。
 
 5) 正版登录（可选）
    当 onlineMode=true 且 fullSession 为空时，控制台会提示打开登录链接完成授权。
 
 6) 开发插件
    通过插件扩展功能，详见插件开发指南（PDG_CN.md）。
+   
+   > 注意：自动登录和答题功能已从核心中移除，可通过插件实现。
 
 ---
 
@@ -116,4 +125,4 @@ GPL-3.0-or-later，详见 LICENSE。
 
 如果你喜欢 Xinbot，欢迎点亮一个 Star！
 
-Made with ❤️ by huangdihd
+Made with ❤️ by huangdihd amd MCOCET

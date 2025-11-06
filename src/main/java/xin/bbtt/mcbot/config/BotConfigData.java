@@ -22,12 +22,19 @@ import lombok.Data;
 import java.net.InetSocketAddress;
 
 @Data
-public class  BotConfigData {
+public class BotConfigData {
     private Account account;
     private String owner;
     private Plugin plugin;
     private Advances advances;
     private Proxy proxy;
+    private Server server;
+
+    @Data
+    public static class Server {
+        private String address = "127.0.0.1";
+        private int port = 25565;
+    }
 
     @Data
     public static class Account {

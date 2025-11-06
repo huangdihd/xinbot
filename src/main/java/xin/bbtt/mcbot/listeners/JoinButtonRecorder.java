@@ -31,6 +31,6 @@ public class JoinButtonRecorder extends SessionAdapter {
         if (!(packet instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket)) return;
         if (Bot.Instance.getServer().equals(Server.Xin)) return;
         if (!containerSetSlotPacket.toString().contains("加入游戏")) return;
-        AutoLoginListener.join_button_slot = containerSetSlotPacket.getSlot() % 9;
+        // Removed reference to AutoLoginListener.join_button_slot
     }
 }
