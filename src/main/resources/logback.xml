@@ -22,7 +22,7 @@
     <appender name="CONSOLE" class="xin.bbtt.mcbot.jLine.JLineConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>[%d{HH:mm:ss} %highlight(%5level)] [%cyan(%logger)]%marker: %msg%n</pattern>
+            <pattern>%msg%n</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>

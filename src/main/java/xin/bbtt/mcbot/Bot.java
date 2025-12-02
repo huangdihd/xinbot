@@ -83,9 +83,9 @@ public class Bot {
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
-        session = new TcpClientSession(config.getConfigData().getServer().getAddress(), config.getConfigData().getServer().getPort(), protocol, proxyInfo);
+        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
-        log.info("正在启动机器人，用户名: {}", protocol.getProfile().getName());
+        log.info("Starting bot with username: {}", protocol.getProfile().getName());
         mainLoop();
     }
 
@@ -94,7 +94,7 @@ public class Bot {
             pluginManager.disableAll();
             pluginManager.unloadPlugins();
             running = false;
-            disconnect("机器人已停止");
+            disconnect("Bot stopped.");
         }
         catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -147,7 +147,7 @@ public class Bot {
     }
 
     private void connect(){
-        session = new TcpClientSession(config.getConfigData().getServer().getAddress(), config.getConfigData().getServer().getPort(), protocol, proxyInfo);
+        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
         @Override
         public void disconnected(DisconnectedEvent event) {
@@ -155,16 +155,16 @@ public class Bot {
         }
     });
         pluginManager.enableAll();
-        log.info("正在连接服务器");
+        log.info("connecting.");
         session.connect();
         long start_time = System.currentTimeMillis();
         while (server == null && !running){
             if (System.currentTimeMillis() - start_time > 2000) {
-                disconnect("连接超时");
+                disconnect("connect timed out.");
                 break;
             }
         }
-        log.info("连接完成");
+        log.info("connect complete.");
     }
 
     public void disconnect(String reason){
@@ -186,5 +186,15 @@ public class Bot {
 
     public void sendChatMessage(String message) {
         to_be_sent_messages.add(message);
+    }
+
+    /**
+     * 检查指定名称的插件是否已安装
+     *
+     * @param pluginName 插件名称
+     * @return 如果插件已安装返回true，否则返回false
+     */
+    public boolean isPluginInstalled(String pluginName) {
+        return pluginManager.getPlugin(pluginName) != null;
     }
 }

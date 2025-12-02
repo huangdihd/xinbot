@@ -29,7 +29,7 @@ public class PositionInQueueListener extends SessionAdapter {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
         if (systemChatPacket.isOverlay()) {
             if (Utils.toString(systemChatPacket.getContent()).startsWith("§0§lPosition in queue: §6§l")) {
-                // Removed reference to AutoLoginListener.last_action_time
+                AutoLoginListener.last_action_time = System.currentTimeMillis();
             }
         }
     }

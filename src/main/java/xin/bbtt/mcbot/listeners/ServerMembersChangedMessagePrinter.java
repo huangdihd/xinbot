@@ -36,7 +36,7 @@ import static xin.bbtt.mcbot.Utils.parseColors;
 
 public class ServerMembersChangedMessagePrinter extends SessionAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ServerMembersChangedMessagePrinter.class.getSimpleName());
+    private static final Logger log = LoggerFactory.getLogger("Player");
 
     @Override
     public void packetReceived(Session session, Packet packet) {
