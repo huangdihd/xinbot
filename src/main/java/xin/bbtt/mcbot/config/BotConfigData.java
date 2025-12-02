@@ -16,6 +16,7 @@
  */
 
 package xin.bbtt.mcbot.config;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
@@ -59,6 +60,16 @@ public class  BotConfigData {
             InetSocketAddress address;
             String username;
             String password;
+
+            @JsonSetter("type")
+            public void setType(String type) {
+                if (type == null || type.isEmpty()) {
+                    this.type = null;
+                } else {
+                    this.type = org.geysermc.mcprotocollib.network.ProxyInfo.Type.valueOf(type);
+                }
+            }
+
             public org.geysermc.mcprotocollib.network.ProxyInfo toMcProtocolLibProxyInfo() {
                 return new org.geysermc.mcprotocollib.network.ProxyInfo(type, address, username, password);
             }
