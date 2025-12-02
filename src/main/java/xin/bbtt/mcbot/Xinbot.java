@@ -124,6 +124,8 @@ public class Xinbot {
         if (!Files.exists(configFilePath)) {
             log.info("Config file not found, copying default config...");
             copyDefaultConfig(configPath);
+            log.info("Please modify the config file: {}", configPath);
+            System.exit(1);
         }
         log.info("Loading config file: {}", configPath);
         try {
