@@ -17,40 +17,33 @@
 
 package xin.bbtt.mcbot;
 
-import xin.bbtt.mcbot.commands.executor.*;
 import xin.bbtt.mcbot.commands.command.*;
-import xin.bbtt.mcbot.listeners.*;
+import xin.bbtt.mcbot.commands.executor.*;
+import xin.bbtt.mcbot.eventListeners.PositonInQueueOverlayListener;
+import xin.bbtt.mcbot.eventListeners.PrivateChatMessageListener;
 import xin.bbtt.mcbot.plugin.Plugin;
+import xin.bbtt.mcbot.listeners.*;
 
 public class XinbotPlugin implements Plugin {
-    @Override
-    public String getName() {
-        return "XinbotPlugin";
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.0.0";
-    }
 
     @Override
     public void onLoad() {
-
     }
 
     @Override
     public void onUnload() {
-
     }
 
     @Override
     public void onEnable() {
         // Packet listeners
         Bot.Instance.addPacketListener(new MessageSender(), this);
+        Bot.Instance.addPacketListener(new AutoLoginListener(), this);
         Bot.Instance.addPacketListener(new AutoJoinListener(), this);
         Bot.Instance.addPacketListener(new ServerRecorder(), this);
         Bot.Instance.addPacketListener(new ChatMessagePrinter(), this);
         Bot.Instance.addPacketListener(new CaptchaListener(), this);
+        Bot.Instance.addPacketListener(new AnswerQuestionListener(), this);
         Bot.Instance.addPacketListener(new PositionInQueueListener(), this);
         Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter(), this);
         Bot.Instance.addPacketListener(new DisconnectReasonPrinter(), this);
@@ -63,15 +56,18 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.getPluginManager().registerCommand(new CommandCommand(), new CommandCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new StopCommand(), new StopCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new HelpCommand(), new HelpCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new LicenseCommand(), new LicenseExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new ListCommand(), new ListCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new DisconnectCommand(), new DisconnectExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new ListCommand(), new ListCommandExecutor(), this);
         Bot.Instance.getPluginManager().registerCommand(new PluginManagerCommand(), new PluginManagerCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
+        Bot.Instance.getPluginManager().registerCommand(new LicenseCommand(), new LicenseExecutor(), this);
+
+        // Event listeners
+        Bot.Instance.getPluginManager().registerEvents(new PositonInQueueOverlayListener(), this);
+        Bot.Instance.getPluginManager().registerEvents(new PrivateChatMessageListener(), this);
     }
 
     @Override
     public void onDisable() {
-
     }
 }

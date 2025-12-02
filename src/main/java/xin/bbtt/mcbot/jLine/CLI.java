@@ -43,7 +43,7 @@ public class CLI {
             JLineConsoleAppender.setLineReader(lineReader);
 
         } catch (Exception e) {
-            System.err.println("初始化 JLine 失败: " + e.getMessage());
+            System.err.println("Failed to initialize JLine: " + e.getMessage());
         }
     }
 }
