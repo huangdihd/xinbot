@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 public class JLineConsoleAppender extends ConsoleAppender<ILoggingEvent> {
     @Setter
-    private static LineReader lineReader;
+    private static volatile LineReader lineReader;
 
     @Override
     protected void append(ILoggingEvent event) {
@@ -38,6 +38,7 @@ public class JLineConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 
         if (encoder instanceof PatternLayoutEncoder ple) {
             charset = ple.getCharset();
+            super.setEncoder(encoder);
         }
 
         byte[] bytes = getEncoder().encode(event);
