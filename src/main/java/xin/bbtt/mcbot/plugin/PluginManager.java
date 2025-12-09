@@ -28,6 +28,7 @@ import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.CommandManager;
 import xin.bbtt.mcbot.event.EventManager;
 import xin.bbtt.mcbot.event.Listener;
+import xin.bbtt.mcbot.events.DisablePluginEvent;
 
 import java.util.*;
 import java.io.*;
@@ -126,6 +127,8 @@ public class PluginManager {
         sessionListeners.remove(plugin.getName());
         plugin.onDisable();
         enabledPlugins.remove(plugin.getName());
+        DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
+        eventManager.callEvent(disablePluginEvent);
     }
 
     public void unloadPlugin(Plugin plugin) {
@@ -174,6 +177,14 @@ public class PluginManager {
 
     public Plugin getPlugin(String name) {
         return plugins.get(name);
+    }
+
+    public boolean isPluginLoaded(String name) {
+        return plugins.containsKey(name);
+    }
+
+    public boolean isPluginEnabled(String name) {
+        return enabledPlugins.containsKey(name);
     }
 
     public Collection<Plugin> getPlugins() {
