@@ -104,7 +104,7 @@
   Xinbot 支持使用 [xinManager](https://github.com/huangdihd/xinManager) 管理多个机器人。
 
 - 如何反馈问题或提建议？  
-  请在 GitHub Issues 提交，附上复现步骤更佳。
+  请在 GitHub Issues 提交，附上复现步骤更佳。亦可加入官方插件开发qq交流群:434173700
 
 ---
 
