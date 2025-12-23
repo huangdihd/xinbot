@@ -111,7 +111,7 @@ English / [简体中文](README_CN.md)
 ## Community and Support
 - Issues: bug reports and feature requests
 - Discussions: share ideas, snippets, or showcase your plugins
-- QQ group: Xinbot has an offical plugin development communication group: 434173700
+- QQ group: There is an offical plugin development communication group for Xinbot: 434173700
 
 If you like Xinbot, a star goes a long way!
 
