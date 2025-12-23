@@ -23,7 +23,7 @@
 
     <groupId>xin.bbtt</groupId>
     <artifactId>xinbot</artifactId>
-    <version>1.13.2-SNAPSHOUT</version>
+    <version>1.13.2-RELEASE</version>
     <packaging>jar</packaging>
 
     <repositories>
