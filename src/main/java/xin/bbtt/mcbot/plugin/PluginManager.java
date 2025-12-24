@@ -121,7 +121,7 @@ public class PluginManager {
         }
         eventManager.unregisterAll(plugin);
         commandManager.unregisterAll(plugin);
-        for (SessionListener sessionListener : sessionListeners.get(plugin.getName())) {
+        for (SessionListener sessionListener : sessionListeners.getOrDefault(plugin.getName(), Collections.emptyList())) {
             Bot.Instance.getSession().removeListener(sessionListener);
         }
         sessionListeners.remove(plugin.getName());
