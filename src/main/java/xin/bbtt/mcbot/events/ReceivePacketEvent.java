@@ -1,11 +1,11 @@
 package xin.bbtt.mcbot.events;
 
 import lombok.Getter;
-import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import xin.bbtt.mcbot.event.Event;
 import xin.bbtt.mcbot.event.HandlerList;
 
-public class ReceivePacketEvent<T extends Packet> extends Event {
+public class ReceivePacketEvent<T extends MinecraftPacket> extends Event {
     @Getter
     private final T packet;
     private final static HandlerList HANDLERS = new HandlerList();
