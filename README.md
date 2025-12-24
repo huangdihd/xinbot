@@ -103,9 +103,6 @@ English / [简体中文](README_CN.md)
 - How can I manage multiple bots?  
   Xinbot supports using [xinManager](https://github.com/huangdihd/xinManager) to manage multiple bots.
 
-- How can I manage movement and terrains?
-  We developed a plugin called [MovementSync](https://github.com/huangdihd/movementsync) to manage movement and terrains.
-
 - How do I report issues or request features?  
   Open an issue on GitHub Issues. Clear steps to reproduce are appreciated.
 

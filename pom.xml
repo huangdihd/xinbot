@@ -23,7 +23,7 @@
 
     <groupId>xin.bbtt</groupId>
     <artifactId>xinbot</artifactId>
-    <version>1.13.2-RELEASE</version>
+    <version>1.13.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -81,27 +81,27 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.2.7.Final</version>
+            <version>4.2.8.Final</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-            <version>4.2.7.Final</version>
+            <version>4.2.8.Final</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
-            <version>4.2.7.Final</version>
+            <version>4.2.8.Final</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>4.2.7.Final</version>
+            <version>4.2.8.Final</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>4.2.7.Final</version>
+            <version>4.2.8.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
