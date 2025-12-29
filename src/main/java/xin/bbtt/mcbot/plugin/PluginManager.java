@@ -18,6 +18,7 @@
 
 package xin.bbtt.mcbot.plugin;
 
+import lombok.Getter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,8 @@ public class PluginManager {
     private final Map<String, Plugin> plugins = new HashMap<>();
     private final Map<String, Plugin> enabledPlugins = new HashMap<>();
     private final Map<String, List<SessionListener>> sessionListeners = new HashMap<>();
+    @Getter
+    private final PluginClassLoader classLoader = new PluginClassLoader(new URL[]{}, ClassLoader.getSystemClassLoader());
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class.getSimpleName());
 
     // Event manager
@@ -69,13 +72,11 @@ public class PluginManager {
 
     public void loadPlugin(File pluginFile) throws MalformedURLException {
         URL[] urls = { pluginFile.toURI().toURL() };
-        URLClassLoader classLoader = new URLClassLoader(urls);
-        ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
+        classLoader.addURLFile(pluginFile.toURI().toURL());
+        ClassLoader pluginClassLoader = new URLClassLoader(urls, classLoader);
+        ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, pluginClassLoader);
         for (Plugin plugin : serviceLoader) {
-            if (plugins.containsKey(plugin.getName())) {
-                log.error("Plugin {} is already loaded.", plugin.getName());
-                continue;
-            }
+            if (plugins.containsKey(plugin.getName())) continue;
             loadPlugin(plugin);
         }
     }
