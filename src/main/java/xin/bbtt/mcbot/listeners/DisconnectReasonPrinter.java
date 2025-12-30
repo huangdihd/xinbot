@@ -33,6 +33,19 @@ public class DisconnectReasonPrinter extends SessionAdapter {
     public void disconnected(DisconnectedEvent event) {
         Bot.Instance.setServer(null);
         log.info(parseColors(Utils.toString(event.getReason())));
-        log.error(event.getCause().getMessage(), event.getCause());
+        if (event.getCause() != null) {
+            log.error(event.getCause().getMessage(), event.getCause());
+        }
+        if (Utils.toString(event.getReason()).equals("§c微软认证失败")) {
+            log.error("Microsoft authentication failed.");
+            Bot.Instance.getConfig().getConfigData().getAccount().setFullSession(null);
+            try {
+                Bot.Instance.getConfig().saveToFile();
+            }
+            catch (Exception e) {
+                log.error("Failed to save the configuration file.", e);
+            }
+            Bot.Instance.stop();
+        }
     }
 }

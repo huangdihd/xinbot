@@ -149,11 +149,11 @@ public class Bot {
     private void connect(){
         session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
-        @Override
-        public void disconnected(DisconnectedEvent event) {
-            on_disconnect(event.getReason());
-        }
-    });
+            @Override
+            public void disconnected(DisconnectedEvent event) {
+                on_disconnect(event.getReason());
+            }
+        });
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
