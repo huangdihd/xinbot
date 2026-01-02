@@ -32,7 +32,7 @@ public class PrivateChatMessageListener implements Listener {
         if (!text.startsWith("§d来自 ")) return;
         text = text.replaceFirst("§d来自 ", "");
         String playerName = text.split(": ")[0];
-        String message = text.replaceFirst(playerName + ": §d", "");
+        String message = text.replaceFirst(playerName + ": §d", "").trim();
         for (GameProfile profile : Bot.Instance.players.values()) {
             if (profile.getName().equals(playerName)) {
                 PrivateChatEvent privateChatEvent = new PrivateChatEvent(profile, message);
