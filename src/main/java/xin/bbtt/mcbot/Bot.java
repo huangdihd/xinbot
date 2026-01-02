@@ -185,6 +185,9 @@ public class Bot {
     }
 
     public void sendChatMessage(String message) {
+        if (message.startsWith("/")) {
+            message = "\\" + message;
+        }
         to_be_sent_messages.add(message);
     }
 }

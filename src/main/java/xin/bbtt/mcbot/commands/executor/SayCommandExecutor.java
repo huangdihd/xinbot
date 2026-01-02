@@ -26,9 +26,6 @@ public class SayCommandExecutor extends CommandExecutor {
     public void onCommand(Command command, String label, String[] args) {
         if (args == null || args.length == 0) return;
         String message = String.join(" ", args);
-        if (message.startsWith("/")) {
-            message = "\\" + message;
-        }
         Bot.Instance.sendChatMessage(message);
     }
 }
