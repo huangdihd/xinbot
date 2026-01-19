@@ -38,19 +38,14 @@ public class XinbotPlugin implements Plugin {
     @Override
     public void onEnable() {
         // Packet listeners
-        Bot.Instance.addPacketListener(new MessageSender(), this);
         Bot.Instance.addPacketListener(new AutoLoginListener(), this);
         Bot.Instance.addPacketListener(new AutoJoinListener(), this);
-        Bot.Instance.addPacketListener(new ServerRecorder(), this);
-        Bot.Instance.addPacketListener(new ChatMessagePrinter(), this);
         Bot.Instance.addPacketListener(new CaptchaListener(), this);
         Bot.Instance.addPacketListener(new AnswerQuestionListener(), this);
         Bot.Instance.addPacketListener(new PositionInQueueListener(), this);
         Bot.Instance.addPacketListener(new ServerMembersChangedMessagePrinter(), this);
-        Bot.Instance.addPacketListener(new DisconnectReasonPrinter(), this);
         Bot.Instance.addPacketListener(new JoinButtonRecorder(), this);
         Bot.Instance.addPacketListener(new CommandsRecorder(), this);
-        Bot.Instance.addPacketListener(new PacketListener(), this);
 
         // Commands
         Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);

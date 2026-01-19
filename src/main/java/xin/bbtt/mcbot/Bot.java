@@ -36,6 +36,7 @@ import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
 import xin.bbtt.mcbot.events.DisconnectEvent;
+import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
@@ -64,6 +65,11 @@ public class Bot {
     private Server server = null;
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
+    private final PacketListener packetListener = new PacketListener();
+    private final DisconnectReasonPrinter disconnectReasonPrinter = new DisconnectReasonPrinter();
+    private final ServerRecorder serverRecorder = new ServerRecorder();
+    private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
+    private final MessageSender messageSender = new MessageSender();
 
     private Bot() {
         this.pluginManager = new PluginManager();
@@ -142,6 +148,11 @@ public class Bot {
         if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
+        session.removeListener(packetListener);
+        session.removeListener(disconnectReasonPrinter);
+        session.removeListener(serverRecorder);
+        session.removeListener(chatMessagePrinter);
+        session.removeListener(messageSender);
         server = null;
         connect();
     }
@@ -154,6 +165,11 @@ public class Bot {
                 on_disconnect(event.getReason());
             }
         });
+        session.addListener(packetListener);
+        session.addListener(disconnectReasonPrinter);
+        session.addListener(serverRecorder);
+        session.addListener(chatMessagePrinter);
+        session.addListener(messageSender);
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
@@ -176,7 +192,7 @@ public class Bot {
     }
 
     @SuppressWarnings("unused")
-    public void removeListener(SessionListener listener, Plugin plugin){
+    public void removePacketListener(SessionListener listener, Plugin plugin){
         getPluginManager().removeListener(listener, plugin);
     }
 
