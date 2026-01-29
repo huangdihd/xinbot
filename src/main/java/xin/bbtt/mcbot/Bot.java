@@ -51,6 +51,7 @@ public class Bot {
     @Getter
     private Session session;
     private final Thread inputThread = new Thread(this::getInput);
+    private Thread mainThread;
     @Getter
     private BotConfig config;
     @Getter
@@ -82,6 +83,7 @@ public class Bot {
     }
 
     public void start() {
+        mainThread = Thread.currentThread();
         running = true;
         protocol = AccountLoader.getProtocol();
         if (config.getConfigData().getProxy().isEnable()) {
@@ -113,7 +115,7 @@ public class Bot {
         }
         finally {
             inputThread.interrupt();
-            Thread.currentThread().interrupt();
+            mainThread.interrupt();
         }
     }
 
