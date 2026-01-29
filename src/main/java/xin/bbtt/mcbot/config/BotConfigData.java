@@ -45,7 +45,6 @@ public class  BotConfigData {
 
     @Data
     public static class Advances {
-        private boolean enableJLine;
         private boolean enableTranslation;
         private boolean enableHighStability;
     }
