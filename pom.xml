@@ -23,7 +23,7 @@
 
     <groupId>xin.bbtt</groupId>
     <artifactId>xinbot</artifactId>
-    <version>1.14.1-RELEASE</version>
+    <version>1.15.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -111,7 +111,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.19</version>
+            <version>1.5.26</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

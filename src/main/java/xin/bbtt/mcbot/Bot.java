@@ -79,8 +79,6 @@ public class Bot {
         this.config = config;
         this.pluginManager.loadPlugin(new XinbotPlugin());
         this.pluginManager.loadPlugins(this.config.getConfigData().getPlugin().getDirectory());
-        this.inputThread.setDaemon(true);
-        this.inputThread.start();
     }
 
     public void start() {
@@ -92,7 +90,15 @@ public class Bot {
         session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        mainLoop();
+        if (config.getConfigData().getAdvances().isEnableHighStability()) {
+            stableMainLoop();
+            this.inputThread.setDaemon(true);
+            this.inputThread.start();
+        }
+        else {
+            connect();
+            getInput();
+        }
     }
 
     public void stop() {
@@ -111,17 +117,14 @@ public class Bot {
         }
     }
 
-    private void mainLoop() {
-        connect();
+    private void stableMainLoop() {
         while (!Thread.currentThread().isInterrupted() && running) {
-            if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) {
-                if (session.isConnected()) continue;
-                players.clear();
-                pluginManager.disableAll();
-                connect();
-            }
-            Thread.onSpinWait();
+            if (session.isConnected()) continue;
+            connect();
+            players.clear();
+            pluginManager.disableAll();
         }
+
     }
 
     private void getInput() {
