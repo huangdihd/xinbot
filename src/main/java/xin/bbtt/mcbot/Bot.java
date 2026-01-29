@@ -36,6 +36,7 @@ import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
 import xin.bbtt.mcbot.events.DisconnectEvent;
+import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
@@ -64,6 +65,11 @@ public class Bot {
     private Server server = null;
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
+    private final PacketListener packetListener = new PacketListener();
+    private final DisconnectReasonPrinter disconnectReasonPrinter = new DisconnectReasonPrinter();
+    private final ServerRecorder serverRecorder = new ServerRecorder();
+    private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
+    private final MessageSender messageSender = new MessageSender();
 
     private Bot() {
         this.pluginManager = new PluginManager();
@@ -73,8 +79,6 @@ public class Bot {
         this.config = config;
         this.pluginManager.loadPlugin(new XinbotPlugin());
         this.pluginManager.loadPlugins(this.config.getConfigData().getPlugin().getDirectory());
-        this.inputThread.setDaemon(true);
-        this.inputThread.start();
     }
 
     public void start() {
@@ -86,7 +90,15 @@ public class Bot {
         session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        mainLoop();
+        if (config.getConfigData().getAdvances().isEnableHighStability()) {
+            stableMainLoop();
+            this.inputThread.setDaemon(true);
+            this.inputThread.start();
+        }
+        else {
+            connect();
+            getInput();
+        }
     }
 
     public void stop() {
@@ -105,17 +117,14 @@ public class Bot {
         }
     }
 
-    private void mainLoop() {
-        connect();
+    private void stableMainLoop() {
         while (!Thread.currentThread().isInterrupted() && running) {
-            if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) {
-                if (session.isConnected()) continue;
-                players.clear();
-                pluginManager.disableAll();
-                connect();
-            }
-            Thread.onSpinWait();
+            if (session.isConnected()) continue;
+            connect();
+            players.clear();
+            pluginManager.disableAll();
         }
+
     }
 
     private void getInput() {
@@ -142,6 +151,11 @@ public class Bot {
         if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
+        session.removeListener(packetListener);
+        session.removeListener(disconnectReasonPrinter);
+        session.removeListener(serverRecorder);
+        session.removeListener(chatMessagePrinter);
+        session.removeListener(messageSender);
         server = null;
         connect();
     }
@@ -154,6 +168,11 @@ public class Bot {
                 on_disconnect(event.getReason());
             }
         });
+        session.addListener(packetListener);
+        session.addListener(disconnectReasonPrinter);
+        session.addListener(serverRecorder);
+        session.addListener(chatMessagePrinter);
+        session.addListener(messageSender);
         pluginManager.enableAll();
         log.info("connecting.");
         session.connect();
@@ -176,7 +195,7 @@ public class Bot {
     }
 
     @SuppressWarnings("unused")
-    public void removeListener(SessionListener listener, Plugin plugin){
+    public void removePacketListener(SessionListener listener, Plugin plugin){
         getPluginManager().removeListener(listener, plugin);
     }
 
