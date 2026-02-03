@@ -34,7 +34,7 @@ public class ServerRecorder extends SessionAdapter {
         if (loginPacket.toString().contains(", gameMode=ADVENTURE")) newServer = Server.Login;
         if (loginPacket.toString().contains(", gameMode=SURVIVAL")) newServer = Server.Xin;
         ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.Instance.getServer());
-        Bot.Instance.getPluginManager().events().callEvent(event);
         if (newServer != null) Bot.Instance.setServer(newServer);
+        Bot.Instance.getPluginManager().events().callEvent(event);
     }
 }

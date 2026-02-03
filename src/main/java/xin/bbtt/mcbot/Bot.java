@@ -71,6 +71,12 @@ public class Bot {
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
+    @Getter
+    @Setter
+    private String serverHost = "2b2t.xin";
+    @Getter
+    @Setter
+    private int serverPort = 25565;
 
     private Bot() {
         this.pluginManager = new PluginManager();
@@ -89,7 +95,6 @@ public class Bot {
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
         if (config.getConfigData().getAdvances().isEnableHighStability()) {
@@ -146,7 +151,7 @@ public class Bot {
         }
     }
 
-    private void on_disconnect(Component reason) {
+    private void onDisconnect(Component reason) {
         if (!running) return;
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
@@ -163,11 +168,11 @@ public class Bot {
     }
 
     private void connect(){
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
+        session = new TcpClientSession(serverHost, serverPort, protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
-                on_disconnect(event.getReason());
+                onDisconnect(event.getReason());
             }
         });
         session.addListener(packetListener);
