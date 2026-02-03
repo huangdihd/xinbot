@@ -16,6 +16,9 @@
   <a href="https://jitpack.io/#huangdihd/xinbot" target="_blank">
     <img src="https://img.shields.io/jitpack/version/com.github.huangdihd/xinbot?style=for-the-badge&label=JitPack&color=b22222" alt="jitpack">
   </a>
+  <a href="https://github.com/huangdihd/xinbot/commits/master/">
+    <img src="https://img.shields.io/github/commit-activity/w/huangdihd/xinbot?style=for-the-badge&color=purple" alt="commit activity"/>
+  </a>
 </p>
 
 ---
