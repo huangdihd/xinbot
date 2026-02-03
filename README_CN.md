@@ -58,11 +58,7 @@
             "onlineMode" : false,           // true = 使用正版账号登录
             "password" : ""                 // 2b2t.xin 密码
         },
-        "advances" : {
-            "enableHighStability" : false,  // 高稳定模式（更高 CPU 占用）
-            "enableJLine" : true,           // 使用 JLine 输入处理（更高内存占用）
-            "enableTranslation" : true      // 加载语言文件（更高内存占用）
-        },
+        "enableTranslation" : true,         // 加载语言文件（更高内存占用）
         "owner" : "[Owner name]",           // 机器人的主人名称
         "plugin" : {
             "directory" : "plugin"          // 插件目录
