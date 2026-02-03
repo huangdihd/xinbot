@@ -97,41 +97,23 @@ public class Bot {
         }
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        if (config.getConfigData().getAdvances().isEnableHighStability()) {
-            stableMainLoop();
-            this.inputThread.setDaemon(true);
-            this.inputThread.start();
-        }
-        else {
-            connect();
-            getInput();
-        }
+        connect();
+        getInput();
     }
 
     public void stop() {
         try {
-            pluginManager.disableAll();
-            pluginManager.unloadPlugins();
             running = false;
             disconnect("Bot stopped.");
+            pluginManager.unloadPlugins();
         }
         catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("An error occurred while stopping bot", e);
         }
         finally {
             inputThread.interrupt();
             mainThread.interrupt();
         }
-    }
-
-    private void stableMainLoop() {
-        while (!Thread.currentThread().isInterrupted() && running) {
-            if (session.isConnected()) continue;
-            connect();
-            players.clear();
-            pluginManager.disableAll();
-        }
-
     }
 
     private void getInput() {
@@ -142,6 +124,7 @@ public class Bot {
             }
             catch (UserInterruptException | EndOfFileException e) {
                 this.stop();
+                break;
             }
             catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -152,10 +135,8 @@ public class Bot {
     }
 
     private void onDisconnect(Component reason) {
-        if (!running) return;
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
-        if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
         session.removeListener(packetListener);
@@ -164,6 +145,7 @@ public class Bot {
         session.removeListener(chatMessagePrinter);
         session.removeListener(messageSender);
         server = null;
+        if (!running) return;
         connect();
     }
 
@@ -181,10 +163,10 @@ public class Bot {
         session.addListener(chatMessagePrinter);
         session.addListener(messageSender);
         pluginManager.enableAll();
-        log.info("connecting.");
+        log.info("Connecting.");
         session.connect();
         long start_time = System.currentTimeMillis();
-        while (server == null && !running){
+        while (server == null && running){
             if (System.currentTimeMillis() - start_time > 2000) {
                 disconnect("connect timed out.");
                 break;

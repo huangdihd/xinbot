@@ -27,8 +27,8 @@ public class  BotConfigData {
     private Account account;
     private String owner;
     private Plugin plugin;
-    private Advances advances;
     private Proxy proxy;
+    private boolean enableTranslation;
 
     @Data
     public static class Account {
@@ -43,11 +43,6 @@ public class  BotConfigData {
         private String directory;
     }
 
-    @Data
-    public static class Advances {
-        private boolean enableTranslation;
-        private boolean enableHighStability;
-    }
 
     @Data
     public static class Proxy {
