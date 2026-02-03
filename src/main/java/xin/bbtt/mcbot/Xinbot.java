@@ -137,10 +137,10 @@ public class Xinbot {
         }
 
         // Initialize JLine
-        if (config.getConfigData().getAdvances().isEnableJLine()) CLI.init();
+        CLI.init();
 
         // Initialize the language manager
-        if (config.getConfigData().getAdvances().isEnableTranslation()) LangManager.Init();
+        if (config.getConfigData().isEnableTranslation()) LangManager.Init();
 
         log.info("version: {}", version);
 

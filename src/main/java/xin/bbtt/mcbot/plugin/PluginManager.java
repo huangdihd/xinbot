@@ -126,10 +126,17 @@ public class PluginManager {
             Bot.Instance.getSession().removeListener(sessionListener);
         }
         sessionListeners.remove(plugin.getName());
-        plugin.onDisable();
-        enabledPlugins.remove(plugin.getName());
-        DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
-        eventManager.callEvent(disablePluginEvent);
+        try {
+            plugin.onDisable();
+        }
+        catch (Exception e) {
+            log.error("Failed to disable plugin: {}", plugin.getName(), e);
+        }
+        finally {
+            enabledPlugins.remove(plugin.getName());
+            DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
+            eventManager.callEvent(disablePluginEvent);
+        }
     }
 
     public void unloadPlugin(Plugin plugin) {
@@ -141,8 +148,10 @@ public class PluginManager {
         } catch (Exception e) {
             log.error("Failed to unload plugin: {}", plugin.getName(), e);
         }
-        plugins.remove(plugin.getName());
-        log.info("Unloaded plugin: {}", plugin.getClass().getName());
+        finally {
+            plugins.remove(plugin.getName());
+            log.info("Unloaded plugin: {}", plugin.getClass().getName());
+        }
     }
 
     public void unloadPlugins() {
@@ -180,10 +189,11 @@ public class PluginManager {
         return plugins.get(name);
     }
 
+    @SuppressWarnings("unused")
     public boolean isPluginLoaded(String name) {
         return plugins.containsKey(name);
     }
-
+    @SuppressWarnings("unused")
     public boolean isPluginEnabled(String name) {
         return enabledPlugins.containsKey(name);
     }

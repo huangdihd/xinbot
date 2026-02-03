@@ -29,7 +29,7 @@ public class JoinButtonRecorder extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket)) return;
-        if (Bot.Instance.getServer().equals(Server.Xin)) return;
+        if (Bot.Instance.getServer() == Server.Xin) return;
         if (!containerSetSlotPacket.toString().contains("加入游戏")) return;
         AutoLoginListener.join_button_slot = containerSetSlotPacket.getSlot() % 9;
     }

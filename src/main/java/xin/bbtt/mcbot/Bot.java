@@ -51,6 +51,7 @@ public class Bot {
     @Getter
     private Session session;
     private final Thread inputThread = new Thread(this::getInput);
+    private Thread mainThread;
     @Getter
     private BotConfig config;
     @Getter
@@ -70,6 +71,12 @@ public class Bot {
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
+    @Getter
+    @Setter
+    private String serverHost = "2b2t.xin";
+    @Getter
+    @Setter
+    private int serverPort = 25565;
 
     private Bot() {
         this.pluginManager = new PluginManager();
@@ -82,49 +89,31 @@ public class Bot {
     }
 
     public void start() {
+        mainThread = Thread.currentThread();
         running = true;
         protocol = AccountLoader.getProtocol();
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
         login = false;
         log.info("Starting bot with username: {}", protocol.getProfile().getName());
-        if (config.getConfigData().getAdvances().isEnableHighStability()) {
-            stableMainLoop();
-            this.inputThread.setDaemon(true);
-            this.inputThread.start();
-        }
-        else {
-            connect();
-            getInput();
-        }
+        connect();
+        getInput();
     }
 
     public void stop() {
         try {
-            pluginManager.disableAll();
-            pluginManager.unloadPlugins();
             running = false;
             disconnect("Bot stopped.");
+            pluginManager.unloadPlugins();
         }
         catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("An error occurred while stopping bot", e);
         }
         finally {
             inputThread.interrupt();
-            Thread.currentThread().interrupt();
+            mainThread.interrupt();
         }
-    }
-
-    private void stableMainLoop() {
-        while (!Thread.currentThread().isInterrupted() && running) {
-            if (session.isConnected()) continue;
-            connect();
-            players.clear();
-            pluginManager.disableAll();
-        }
-
     }
 
     private void getInput() {
@@ -135,6 +124,7 @@ public class Bot {
             }
             catch (UserInterruptException | EndOfFileException e) {
                 this.stop();
+                break;
             }
             catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -144,11 +134,9 @@ public class Bot {
         }
     }
 
-    private void on_disconnect(Component reason) {
-        if (!running) return;
+    private void onDisconnect(Component reason) {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
-        if (Bot.Instance.getConfig().getConfigData().getAdvances().isEnableHighStability()) return;
         players.clear();
         pluginManager.disableAll();
         session.removeListener(packetListener);
@@ -157,15 +145,16 @@ public class Bot {
         session.removeListener(chatMessagePrinter);
         session.removeListener(messageSender);
         server = null;
+        if (!running) return;
         connect();
     }
 
     private void connect(){
-        session = new TcpClientSession("2b2t.xin", 25565, protocol, proxyInfo);
+        session = new TcpClientSession(serverHost, serverPort, protocol, proxyInfo);
         session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
-                on_disconnect(event.getReason());
+                onDisconnect(event.getReason());
             }
         });
         session.addListener(packetListener);
@@ -174,16 +163,16 @@ public class Bot {
         session.addListener(chatMessagePrinter);
         session.addListener(messageSender);
         pluginManager.enableAll();
-        log.info("connecting.");
+        log.info("Connecting.");
         session.connect();
         long start_time = System.currentTimeMillis();
-        while (server == null && !running){
+        while (server == null && running){
             if (System.currentTimeMillis() - start_time > 2000) {
-                disconnect("connect timed out.");
+                disconnect("Connection timed out.");
                 break;
             }
         }
-        log.info("connect complete.");
+        log.info("Connection completed.");
     }
 
     public void disconnect(String reason){
