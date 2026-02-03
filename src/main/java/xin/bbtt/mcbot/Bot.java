@@ -168,11 +168,11 @@ public class Bot {
         long start_time = System.currentTimeMillis();
         while (server == null && running){
             if (System.currentTimeMillis() - start_time > 2000) {
-                disconnect("connect timed out.");
+                disconnect("Connection timed out.");
                 break;
             }
         }
-        log.info("connect complete.");
+        log.info("Connection completed.");
     }
 
     public void disconnect(String reason){
