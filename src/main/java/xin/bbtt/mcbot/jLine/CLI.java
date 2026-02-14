@@ -30,15 +30,18 @@ public class CLI {
     public static void init() {
         try {
             Terminal terminal = TerminalBuilder.builder()
-                    .system(true)
-                    .encoding("UTF-8")
-                    .build();
+                .system(true)
+                .encoding("UTF-8")
+                .build();
 
             lineReader = LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .option(LineReader.Option.CASE_INSENSITIVE, true)
-                    .completer(new JLineCommandCompleter())
-                    .build();
+                .terminal(terminal)
+                .appName("Xinbot")
+                .option(LineReader.Option.CASE_INSENSITIVE, true)
+                .option(LineReader.Option.COMPLETE_IN_WORD, true)
+                .completer(new JLineCommandCompleter())
+                .highlighter(new JLineHighlighter())
+                .build();
 
             JLineConsoleAppender.setLineReader(lineReader);
 

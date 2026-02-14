@@ -33,7 +33,7 @@ public class CommandManager {
 
     private final Map<Plugin, List<RegisteredCommand>> byPlugin = new HashMap<>();
 
-    private static List<String> tokenize(String commandLine) {
+    public static List<String> tokenize(String commandLine) {
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
         boolean insideQuotedSection = false;
@@ -73,7 +73,7 @@ public class CommandManager {
         return tokens;
     }
 
-    private RegisteredCommand getCommandByLabel(String label) {
+    public RegisteredCommand getCommandByLabel(String label) {
         List<RegisteredCommand> commandList = new ArrayList<>(List.of());
         for (List<RegisteredCommand> commands : byPlugin.values()) {
             commandList.addAll(commands);
