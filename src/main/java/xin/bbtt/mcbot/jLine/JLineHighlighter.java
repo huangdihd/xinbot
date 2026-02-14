@@ -14,26 +14,22 @@ import java.util.regex.Pattern;
 import static xin.bbtt.mcbot.command.CommandManager.tokenize;
 
 public class JLineHighlighter implements Highlighter {
-    private static final int[] COLORS = {AttributedStyle.CYAN, AttributedStyle.YELLOW, AttributedStyle.GREEN, AttributedStyle.MAGENTA, AttributedStyle.BLUE};
 
     @Override
     public AttributedString highlight(final @NonNull LineReader reader, final @NonNull String buffer) {
         final AttributedStringBuilder builder = new AttributedStringBuilder();
         List<String> tokens = tokenize(buffer);
         if (tokens.isEmpty()) return builder.toAttributedString();
-        if (tokens.size() == 1 && Bot.Instance.getPluginManager().commands().callComplete(tokens.get(0)).isEmpty()) {
-            builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
-        }
-        else if (tokens.size() > 1 && Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
+        else if (Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
             builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
         }
         else {
             builder.append(tokens.get(0), AttributedStyle.DEFAULT);
         }
         builder.append(" ");
-        for (int i = 1;i < tokens.size();i++) {
+        for (String token : tokens) {
             builder
-                .append(tokens.get(i), AttributedStyle.DEFAULT.foreground(COLORS[i % COLORS.length]))
+                .append(token, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
                 .append(" ");
         }
         return builder.toAttributedString();
