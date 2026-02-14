@@ -28,7 +28,7 @@ public class JLineHighlighter implements Highlighter {
         }
         if (tokens.size() == 1) return builder.toAttributedString();
         builder.append(" ");
-        for (String token : tokens.subList(1, tokens.size() - 1)) {
+        for (String token : tokens.subList(1, tokens.size())) {
             builder
                 .append(token, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
                 .append(" ");
