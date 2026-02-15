@@ -29,6 +29,8 @@ import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.*;
 
+import static xin.bbtt.mcbot.Utils.parseHighlight;
+
 public class CommandManager {
     private static final Logger log = LoggerFactory.getLogger(CommandManager.class.getSimpleName());
 
@@ -218,11 +220,16 @@ public class CommandManager {
 
         RegisteredCommand registeredCommand = getCommandByLabel(label);
 
-        if (registeredCommand == null) return builder.toAttributedString();
+        builder.append(" ");
 
-        builder
-            .append(" ")
-            .append(registeredCommand.callHighlight(label, args));
+        if (registeredCommand == null) {
+            builder.append(parseHighlight(args));
+        }
+        else {
+            builder.append(registeredCommand.callHighlight(label, args));
+        }
+
+
         return builder.toAttributedString();
     }
 }

@@ -18,8 +18,7 @@
 package xin.bbtt.mcbot.command;
 
 import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
+import xin.bbtt.mcbot.Utils;
 
 import java.util.List;
 
@@ -29,12 +28,6 @@ public abstract class CommandExecutor {
         return List.of();
     }
     public AttributedString onHighlight(Command cmd, String label, String[] args) {
-        AttributedStringBuilder builder = new AttributedStringBuilder();
-        for (String arg : args) {
-            builder
-                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
-                .append(" ");
-        }
-        return builder.toAttributedString();
+        return Utils.parseHighlight(args);
     }
 }

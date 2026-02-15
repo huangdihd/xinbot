@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static xin.bbtt.mcbot.Utils.parseHighlight;
 import static xin.bbtt.mcbot.listeners.CommandsRecorder.rootCommands;
 
 public class CommandCommandExecutor extends TabHighlightExecutor {
@@ -74,11 +75,8 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
         }
         if (args.length == 1) return builder.toAttributedString();
         String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length).toArray(new String[0]);
-        for (String arg : commandArgs) {
-            builder
-                .append(" ")
-                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
-        }
+        builder.append(" ");
+        builder.append(parseHighlight(commandArgs));
         return builder.toAttributedString();
     }
 }

@@ -23,6 +23,9 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -154,5 +157,15 @@ public class Utils {
         result.append(text.substring(lastIndex));
         result.append("\u001B[0m");
         return result.toString();
+    }
+
+    public static AttributedString parseHighlight(String[] args) {
+        AttributedStringBuilder builder = new AttributedStringBuilder();
+        for (String arg : args) {
+            builder
+                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
+                .append(" ");
+        }
+        return builder.toAttributedString();
     }
 }
