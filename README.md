@@ -1,4 +1,5 @@
 # Xinbot
+![logo](logo.jpeg)
 <!-- Badges -->
 <p>
   <a href="https://github.com/huangdihd/xinbot/releases" target="_blank">
