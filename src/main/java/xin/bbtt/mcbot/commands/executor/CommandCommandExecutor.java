@@ -67,17 +67,17 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
     public AttributedString onHighlight(Command cmd, String label, String[] args) {
         AttributedStringBuilder builder = new AttributedStringBuilder();
         if (rootCommands.contains(args[0])) {
-            builder.append(args[0]);
+            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE));
         }
         else {
             builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
         }
-        builder.append(" ");
-        String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length - 1).toArray(new String[0]);
+        if (args.length == 1) return builder.toAttributedString();
+        String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length).toArray(new String[0]);
         for (String arg : commandArgs) {
             builder
-                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
-                .append(" ");
+                .append(" ")
+                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
         }
         return builder.toAttributedString();
     }

@@ -30,9 +30,9 @@ public abstract class CommandExecutor {
     }
     public AttributedString onHighlight(Command cmd, String label, String[] args) {
         AttributedStringBuilder builder = new AttributedStringBuilder();
-        for (String token : args) {
+        for (String arg : args) {
             builder
-                .append(token, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
+                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
                 .append(" ");
         }
         return builder.toAttributedString();

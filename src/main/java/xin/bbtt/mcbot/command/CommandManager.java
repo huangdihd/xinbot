@@ -187,10 +187,6 @@ public class CommandManager {
             return List.of();
         }
 
-        if (args.length > 0 && args[args.length - 1].isEmpty()) {
-            args = Arrays.copyOfRange(args, 0, args.length - 1);
-        }
-
         try {
             return registeredCommand.callComplete(label, args);
         }
@@ -210,8 +206,6 @@ public class CommandManager {
         else {
             builder.append(tokens.get(0), AttributedStyle.DEFAULT);
         }
-        tokens.remove(0);
-        if (tokens.isEmpty()) return builder.toAttributedString();
 
         if (command.endsWith(" ")) {
             tokens.add("");
@@ -220,14 +214,15 @@ public class CommandManager {
         String label = tokens.get(0);
         String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
+        if (args.length == 0) return builder.toAttributedString();
+
         RegisteredCommand registeredCommand = getCommandByLabel(label);
 
         if (registeredCommand == null) return builder.toAttributedString();
 
-        if (args.length > 0 && args[args.length - 1].isEmpty()) {
-            args = Arrays.copyOfRange(args, 0, args.length - 1);
-        }
-
-        return registeredCommand.callHighlight(label, args);
+        builder
+            .append(" ")
+            .append(registeredCommand.callHighlight(label, args));
+        return builder.toAttributedString();
     }
 }
