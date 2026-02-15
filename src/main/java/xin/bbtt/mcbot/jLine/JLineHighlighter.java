@@ -15,23 +15,30 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.events;
+package xin.bbtt.mcbot.jLine;
 
-import lombok.Getter;
-import org.geysermc.mcprotocollib.auth.GameProfile;
-import xin.bbtt.mcbot.event.Event;
-import xin.bbtt.mcbot.event.HandlerList;
+import lombok.NonNull;
+import org.jline.reader.Highlighter;
+import org.jline.reader.LineReader;
+import org.jline.utils.AttributedString;
+import xin.bbtt.mcbot.Bot;
 
-@Getter
-public class PlayerLeaveEvent extends Event {
-    private static final HandlerList HANDLERS = new HandlerList();
+import java.util.regex.Pattern;
 
-    private final GameProfile playerProfile;
+public class JLineHighlighter implements Highlighter {
 
-    public PlayerLeaveEvent(GameProfile playerProfile) {
-        this.playerProfile = playerProfile;
+    @Override
+    public AttributedString highlight(final @NonNull LineReader reader, final @NonNull String buffer) {
+        return Bot.Instance.getPluginManager().commands().callHighlight(buffer);
     }
 
-    @Override public HandlerList getHandlers() { return HANDLERS; }
-    public static HandlerList getHandlerList() { return HANDLERS; }
+    @Override
+    public void setErrorPattern(Pattern pattern) {
+
+    }
+
+    @Override
+    public void setErrorIndex(int i) {
+
+    }
 }

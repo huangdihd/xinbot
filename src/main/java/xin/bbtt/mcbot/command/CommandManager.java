@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 
 package xin.bbtt.mcbot.command;
 
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -26,6 +29,8 @@ import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.*;
 
+import static xin.bbtt.mcbot.Utils.parseHighlight;
+
 public class CommandManager {
     private static final Logger log = LoggerFactory.getLogger(CommandManager.class.getSimpleName());
 
@@ -33,7 +38,7 @@ public class CommandManager {
 
     private final Map<Plugin, List<RegisteredCommand>> byPlugin = new HashMap<>();
 
-    private static List<String> tokenize(String commandLine) {
+    public static List<String> tokenize(String commandLine) {
         List<String> tokens = new ArrayList<>();
         StringBuilder currentToken = new StringBuilder();
         boolean insideQuotedSection = false;
@@ -73,7 +78,7 @@ public class CommandManager {
         return tokens;
     }
 
-    private RegisteredCommand getCommandByLabel(String label) {
+    public RegisteredCommand getCommandByLabel(String label) {
         List<RegisteredCommand> commandList = new ArrayList<>(List.of());
         for (List<RegisteredCommand> commands : byPlugin.values()) {
             commandList.addAll(commands);
@@ -165,14 +170,10 @@ public class CommandManager {
 
     public List<String> callComplete(String command) {
         List<String> tokens = tokenize(command);
-        if (tokens.isEmpty()) return List.of();
 
+        if (tokens.isEmpty()) return getCommandNames("");
         if (tokens.size() == 1) {
             return getCommandNames(tokens.get(0));
-        }
-
-        if (command.endsWith(" ")) {
-            tokens.add("");
         }
 
         String label = tokens.get(0);
@@ -184,10 +185,6 @@ public class CommandManager {
             return List.of();
         }
 
-        if (args.length > 0 && args[args.length - 1].isEmpty()) {
-            args = Arrays.copyOfRange(args, 0, args.length - 1);
-        }
-
         try {
             return registeredCommand.callComplete(label, args);
         }
@@ -195,5 +192,35 @@ public class CommandManager {
             log.error(commandErrorMarker, "Error while Complete command {}", command, e);
         }
         return List.of();
+    }
+
+    public AttributedString callHighlight(String command) {
+        final AttributedStringBuilder builder = new AttributedStringBuilder();
+        List<String> tokens = tokenize(command);
+        if (tokens.isEmpty()) return builder.toAttributedString();
+        else if (Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
+            builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+        }
+        else {
+            builder.append(tokens.get(0), AttributedStyle.DEFAULT);
+        }
+
+        String label = tokens.get(0);
+        String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
+
+        if (args.length == 0) return builder.toAttributedString();
+
+        RegisteredCommand registeredCommand = getCommandByLabel(label);
+
+        builder.append(" ");
+
+        if (registeredCommand == null) {
+            builder.append(parseHighlight(args));
+        }
+        else {
+            builder.append(registeredCommand.callHighlight(label, args));
+        }
+
+        return builder.toAttributedString();
     }
 }

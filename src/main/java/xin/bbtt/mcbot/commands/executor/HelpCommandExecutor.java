@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,18 +17,21 @@
 
 package xin.bbtt.mcbot.commands.executor;
 
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.RegisteredCommand;
-import xin.bbtt.mcbot.command.TabExecutor;
+import xin.bbtt.mcbot.command.TabHighlightExecutor;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpCommandExecutor extends TabExecutor {
+public class HelpCommandExecutor extends TabHighlightExecutor {
     private final Logger log = LoggerFactory.getLogger(HelpCommandExecutor.class.getSimpleName());
 
     private void printCommandHelp(Command command, Plugin plugin) {
@@ -70,5 +73,22 @@ public class HelpCommandExecutor extends TabExecutor {
             }
         }
         return list;
+    }
+
+    @Override
+    public AttributedString onHighlight(Command command, String label, String[] args) {
+        AttributedStringBuilder builder = new AttributedStringBuilder();
+        if (Bot.Instance.getPluginManager().commands().getCommandByLabel(args[0]) == null) {
+            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+        }
+        else {
+            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
+        }
+        for (int i = 1;i < args.length;i++) {
+            builder
+                .append(" ")
+                .append(args[i], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+        }
+        return builder.toAttributedString();
     }
 }

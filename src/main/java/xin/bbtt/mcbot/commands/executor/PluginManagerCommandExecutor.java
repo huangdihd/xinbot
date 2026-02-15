@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,20 +18,28 @@
 package xin.bbtt.mcbot.commands.executor;
 
 import org.jetbrains.annotations.Nullable;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
-import xin.bbtt.mcbot.command.TabExecutor;
+import xin.bbtt.mcbot.command.TabHighlightExecutor;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class PluginManagerCommandExecutor extends TabExecutor {
+import static xin.bbtt.mcbot.Utils.parseConditionalHighlight;
+import static xin.bbtt.mcbot.Utils.parseContainHighlight;
+
+public class PluginManagerCommandExecutor extends TabHighlightExecutor {
     private final static Logger log = LoggerFactory.getLogger(PluginManagerCommandExecutor.class.getSimpleName());
 
     private void listPlugins() {
@@ -221,5 +229,47 @@ public class PluginManagerCommandExecutor extends TabExecutor {
                 return List.of();
             }
         }
+    }
+
+    @Override
+    public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        AttributedStringBuilder builder = new AttributedStringBuilder();
+        String operate = args[0];
+
+        builder
+            .append(args[0],
+                List.of(
+                    "list", "load", "unload", "reload", "enable", "disable", "re-enable"
+                ).contains(args[0]) ?
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE) :
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
+            )
+            .append(" ");
+
+        if (args.length == 1) return builder.toAttributedString();
+        String[] plugins = Arrays.copyOfRange(args, 1, args.length);
+        Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+
+        switch (operate) {
+            case "reload", "enable", "re-enable" ->
+                builder.append(
+                    parseConditionalHighlight(plugins, isPluginLoaded)
+                );
+            case "disable", "unload" ->
+                builder.append(
+                    parseConditionalHighlight(plugins, isPluginLoaded.and(plugin -> !plugin.equals("XinbotPlugin")))
+                );
+            case "load" -> {
+                File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
+                List<String> pluginFils = Arrays.stream(
+                    Objects.requireNonNull(
+                        dir.listFiles((dir1, name) -> name.endsWith(".jar"))
+                    )
+                ).map(File::getName).toList();
+                builder.append(parseContainHighlight(plugins, pluginFils));
+            }
+            default -> builder.append(parseConditionalHighlight(plugins, plugin -> false));
+        }
+        return builder.toAttributedString();
     }
 }

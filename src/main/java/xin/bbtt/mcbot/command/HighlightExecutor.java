@@ -15,23 +15,10 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.events;
+package xin.bbtt.mcbot.command;
 
-import lombok.Getter;
-import org.geysermc.mcprotocollib.auth.GameProfile;
-import xin.bbtt.mcbot.event.Event;
-import xin.bbtt.mcbot.event.HandlerList;
+import org.jline.utils.AttributedString;
 
-@Getter
-public class PlayerLeaveEvent extends Event {
-    private static final HandlerList HANDLERS = new HandlerList();
-
-    private final GameProfile playerProfile;
-
-    public PlayerLeaveEvent(GameProfile playerProfile) {
-        this.playerProfile = playerProfile;
-    }
-
-    @Override public HandlerList getHandlers() { return HANDLERS; }
-    public static HandlerList getHandlerList() { return HANDLERS; }
+public abstract class HighlightExecutor extends CommandExecutor {
+    public abstract AttributedString onHighlight(Command cmd, String label, String[] args);
 }

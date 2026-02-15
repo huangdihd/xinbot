@@ -1,6 +1,6 @@
 
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,5 +19,6 @@
 package xin.bbtt.mcbot.event;
 public interface HasDefaultAction {
     boolean isDefaultActionCancelled();
+    @SuppressWarnings("unused")
     void setDefaultActionCancelled(boolean cancel);
 }

@@ -1,6 +1,6 @@
 
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ public abstract class Event {
     private final boolean async;
     protected Event() { this(false); }
     protected Event(boolean isAsync) { this.async = isAsync; }
+    @SuppressWarnings("unused")
     public boolean isAsynchronous() { return async; }
     public abstract HandlerList getHandlers();
 }
