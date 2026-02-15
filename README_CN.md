@@ -28,8 +28,7 @@
 [English](README.md) / 简体中文
 
 ## 演示
-[![asciicast](https://asciinema.org/a/72Fk8RfX3dV611SE.svg)](https://asciinema.org/a/72Fk8RfX3dV611SE)
-
+[![asciicast](https://asciinema.org/a/788266.svg)](https://asciinema.org/a/788266)
 ## 为什么选择 Xinbot？
 - 高可读日志：像官方客户端一样渲染颜色与格式。
 - 正版登录更安心：可选的正版账号登录流程。
