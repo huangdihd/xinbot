@@ -20,6 +20,7 @@ package xin.bbtt.mcbot.commands.executor;
 import org.jetbrains.annotations.Nullable;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
@@ -240,7 +241,9 @@ public class PluginManagerCommandExecutor extends TabHighlightExecutor {
                 new String[]{args[0]},
                 List.of(
                     "list", "load", "unload", "reload", "enable", "disable", "re-enable"
-                )
+                ),
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE),
+                AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
             )
         );
 

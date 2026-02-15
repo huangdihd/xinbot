@@ -164,19 +164,34 @@ public class Utils {
         return parseConditionalHighlight(args, arg -> true);
     }
 
+    public static AttributedString parseHighlight(String[] args, AttributedStyle style) {
+        return parseConditionalHighlight(args, arg -> true, style, AttributedStyle.DEFAULT);
+    }
+
     public static AttributedString parseContainHighlight(String[] args, Collection<String> targets) {
         return parseConditionalHighlight(args, targets::contains);
     }
 
-    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition) {
+    public static AttributedString parseContainHighlight(String[] args, Collection<String> targets, AttributedStyle containStyle, AttributedStyle nonContainStyle) {
+        return parseConditionalHighlight(args, targets::contains, containStyle, nonContainStyle);
+    }
+
+    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition, AttributedStyle matchStyle, AttributedStyle nonMatchStyle) {
         AttributedStringBuilder builder = new AttributedStringBuilder();
         for (String arg : args) {
             builder
-                .append(arg, AttributedStyle.DEFAULT.foreground(
-                    condition.test(arg) ? AttributedStyle.CYAN : AttributedStyle.RED
-                ))
+                .append(arg,
+                    condition.test(arg) ? matchStyle : nonMatchStyle
+                )
                 .append(" ");
         }
         return builder.toAttributedString();
+    }
+
+    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition) {
+        return parseConditionalHighlight(args, condition,
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN),
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
+        );
     }
 }
