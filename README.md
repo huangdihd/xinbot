@@ -64,7 +64,7 @@ English / [简体中文](README_CN.md)
             "onlineMode" : false,           // true = official account login
             "password" : ""                 // Bot's password in 2b2t.xin
         }, 
-        "enableTranslation" : true,        // Language file loading (higher memory usage)
+        "enableTranslation" : true,         // Language file loading (higher memory usage)
         "owner" : "[Owner name]",           // Bot owner's name
         "plugin" : {
             "directory" : "plugin"          // Plugin directory
