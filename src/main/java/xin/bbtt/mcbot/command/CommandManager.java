@@ -170,14 +170,10 @@ public class CommandManager {
 
     public List<String> callComplete(String command) {
         List<String> tokens = tokenize(command);
-        if (tokens.isEmpty()) return List.of();
 
+        if (tokens.isEmpty()) return getCommandNames("");
         if (tokens.size() == 1) {
             return getCommandNames(tokens.get(0));
-        }
-
-        if (command.endsWith(" ")) {
-            tokens.add("");
         }
 
         String label = tokens.get(0);
@@ -209,10 +205,6 @@ public class CommandManager {
             builder.append(tokens.get(0), AttributedStyle.DEFAULT);
         }
 
-        if (command.endsWith(" ")) {
-            tokens.add("");
-        }
-
         String label = tokens.get(0);
         String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
@@ -228,7 +220,6 @@ public class CommandManager {
         else {
             builder.append(registeredCommand.callHighlight(label, args));
         }
-
 
         return builder.toAttributedString();
     }

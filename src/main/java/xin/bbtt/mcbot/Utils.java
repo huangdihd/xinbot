@@ -28,6 +28,7 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,10 +161,20 @@ public class Utils {
     }
 
     public static AttributedString parseHighlight(String[] args) {
+        return parseConditionalHighlight(args, arg -> true);
+    }
+
+    public static AttributedString parseContainHighlight(String[] args, Collection<String> targets) {
+        return parseConditionalHighlight(args, targets::contains);
+    }
+
+    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition) {
         AttributedStringBuilder builder = new AttributedStringBuilder();
         for (String arg : args) {
             builder
-                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
+                .append(arg, AttributedStyle.DEFAULT.foreground(
+                    condition.test(arg) ? AttributedStyle.CYAN : AttributedStyle.RED
+                ))
                 .append(" ");
         }
         return builder.toAttributedString();
