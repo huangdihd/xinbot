@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,11 +17,24 @@
 
 package xin.bbtt.mcbot.command;
 
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
+
 import java.util.List;
 
 public abstract class CommandExecutor {
     public abstract void onCommand(Command command, String label, String[] args);
     public List<String> onTabComplete(Command cmd, String label, String[] args) {
         return List.of();
+    }
+    public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        AttributedStringBuilder builder = new AttributedStringBuilder();
+        for (String token : args) {
+            builder
+                .append(token, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
+                .append(" ");
+        }
+        return builder.toAttributedString();
     }
 }

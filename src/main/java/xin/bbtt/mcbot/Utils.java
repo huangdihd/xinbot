@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    private static final String ANSI_GARBAGE = "░";                 // §k（伪乱码）
-    private static final String ANSI_BOLD = "\u001B[1m";            // §l
-    private static final String ANSI_STRIKETHROUGH = "\u001B[9m";   // §m
-    private static final String ANSI_UNDERLINE = "\u001B[4m";       // §n
-    private static final String ANSI_ITALIC = "\u001B[3m";          // §o
-    private static final String ANSI_RESET = "\u001B[97m";          // §r
+    private static final String ANSI_GARBAGE = "░";
+    private static final String ANSI_BOLD = "\u001B[1m";
+    private static final String ANSI_STRIKETHROUGH = "\u001B[9m";
+    private static final String ANSI_UNDERLINE = "\u001B[4m";
+    private static final String ANSI_ITALIC = "\u001B[3m";
+    private static final String ANSI_RESET = "\u001B[97m";
 
     private static final Map<Character, String> FORMAT_CODES = new HashMap<>();
 
@@ -69,10 +69,10 @@ public class Utils {
     }
 
     private static final String[] ANSI_COLORS = {
-            "\u001B[30m", "\u001B[34m", "\u001B[32m", "\u001B[36m", // §0-§3
-            "\u001B[31m", "\u001B[35m", "\u001B[33m", "\u001B[37m", // §4-§7
-            "\u001B[90m", "\u001B[94m", "\u001B[92m", "\u001B[96m", // §8-§b
-            "\u001B[91m", "\u001B[95m", "\u001B[93m", "\u001B[97m"  // §c-§f
+            "\u001B[30m", "\u001B[34m", "\u001B[32m", "\u001B[36m",
+            "\u001B[31m", "\u001B[35m", "\u001B[33m", "\u001B[37m",
+            "\u001B[90m", "\u001B[94m", "\u001B[92m", "\u001B[96m",
+            "\u001B[91m", "\u001B[95m", "\u001B[93m", "\u001B[97m"
     };
 
     public static String getStyleAnsi(TextComponent text) {
@@ -81,7 +81,7 @@ public class Utils {
         if (text.style().hasDecoration(TextDecoration.ITALIC)) sb.append("§o");
         if (text.style().hasDecoration(TextDecoration.UNDERLINED)) sb.append("§n");
         if (text.style().hasDecoration(TextDecoration.STRIKETHROUGH)) sb.append("§m");
-        if (text.style().hasDecoration(TextDecoration.OBFUSCATED)) sb.append("░"); // §k 无法用 ANSI 实现
+        if (text.style().hasDecoration(TextDecoration.OBFUSCATED)) sb.append("░");
         return sb.toString();
     }
 
@@ -126,7 +126,7 @@ public class Utils {
     }
 
     public static String parseColors(String text) {
-        text = text.replace("§r§", "§"); // 合并重复重置
+        text = text.replace("§r§", "§");
 
         Pattern pattern = Pattern.compile("§([0-9a-fk-or])");
         Matcher matcher = pattern.matcher(text);
@@ -137,7 +137,7 @@ public class Utils {
         int lastIndex = 0;
 
         while (matcher.find()) {
-            result.append(text, lastIndex, matcher.start()); // 普通文本
+            result.append(text, lastIndex, matcher.start());
             char code = matcher.group(1).charAt(0);
             lastIndex = matcher.end();
 

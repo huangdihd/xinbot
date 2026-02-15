@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 
 package xin.bbtt.mcbot.command;
 
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -195,5 +198,36 @@ public class CommandManager {
             log.error(commandErrorMarker, "Error while Complete command {}", command, e);
         }
         return List.of();
+    }
+
+    public AttributedString callHighlight(String command) {
+        final AttributedStringBuilder builder = new AttributedStringBuilder();
+        List<String> tokens = tokenize(command);
+        if (tokens.isEmpty()) return builder.toAttributedString();
+        else if (Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
+            builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+        }
+        else {
+            builder.append(tokens.get(0), AttributedStyle.DEFAULT);
+        }
+        tokens.remove(0);
+        if (tokens.isEmpty()) return builder.toAttributedString();
+
+        if (command.endsWith(" ")) {
+            tokens.add("");
+        }
+
+        String label = tokens.get(0);
+        String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
+
+        RegisteredCommand registeredCommand = getCommandByLabel(label);
+
+        if (registeredCommand == null) return builder.toAttributedString();
+
+        if (args.length > 0 && args[args.length - 1].isEmpty()) {
+            args = Arrays.copyOfRange(args, 0, args.length - 1);
+        }
+
+        return registeredCommand.callHighlight(label, args);
     }
 }

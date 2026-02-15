@@ -1,41 +1,36 @@
+/*
+ *   Copyright (C) 2026 huangdihd
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.jLine;
 
 import lombok.NonNull;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 import xin.bbtt.mcbot.Bot;
 
-import java.util.List;
 import java.util.regex.Pattern;
-
-import static xin.bbtt.mcbot.command.CommandManager.tokenize;
 
 public class JLineHighlighter implements Highlighter {
 
     @Override
     public AttributedString highlight(final @NonNull LineReader reader, final @NonNull String buffer) {
-        final AttributedStringBuilder builder = new AttributedStringBuilder();
-        List<String> tokens = tokenize(buffer);
-        if (tokens.isEmpty()) return builder.toAttributedString();
-        else if (Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
-            builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
-        }
-        else {
-            builder.append(tokens.get(0), AttributedStyle.DEFAULT);
-        }
-        tokens.remove(0);
-        if (tokens.isEmpty()) return builder.toAttributedString();
-        builder.append(" ");
-        for (String token : tokens) {
-            builder
-                .append(token, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
-                .append(" ");
-        }
-        return builder.toAttributedString();
-        }
+        return Bot.Instance.getPluginManager().commands().callHighlight(buffer);
+    }
 
     @Override
     public void setErrorPattern(Pattern pattern) {

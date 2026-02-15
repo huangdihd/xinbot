@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,11 +18,15 @@
 package xin.bbtt.mcbot.commands.executor;
 
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
-import xin.bbtt.mcbot.command.TabExecutor;
+import xin.bbtt.mcbot.command.TabHighlightExecutor;
 import xin.bbtt.mcbot.listeners.CommandSuggestionsListener;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -31,7 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import static xin.bbtt.mcbot.listeners.CommandsRecorder.rootCommands;
 
-public class CommandCommandExecutor extends TabExecutor {
+public class CommandCommandExecutor extends TabHighlightExecutor {
     private static int transactionId = 0;
 
     @Override
@@ -57,5 +61,24 @@ public class CommandCommandExecutor extends TabExecutor {
         }
         transactionId++;
         return results;
+    }
+
+    @Override
+    public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        AttributedStringBuilder builder = new AttributedStringBuilder();
+        if (rootCommands.contains(args[0])) {
+            builder.append(args[0]);
+        }
+        else {
+            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+        }
+        builder.append(" ");
+        String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length - 1).toArray(new String[0]);
+        for (String arg : commandArgs) {
+            builder
+                .append(arg, AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN))
+                .append(" ");
+        }
+        return builder.toAttributedString();
     }
 }

@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2024-2025 huangdihd
+ *   Copyright (C) 2026 huangdihd
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 package xin.bbtt.mcbot.command;
 
+import org.jline.utils.AttributedString;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.List;
@@ -28,5 +29,7 @@ public record RegisteredCommand(Plugin plugin, Command command, CommandExecutor 
     List<String> callComplete(String label, String[] args) {
         return executor.onTabComplete(command, label, args);
     }
-
+    AttributedString callHighlight(String label, String[] args) {
+        return executor.onHighlight(command, label, args);
+    }
 }
