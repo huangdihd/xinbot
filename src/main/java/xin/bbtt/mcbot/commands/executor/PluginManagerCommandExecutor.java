@@ -236,15 +236,12 @@ public class PluginManagerCommandExecutor extends TabHighlightExecutor {
         AttributedStringBuilder builder = new AttributedStringBuilder();
         String operate = args[0];
 
-        builder.append(
-            parseContainHighlight(
-                new String[]{args[0]},
-                List.of(
-                    "list", "load", "unload", "reload", "enable", "disable", "re-enable"
-                ),
-                AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE),
-                AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
-            )
+        builder.append(args[0],
+            List.of(
+                "list", "load", "unload", "reload", "enable", "disable", "re-enable"
+            ).contains(args[0]) ?
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE) :
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
         );
 
         if (args.length == 1) return builder.toAttributedString();
