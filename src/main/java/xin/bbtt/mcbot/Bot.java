@@ -198,4 +198,25 @@ public class Bot {
         }
         to_be_sent_messages.add(message);
     }
+
+    /**
+     * Execute a command from console.
+     * This method allows any code to execute commands as if they were typed in the console.
+     * It supports both built-in Xinbot commands and plugin commands.
+     *
+     * @param command The command string to execute (without leading '/')
+     * @return true if a command was found and executed, false otherwise
+     */
+   public boolean executeCommand(String command) {
+        if (command == null || command.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            this.getPluginManager().commands().callCommand(command.trim());
+            return true;
+        } catch (Exception e) {
+            log.error("Error while executing command: {}", command, e);
+            return false;
+        }
+    }
 }
