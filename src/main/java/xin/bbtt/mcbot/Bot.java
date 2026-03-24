@@ -50,7 +50,6 @@ public class Bot {
     private MinecraftProtocol protocol;
     @Getter
     private Session session;
-    private final Thread inputThread = new Thread(this::getInput);
     private Thread mainThread;
     @Getter
     private BotConfig config;
@@ -111,7 +110,6 @@ public class Bot {
             log.error("An error occurred while stopping bot", e);
         }
         finally {
-            inputThread.interrupt();
             mainThread.interrupt();
         }
     }
