@@ -42,6 +42,8 @@ import xin.bbtt.mcbot.plugin.PluginManager;
 
 import java.util.*;
 
+import static xin.bbtt.mcbot.Utils.parseColors;
+
 public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
     @Getter
@@ -66,7 +68,6 @@ public class Bot {
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
     private final PacketListener packetListener = new PacketListener();
-    private final DisconnectReasonPrinter disconnectReasonPrinter = new DisconnectReasonPrinter();
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
@@ -135,10 +136,21 @@ public class Bot {
     private void onDisconnect(Component reason) {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
+        log.info(parseColors(Utils.toString(reason)));
+        if (Utils.toString(reason).equals("§c微软认证失败")) {
+            log.error("Microsoft authentication failed.");
+            Bot.Instance.getConfig().getConfigData().getAccount().setFullSession(null);
+            try {
+                Bot.Instance.getConfig().saveToFile();
+            }
+            catch (Exception e) {
+                log.error("Failed to save the configuration file.", e);
+            }
+            Bot.Instance.stop();
+        }
         players.clear();
         pluginManager.disableAll();
         session.removeListener(packetListener);
-        session.removeListener(disconnectReasonPrinter);
         session.removeListener(serverRecorder);
         session.removeListener(chatMessagePrinter);
         session.removeListener(messageSender);
@@ -156,7 +168,6 @@ public class Bot {
             }
         });
         session.addListener(packetListener);
-        session.addListener(disconnectReasonPrinter);
         session.addListener(serverRecorder);
         session.addListener(chatMessagePrinter);
         session.addListener(messageSender);

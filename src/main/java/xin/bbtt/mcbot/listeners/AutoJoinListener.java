@@ -60,14 +60,14 @@ public class AutoJoinListener extends SessionAdapter {
     }
     @Override
     public void packetReceived(Session session, Packet packet) {
+        if (packet instanceof ClientboundContainerClosePacket containerClosePacket) onCloseContainer(containerClosePacket);
+        if (Bot.Instance.getServer() != Server.Login) return;
         if (packet instanceof ClientboundOpenScreenPacket openScreenPacket) recordContainer(openScreenPacket);
         if (packet instanceof ClientboundContainerSetContentPacket containerSetContentPacket) onSetContent(containerSetContentPacket, session);
         if (packet instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket) onSetSlot(containerSetSlotPacket, session);
-        if (packet instanceof ClientboundContainerClosePacket containerClosePacket) onCloseContainer(containerClosePacket);
     }
 
     private void onCloseContainer(ClientboundContainerClosePacket containerClosePacket) {
-        if (Bot.Instance.getServer() != Server.Login) return;
         if (containerClosePacket.getContainerId() != containerId) return;
         containerId = -1;
     }
@@ -81,19 +81,16 @@ public class AutoJoinListener extends SessionAdapter {
     }
 
     private void onSetContent(ClientboundContainerSetContentPacket containerSetContentPacket, Session session) {
-        if (Bot.Instance.getServer() != Server.Login) return;
         if (!(containerSetContentPacket.getContainerId() == containerId)) return;
         ItemStack[] items = containerSetContentPacket.getItems();
         for (int slot = 0; slot < items.length; slot++) {
             ItemStack itemStack = items[slot];
             if (itemStack == null) continue;
             checkItemStack(itemStack, session, slot, containerSetContentPacket.getStateId());
-            return;
         }
     }
 
     private void onSetSlot(ClientboundContainerSetSlotPacket containerSetSlotPacket, Session session) {
-        if (Bot.Instance.getServer() != Server.Login) return;
         if (!(containerSetSlotPacket.getContainerId() == containerId)) return;
         ItemStack itemStack = containerSetSlotPacket.getItem();
         if (itemStack == null) return;
