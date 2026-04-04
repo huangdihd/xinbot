@@ -100,7 +100,7 @@
    学习内置命令与核心概念，详见[使用指南](https://xinbot.shouldbe.top/zh/guide/usage)。
 
 7) 开发插件
-   通过插件扩展功能，详见[插件开发指南](https://xinbot.shouldbe.top/zh/guide/plugin-development)。
+   通过插件扩展功能，详见[插件开发指南](https://xinbot.shouldbe.top/zh/reference/plugin-development)。
 
 ---
 
