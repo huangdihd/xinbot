@@ -100,7 +100,7 @@ English / [简体中文](README_CN.md)
    Learn about built-in commands and core concepts. See the [Usage Guide](https://xinbot.shouldbe.top/guide/usage).
 
 7) Develop Plugins
-   Add features with plugins. See the [Plugin Development Guide](https://xinbot.shouldbe.top/reference/plugin-development).
+   Add features with plugins. See the [Plugin Development Guide](https://xinbot.shouldbe.top/reference/).
 
 ---
 
@@ -109,7 +109,7 @@ English / [简体中文](README_CN.md)
   No, but you can enable official account login for added trust and compatibility.
 
 - Can I write my own plugins?  
-  Yes — Xinbot exposes a simple, Bukkit-style event system to build on. For details, see the [Plugin Development Guide](https://xinbot.shouldbe.top/guide/plugin-development)
+  Yes — Xinbot exposes a simple, Bukkit-style event system to build on. For details, see the [Plugin Development Guide](https://xinbot.shouldbe.top/zh/reference/)
 
 - How can I manage multiple bots?  
   Xinbot supports using [xinManager](https://github.com/huangdihd/xinManager) to manage multiple bots.

@@ -100,7 +100,7 @@
    学习内置命令与核心概念，详见[使用指南](https://xinbot.shouldbe.top/zh/guide/usage)。
 
 7) 开发插件
-   通过插件扩展功能，详见[插件开发指南](https://xinbot.shouldbe.top/zh/reference/plugin-development)。
+   通过插件扩展功能，详见[插件开发指南](https://xinbot.shouldbe.top/zh/reference/)。
 
 ---
 
@@ -109,7 +109,7 @@
   非必须；开启 onlineMode 可使用正版账号以提升兼容性与可信度。
 
 - 我能写自己的插件吗？  
-  可以。Xinbot 提供类 Bukkit 的事件系统，方便扩展。详细参考[插件开发指南](https://xinbot.shouldbe.top/zh/guide/plugin-development)。
+  可以。Xinbot 提供类 Bukkit 的事件系统，方便扩展。详细参考[插件开发指南](https://xinbot.shouldbe.top/zh/reference/)。
 
 - 如何管理多个机器人？  
   Xinbot 支持使用 [xinManager](https://github.com/huangdihd/xinManager) 管理多个机器人。
