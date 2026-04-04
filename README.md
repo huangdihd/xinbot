@@ -90,8 +90,11 @@ English / [简体中文](README_CN.md)
 5) Official Login (Optional)
    If onlineMode=true and fullSession is null, the console will guide you through a browser-based login flow.
 
-6) Develop Plugins
-   Add features with plugins. See the Plugin Development Guide (PDG.md).
+6) Master Commands
+   Learn about built-in commands and core concepts. See the [Usage Guide](USAGE.md).
+
+7) Develop Plugins
+   Add features with plugins. See the [Plugin Development Guide](PDG.md).
 
 ---
 
