@@ -122,6 +122,14 @@
 
 ---
 
+## 社区与支持
+- 反馈问题：[GitHub Issues](https://github.com/huangdihd/xinbot/issues)
+- 交流想法：[GitHub Discussions](https://github.com/huangdihd/xinbot/discussions)
+- LINUX DO 社区：[linux.do](https://linux.do/)
+- QQ 交流群：434173700
+
+---
+
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。
 - 允许使用、修改与分发。
