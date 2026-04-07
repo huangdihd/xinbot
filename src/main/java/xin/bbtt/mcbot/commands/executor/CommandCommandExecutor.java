@@ -18,8 +18,7 @@
 package xin.bbtt.mcbot.commands.executor;
 
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
+
 import org.jline.utils.AttributedStyle;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
@@ -65,16 +64,20 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
     }
 
     @Override
-    public AttributedString onHighlight(Command cmd, String label, String[] args) {
-        AttributedStringBuilder builder = new AttributedStringBuilder();
-        builder.append(args[0], rootCommands.contains(args[0]) ?
+    public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
+        AttributedStyle[] styles = new AttributedStyle[args.length];
+        if (args.length == 0) return styles;
+
+        styles[0] = rootCommands.contains(args[0]) ?
             AttributedStyle.DEFAULT.foreground(AttributedStyle.BLUE) :
-            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
-        );
-        if (args.length == 1) return builder.toAttributedString();
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.RED);
+
+        if (args.length == 1) return styles;
+        
         String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length).toArray(new String[0]);
-        builder.append(" ");
-        builder.append(parseHighlight(commandArgs));
-        return builder.toAttributedString();
+        AttributedStyle[] argStyles = parseHighlight(commandArgs);
+        System.arraycopy(argStyles, 0, styles, 1, argStyles.length);
+        
+        return styles;
     }
 }
