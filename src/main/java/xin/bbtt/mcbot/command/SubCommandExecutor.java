@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class SubCommandExecutor extends TabHighlightExecutor {
     private final Map<String, CommandExecutor> subCommandMap = new HashMap<>();
-    private final Logger log = LoggerFactory.getLogger(SubCommandExecutor.class.getSimpleName());
+    private final Logger log = LoggerFactory.getLogger(CommandManager.class.getSimpleName());
 
     public void registerSubCommand(String name, CommandExecutor executor) {
         subCommandMap.put(name.toLowerCase(), executor);
