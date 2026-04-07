@@ -32,7 +32,7 @@
 English / [简体中文](README_CN.md)
 
 ## Demonstration
-[![asciicast](https://asciinema.org/a/788266.svg)](https://asciinema.org/a/788266)
+[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
 ## Why Xinbot?
 - Vibrant, readable logs: parse and render messages just like the official client.
 - Secure official account login: use your legit Minecraft account with confidence.

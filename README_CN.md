@@ -32,7 +32,7 @@
 [English](README.md) / 简体中文
 
 ## 演示
-[![asciicast](https://asciinema.org/a/788266.svg)](https://asciinema.org/a/788266)
+[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
 ## 为什么选择 Xinbot？
 - 高可读日志：像官方客户端一样渲染颜色与格式。
 - 正版登录更安心：可选的正版账号登录流程。
