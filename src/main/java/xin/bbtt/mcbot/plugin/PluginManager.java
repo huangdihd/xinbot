@@ -110,6 +110,7 @@ public class PluginManager {
             sessionListeners.put(plugin.getName(), new ArrayList<>());
             plugin.onEnable();
             enabledPlugins.put(plugin.getName(), plugin);
+            log.info("Enabled plugin: {}", plugin.getName());
         } catch (Exception e) {
             log.error("Failed to enable plugin: {}", plugin.getName(), e);
         }
@@ -136,6 +137,7 @@ public class PluginManager {
             enabledPlugins.remove(plugin.getName());
             DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
             eventManager.callEvent(disablePluginEvent);
+            log.info("Disabled plugin: {}", plugin.getName());
         }
     }
 
