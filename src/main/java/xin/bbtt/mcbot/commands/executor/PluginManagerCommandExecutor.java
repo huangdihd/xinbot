@@ -18,7 +18,8 @@
 package xin.bbtt.mcbot.commands.executor;
 
 import org.jetbrains.annotations.Nullable;
-import org.jline.utils.AttributedString;
+
+import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
@@ -115,7 +116,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
             File[] filesArray = dir.listFiles((dir1, name) -> name.endsWith(".jar"));
             if (filesArray == null) {
@@ -157,7 +158,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded.and(plugin -> !plugin.equals("XinbotPlugin")));
         }
@@ -195,7 +196,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }
@@ -226,7 +227,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }
@@ -262,7 +263,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded.and(plugin -> !plugin.equals("XinbotPlugin")));
         }
@@ -299,7 +300,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         }
 
         @Override
-        public AttributedString onHighlight(Command cmd, String label, String[] args) {
+        public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
             Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }

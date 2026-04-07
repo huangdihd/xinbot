@@ -17,8 +17,8 @@
 
 package xin.bbtt.mcbot.command;
 
-import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
 
 public abstract class HighlightExecutor extends CommandExecutor {
-    public abstract AttributedString onHighlight(Command cmd, String label, String[] args);
+    public abstract AttributedStyle[] onHighlight(Command cmd, String label, String[] args);
 }

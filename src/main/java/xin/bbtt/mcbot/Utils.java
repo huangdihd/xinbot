@@ -23,8 +23,6 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 import java.util.*;
@@ -160,35 +158,31 @@ public class Utils {
         return result.toString();
     }
 
-    public static AttributedString parseHighlight(String[] args) {
+    public static AttributedStyle[] parseHighlight(String[] args) {
         return parseConditionalHighlight(args, arg -> true);
     }
 
-    public static AttributedString parseHighlight(String[] args, AttributedStyle style) {
+    public static AttributedStyle[] parseHighlight(String[] args, AttributedStyle style) {
         return parseConditionalHighlight(args, arg -> true, style, AttributedStyle.DEFAULT);
     }
 
-    public static AttributedString parseContainHighlight(String[] args, Collection<String> targets) {
+    public static AttributedStyle[] parseContainHighlight(String[] args, Collection<String> targets) {
         return parseConditionalHighlight(args, targets::contains);
     }
 
-    public static AttributedString parseContainHighlight(String[] args, Collection<String> targets, AttributedStyle containStyle, AttributedStyle nonContainStyle) {
+    public static AttributedStyle[] parseContainHighlight(String[] args, Collection<String> targets, AttributedStyle containStyle, AttributedStyle nonContainStyle) {
         return parseConditionalHighlight(args, targets::contains, containStyle, nonContainStyle);
     }
 
-    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition, AttributedStyle matchStyle, AttributedStyle nonMatchStyle) {
-        AttributedStringBuilder builder = new AttributedStringBuilder();
+    public static AttributedStyle[] parseConditionalHighlight(String[] args, Predicate<String> condition, AttributedStyle matchStyle, AttributedStyle nonMatchStyle) {
+        ArrayList<AttributedStyle> attributedStyles = new ArrayList<>();
         for (String arg : args) {
-            builder
-                .append(arg,
-                    condition.test(arg) ? matchStyle : nonMatchStyle
-                )
-                .append(" ");
+            attributedStyles.add(condition.test(arg) ? matchStyle : nonMatchStyle);
         }
-        return builder.toAttributedString();
+        return attributedStyles.toArray(AttributedStyle[]::new);
     }
 
-    public static AttributedString parseConditionalHighlight(String[] args, Predicate<String> condition) {
+    public static AttributedStyle[] parseConditionalHighlight(String[] args, Predicate<String> condition) {
         return parseConditionalHighlight(args, condition,
             AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN),
             AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)

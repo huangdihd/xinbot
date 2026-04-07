@@ -17,8 +17,7 @@
 
 package xin.bbtt.mcbot.command;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
+
 import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,32 +77,30 @@ public class SubCommandExecutor extends TabHighlightExecutor {
     }
 
     @Override
-    public AttributedString onHighlight(Command command, String label, String[] args) {
+    public AttributedStyle[] onHighlight(Command command, String label, String[] args) {
         if (args.length == 0) {
-            return new AttributedString("");
+            return new AttributedStyle[0];
         }
         
         String subLabel = args[0].toLowerCase();
         CommandExecutor executor = subCommandMap.get(subLabel);
         
+        AttributedStyle[] result = new AttributedStyle[args.length];
+        
         if (executor != null) {
-            AttributedStringBuilder builder = new AttributedStringBuilder();
-            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
+            result[0] = AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN);
             
             if (args.length > 1) {
-                builder.append(" ");
                 String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
-                builder.append(executor.onHighlight(command, subLabel, subArgs));
+                AttributedStyle[] subHighlight = executor.onHighlight(command, subLabel, subArgs);
+                System.arraycopy(subHighlight, 0, result, 1, Math.min(subHighlight.length, args.length - 1));
             }
-            return builder.toAttributedString();
         } else {
-            AttributedStringBuilder builder = new AttributedStringBuilder();
-            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
-            for (int i = 1; i < args.length; i++) {
-                builder.append(" ").append(args[i], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+            for (int i = 0; i < args.length; i++) {
+                result[i] = AttributedStyle.DEFAULT.foreground(AttributedStyle.RED);
             }
-            return builder.toAttributedString();
         }
+        return result;
     }
 
     protected void onNoSubCommand(Command command, String label) {

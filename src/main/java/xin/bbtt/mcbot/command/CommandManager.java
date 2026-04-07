@@ -194,32 +194,117 @@ public class CommandManager {
         return List.of();
     }
 
+    private static class Token {
+        final String value;
+        final int start;
+        final int end;
+
+        Token(String value, int start, int end) {
+            this.value = value;
+            this.start = start;
+            this.end = end;
+        }
+    }
+
+    private static List<Token> tokenizeDetailed(String commandLine) {
+        List<Token> tokens = new ArrayList<>();
+        StringBuilder currentToken = new StringBuilder();
+        boolean insideQuotedSection = false;
+        char currentQuoteChar = 0;
+        int tokenStart = -1;
+
+        for (int charIndex = 0; charIndex < commandLine.length(); charIndex++) {
+            char currentChar = commandLine.charAt(charIndex);
+
+            if (insideQuotedSection) {
+                if (currentChar == '\\' && charIndex + 1 < commandLine.length()) {
+                    currentToken.append(commandLine.charAt(++charIndex));
+                } else if (currentChar == currentQuoteChar) {
+                    insideQuotedSection = false;
+                    tokens.add(new Token(currentToken.toString(), tokenStart, charIndex + 1));
+                    currentToken.setLength(0);
+                    tokenStart = -1;
+                } else {
+                    currentToken.append(currentChar);
+                }
+            } else {
+                if (Character.isWhitespace(currentChar)) {
+                    if (tokenStart != -1) {
+                        tokens.add(new Token(currentToken.toString(), tokenStart, charIndex));
+                        currentToken.setLength(0);
+                        tokenStart = -1;
+                    }
+                } else if (currentChar == '"' || currentChar == '\'') {
+                    insideQuotedSection = true;
+                    currentQuoteChar = currentChar;
+                    tokenStart = charIndex;
+                } else {
+                    if (tokenStart == -1) {
+                        tokenStart = charIndex;
+                    }
+                    currentToken.append(currentChar);
+                }
+            }
+        }
+        if (tokenStart != -1) {
+            tokens.add(new Token(currentToken.toString(), tokenStart, commandLine.length()));
+        }
+        if (!commandLine.isEmpty() && Character.isWhitespace(commandLine.charAt(commandLine.length() - 1))) {
+            tokens.add(new Token("", commandLine.length(), commandLine.length()));
+        }
+        return tokens;
+    }
+
     public AttributedString callHighlight(String command) {
         final AttributedStringBuilder builder = new AttributedStringBuilder();
-        List<String> tokens = tokenize(command);
-        if (tokens.isEmpty()) return builder.toAttributedString();
-        else if (Bot.Instance.getPluginManager().commands().getCommandByLabel(tokens.get(0)) == null) {
-            builder.append(tokens.get(0), AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
-        }
-        else {
-            builder.append(tokens.get(0), AttributedStyle.DEFAULT);
+        List<Token> tokens = tokenizeDetailed(command);
+        if (tokens.isEmpty()) {
+            builder.append(command);
+            return builder.toAttributedString();
         }
 
-        String label = tokens.get(0);
-        String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
-
-        if (args.length == 0) return builder.toAttributedString();
-
+        Token labelToken = tokens.get(0);
+        String label = labelToken.value;
         RegisteredCommand registeredCommand = getCommandByLabel(label);
 
-        builder.append(" ");
+        // Prefix spaces
+        builder.append(command.substring(0, labelToken.start));
+
+        // Label
+        AttributedStyle labelStyle = (registeredCommand == null)
+                ? AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
+                : AttributedStyle.DEFAULT;
+        builder.append(command.substring(labelToken.start, labelToken.end), labelStyle);
+
+        if (tokens.size() == 1) {
+            builder.append(command.substring(labelToken.end));
+            return builder.toAttributedString();
+        }
+
+        String[] argValues = tokens.subList(1, tokens.size()).stream().map(t -> t.value).toArray(String[]::new);
+        AttributedStyle[] highlightedStyles;
 
         if (registeredCommand == null) {
-            builder.append(parseHighlight(args));
+            highlightedStyles = parseHighlight(argValues);
+        } else {
+            highlightedStyles = registeredCommand.callHighlight(label, argValues);
         }
-        else {
-            builder.append(registeredCommand.callHighlight(label, args));
+
+        int lastPos = labelToken.end;
+
+        for (int i = 1; i < tokens.size(); i++) {
+            Token t = tokens.get(i);
+            // Append gaps (spaces) between tokens
+            builder.append(command.substring(lastPos, t.start));
+
+            AttributedStyle style = (i - 1 < highlightedStyles.length) ? highlightedStyles[i - 1] : AttributedStyle.DEFAULT;
+
+            builder.append(command.substring(t.start, t.end), style);
+            lastPos = t.end;
         }
+
+        // Trailing spaces
+        builder.append(command.substring(lastPos));
 
         return builder.toAttributedString();
     }

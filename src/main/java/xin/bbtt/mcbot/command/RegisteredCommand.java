@@ -17,7 +17,8 @@
 
 package xin.bbtt.mcbot.command;
 
-import org.jline.utils.AttributedString;
+
+import org.jline.utils.AttributedStyle;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public record RegisteredCommand(Plugin plugin, Command command, CommandExecutor 
     List<String> callComplete(String label, String[] args) {
         return executor.onTabComplete(command, label, args);
     }
-    AttributedString callHighlight(String label, String[] args) {
+    AttributedStyle[] callHighlight(String label, String[] args) {
         return executor.onHighlight(command, label, args);
     }
 }
