@@ -137,17 +137,7 @@ public class Bot {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
         log.info(parseColors(Utils.toString(reason)));
-        if (Utils.toString(reason).equals("§c微软认证失败")) {
-            log.error("Microsoft authentication failed.");
-            Bot.Instance.getConfig().getConfigData().getAccount().setFullSession(null);
-            try {
-                Bot.Instance.getConfig().saveToFile();
-            }
-            catch (Exception e) {
-                log.error("Failed to save the configuration file.", e);
-            }
-            Bot.Instance.stop();
-        }
+
         players.clear();
         pluginManager.disableAll();
         session.removeListener(packetListener);
