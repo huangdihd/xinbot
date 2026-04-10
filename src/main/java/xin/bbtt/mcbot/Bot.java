@@ -166,7 +166,7 @@ public class Bot {
         session.connect();
         long start_time = System.currentTimeMillis();
         while (server == null && running){
-            if (System.currentTimeMillis() - start_time > 2000) {
+            if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
                 disconnect("Connection timed out.");
                 break;
             }
