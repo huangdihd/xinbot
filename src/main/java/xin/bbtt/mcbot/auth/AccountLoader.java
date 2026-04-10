@@ -36,6 +36,7 @@ public class AccountLoader {
     private static StepFullJavaSession.FullJavaSession javaSession;
     @Getter
     private static MinecraftProtocol protocol;
+    private static final HttpClient httpClient = MinecraftAuth.createHttpClient();
     private static final Gson gson = new Gson();
     public static BotConfigData.Account init(@NotNull BotConfigData.Account account) throws Exception {
         if (!account.isOnlineMode()) {
@@ -45,7 +46,6 @@ public class AccountLoader {
         if (account.getFullSession() == null || account.getFullSession().isEmpty()) {
             log.warn("No session found for the online account");
             log.info("Starting device code login...");
-            HttpClient httpClient = MinecraftAuth.createHttpClient();
             StepMsaDeviceCode.MsaDeviceCodeCallback callback = new StepMsaDeviceCode.MsaDeviceCodeCallback(
                     msaDeviceCode ->
                             log.info("Go to {} to login your minecraft account", msaDeviceCode.getDirectVerificationUri())
@@ -57,6 +57,19 @@ public class AccountLoader {
             JsonObject gsonObject = gson.fromJson(sessionJson, JsonObject.class);
             javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(gsonObject);
         }
+        GameProfile gameProfile = new GameProfile(javaSession.getMcProfile().getId(), javaSession.getMcProfile().getName());
+        String accessToken = javaSession.getMcProfile().getMcToken().getAccessToken();
+
+        protocol = new MinecraftProtocol(gameProfile, accessToken);
+
+        return OnlineAccountDumper.DumpAccount(AccountLoader.getJavaSession());
+    }
+
+    public static BotConfigData.Account refresh() throws Exception {
+        if (javaSession == null) {
+            throw new Exception("No session found");
+        }
+        javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.refresh(httpClient, javaSession);
         GameProfile gameProfile = new GameProfile(javaSession.getMcProfile().getId(), javaSession.getMcProfile().getName());
         String accessToken = javaSession.getMcProfile().getMcToken().getAccessToken();
 
