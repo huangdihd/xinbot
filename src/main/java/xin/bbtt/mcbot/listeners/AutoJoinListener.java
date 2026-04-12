@@ -25,6 +25,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerClosePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
+import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.events.ClickJoinItemEvent;
 
 public class AutoJoinListener extends SessionAdapter {
@@ -43,7 +45,8 @@ public class AutoJoinListener extends SessionAdapter {
 
     private void checkItemStack(ItemStack itemStack, Session session, int slot, int stateId) {
         if (!itemStack.toString().contains("Game") && !itemStack.toString().contains("戏") && !itemStack.toString().contains("队") && !itemStack.toString().contains("入")) return;
-        Int2ObjectMap<ItemStack> changedSlots = new Int2ObjectOpenHashMap<>();
+        HashedStack hashedStack = Utils.itemStackToHashedStack(itemStack);
+        Int2ObjectMap<HashedStack> changedSlots = new Int2ObjectOpenHashMap<>();
         changedSlots.put(slot, null);
         ClickJoinItemEvent clickJoinItemEvent = new ClickJoinItemEvent();
         Bot.Instance.getPluginManager().events().callEvent(clickJoinItemEvent);
@@ -54,7 +57,7 @@ public class AutoJoinListener extends SessionAdapter {
             slot,
             ContainerActionType.CLICK_ITEM,
             ClickItemAction.LEFT_CLICK,
-            itemStack,
+            hashedStack,
             changedSlots
         ));
     }

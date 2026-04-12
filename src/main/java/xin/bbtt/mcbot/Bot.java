@@ -21,12 +21,14 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
-import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
+import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
@@ -40,6 +42,7 @@ import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
+import java.net.InetSocketAddress;
 import java.util.*;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
@@ -51,7 +54,7 @@ public class Bot {
     @Getter
     private MinecraftProtocol protocol;
     @Getter
-    private Session session;
+    private ClientSession session;
     private Thread mainThread;
     @Getter
     private BotConfig config;
@@ -150,7 +153,7 @@ public class Bot {
     }
 
     private void connect(){
-        session = new TcpClientSession(serverHost, serverPort, protocol, proxyInfo);
+        session = new ClientNetworkSession( new InetSocketAddress(serverHost, serverPort), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
         session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
