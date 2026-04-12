@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
+import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.events.ClickJoinItemEvent;
 
 public class AutoJoinListener extends SessionAdapter {
@@ -44,7 +45,7 @@ public class AutoJoinListener extends SessionAdapter {
 
     private void checkItemStack(ItemStack itemStack, Session session, int slot, int stateId) {
         if (!itemStack.toString().contains("Game") && !itemStack.toString().contains("戏") && !itemStack.toString().contains("队") && !itemStack.toString().contains("入")) return;
-        HashedStack hashedStack = new HashedStack(itemStack.getId(), itemStack.getAmount(), null, null);
+        HashedStack hashedStack = Utils.itemStackToHashedStack(itemStack);
         Int2ObjectMap<HashedStack> changedSlots = new Int2ObjectOpenHashMap<>();
         changedSlots.put(slot, null);
         ClickJoinItemEvent clickJoinItemEvent = new ClickJoinItemEvent();
