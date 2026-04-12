@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.CommandManager;
@@ -67,7 +68,7 @@ public class PluginManager {
         if (Bot.Instance.getSession() != null) {
             enablePlugin(plugin);
         }
-        log.info("Loaded plugin: {}", plugin.getClass().getName());
+        log.info(LangManager.get("plugin.loaded", plugin.getClass().getName()));
     }
 
     public void loadPlugin(File pluginFile) throws MalformedURLException {
@@ -95,7 +96,7 @@ public class PluginManager {
         }
 
         for (File file : files) {
-            log.info("Trying to load plugin: {}", file.getName());
+            log.info(LangManager.get("plugin.loading", file.getName()));
             try {
                 loadPlugin(file);
             }
@@ -110,6 +111,7 @@ public class PluginManager {
             sessionListeners.put(plugin.getName(), new ArrayList<>());
             plugin.onEnable();
             enabledPlugins.put(plugin.getName(), plugin);
+            log.info(LangManager.get("plugin.enabled", plugin.getName()));
         } catch (Exception e) {
             log.error("Failed to enable plugin: {}", plugin.getName(), e);
         }
@@ -136,6 +138,7 @@ public class PluginManager {
             enabledPlugins.remove(plugin.getName());
             DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
             eventManager.callEvent(disablePluginEvent);
+            log.info(LangManager.get("plugin.disabled", plugin.getName()));
         }
     }
 

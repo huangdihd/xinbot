@@ -21,12 +21,14 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
-import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
+import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
@@ -40,7 +42,10 @@ import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
+import java.net.InetSocketAddress;
 import java.util.*;
+
+import static xin.bbtt.mcbot.Utils.parseColors;
 
 public class Bot {
     private static final Logger log = LoggerFactory.getLogger(Bot.class.getSimpleName());
@@ -49,8 +54,7 @@ public class Bot {
     @Getter
     private MinecraftProtocol protocol;
     @Getter
-    private Session session;
-    private final Thread inputThread = new Thread(this::getInput);
+    private ClientSession session;
     private Thread mainThread;
     @Getter
     private BotConfig config;
@@ -67,7 +71,6 @@ public class Bot {
     public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
     private final PacketListener packetListener = new PacketListener();
-    private final DisconnectReasonPrinter disconnectReasonPrinter = new DisconnectReasonPrinter();
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
@@ -96,7 +99,7 @@ public class Bot {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
         login = false;
-        log.info("Starting bot with username: {}", protocol.getProfile().getName());
+        log.info(LangManager.get("bot.starting", protocol.getProfile().getName()));
         connect();
         getInput();
     }
@@ -104,14 +107,13 @@ public class Bot {
     public void stop() {
         try {
             running = false;
-            disconnect("Bot stopped.");
+            disconnect(LangManager.get("bot.stopped"));
             pluginManager.unloadPlugins();
         }
         catch (Exception e) {
-            log.error("An error occurred while stopping bot", e);
+            log.error(LangManager.get("bot.error.stopping"), e);
         }
         finally {
-            inputThread.interrupt();
             mainThread.interrupt();
         }
     }
@@ -137,20 +139,48 @@ public class Bot {
     private void onDisconnect(Component reason) {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
+
+        /*
+        // Log detailed disconnect reason
+        String reasonText = parseColors(Utils.toString(reason));
+        log.info("Disconnect reason: {}", reasonText);
+        log.debug("Raw reason component: {}", reason);
+         */
+
         players.clear();
         pluginManager.disableAll();
         session.removeListener(packetListener);
-        session.removeListener(disconnectReasonPrinter);
         session.removeListener(serverRecorder);
         session.removeListener(chatMessagePrinter);
         session.removeListener(messageSender);
         server = null;
         if (!running) return;
-        connect();
+        
+        // Ensure session is disconnected
+        try {
+            if (session.isConnected()) {
+                session.disconnect(LangManager.get("bot.cleanup.session"));
+            }
+        } catch (Exception e) {
+            log.debug("Error during session cleanup", e);
+        }
+                
+        // Wait 3 seconds before reconnecting
+        try {
+            log.info(LangManager.get("bot.waiting.reconnect"));
+            Thread.sleep(10000);  // Increased to 10 seconds to avoid rate limiting
+        } catch (InterruptedException e) {
+            log.info(LangManager.get("bot.reconnect.interrupted"));
+            return;
+        }
+        
+        if (running) {
+            connect();
+        }
     }
 
     private void connect(){
-        session = new TcpClientSession(serverHost, serverPort, protocol, proxyInfo);
+        session = new ClientNetworkSession( new InetSocketAddress(serverHost, serverPort), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
         session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
@@ -158,21 +188,20 @@ public class Bot {
             }
         });
         session.addListener(packetListener);
-        session.addListener(disconnectReasonPrinter);
         session.addListener(serverRecorder);
         session.addListener(chatMessagePrinter);
         session.addListener(messageSender);
         pluginManager.enableAll();
-        log.info("Connecting.");
+        log.info(LangManager.get("bot.connecting"));
         session.connect();
         long start_time = System.currentTimeMillis();
         while (server == null && running){
-            if (System.currentTimeMillis() - start_time > 2000) {
-                disconnect("Connection timed out.");
+            if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
+                disconnect(LangManager.get("bot.connection.timed.out"));
                 break;
             }
         }
-        log.info("Connection completed.");
+        log.info(LangManager.get("bot.connection.completed"));
     }
 
     public void disconnect(String reason){
@@ -197,26 +226,5 @@ public class Bot {
             message = "\\" + message;
         }
         to_be_sent_messages.add(message);
-    }
-
-    /**
-     * Execute a command from console.
-     * This method allows any code to execute commands as if they were typed in the console.
-     * It supports both built-in Xinbot commands and plugin commands.
-     *
-     * @param command The command string to execute (without leading '/')
-     * @return true if a command was found and executed, false otherwise
-     */
-   public boolean executeCommand(String command) {
-        if (command == null || command.trim().isEmpty()) {
-            return false;
-        }
-        try {
-            this.getPluginManager().commands().callCommand(command.trim());
-            return true;
-        } catch (Exception e) {
-            log.error("Error while executing command: {}", command, e);
-            return false;
-        }
     }
 }

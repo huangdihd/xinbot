@@ -17,11 +17,12 @@
 
 package xin.bbtt.mcbot.command;
 
-import org.jline.utils.AttributedString;
+
+import org.jline.utils.AttributedStyle;
 
 import java.util.List;
 
 public abstract class TabHighlightExecutor extends CommandExecutor {
     public abstract List<String> onTabComplete(Command cmd, String label, String[] args);
-    public abstract AttributedString onHighlight(Command cmd, String label, String[] args);
+    public abstract AttributedStyle[] onHighlight(Command cmd, String label, String[] args);
 }

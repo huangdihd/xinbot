@@ -20,6 +20,7 @@ package xin.bbtt.mcbot.listeners;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
@@ -31,8 +32,8 @@ public class ServerRecorder extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;
         Server newServer = null;
-        if (loginPacket.toString().contains(", gameMode=ADVENTURE")) newServer = Server.Login;
-        if (loginPacket.toString().contains(", gameMode=SURVIVAL")) newServer = Server.Xin;
+        if (loginPacket.getCommonPlayerSpawnInfo().getGameMode().equals(GameMode.ADVENTURE)) newServer = Server.Login;
+        if (loginPacket.getCommonPlayerSpawnInfo().getGameMode().equals(GameMode.SURVIVAL)) newServer = Server.Xin;
         ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.Instance.getServer());
         if (newServer != null) Bot.Instance.setServer(newServer);
         Bot.Instance.getPluginManager().events().callEvent(event);

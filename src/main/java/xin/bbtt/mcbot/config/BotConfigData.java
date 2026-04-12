@@ -29,6 +29,8 @@ public class  BotConfigData {
     private Plugin plugin;
     private Proxy proxy;
     private boolean enableTranslation;
+    private String language = "default";
+    private int reconnectTimeout = 5000;
 
     @Data
     public static class Account {

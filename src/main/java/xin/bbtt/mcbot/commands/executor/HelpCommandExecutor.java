@@ -17,8 +17,7 @@
 
 package xin.bbtt.mcbot.commands.executor;
 
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
+
 import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,19 +75,18 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
     }
 
     @Override
-    public AttributedString onHighlight(Command command, String label, String[] args) {
-        AttributedStringBuilder builder = new AttributedStringBuilder();
+    public AttributedStyle[] onHighlight(Command command, String label, String[] args) {
+        AttributedStyle[] styles = new AttributedStyle[args.length];
+        if (args.length == 0) return styles;
+
         if (Bot.Instance.getPluginManager().commands().getCommandByLabel(args[0]) == null) {
-            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
+            styles[0] = AttributedStyle.DEFAULT.foreground(AttributedStyle.RED);
+        } else {
+            styles[0] = AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN);
         }
-        else {
-            builder.append(args[0], AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
+        for (int i = 1; i < args.length; i++) {
+            styles[i] = AttributedStyle.DEFAULT.foreground(AttributedStyle.RED);
         }
-        for (int i = 1;i < args.length;i++) {
-            builder
-                .append(" ")
-                .append(args[i], AttributedStyle.DEFAULT.foreground(AttributedStyle.RED));
-        }
-        return builder.toAttributedString();
+        return styles;
     }
 }
