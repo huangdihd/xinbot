@@ -1,0 +1,41 @@
+# Xinbot Language File - English (US)
+# Format: key=value
+
+# Bot connection messages
+bot.connecting=Connecting.
+bot.connection.completed=Connection completed.
+bot.connection.timed.out=Connection timed out.
+bot.end.of.stream=End of stream
+bot.disconnect.reason=Disconnected: %s
+bot.starting=Starting bot with username: %s
+bot.stopped=Bot stopped.
+bot.error.stopping=An error occurred while stopping bot
+
+# Disconnect reasons (Minecraft protocol translation keys)
+disconnect.genericReason=Disconnected
+disconnect.endOfStream=End of stream
+disconnect.timeout=Connection timed out
+disconnect.loginFailed=Login failed
+
+# Reconnection messages
+bot.waiting.reconnect=Waiting 3 seconds before reconnecting...
+bot.reconnect.interrupted=Reconnect interrupted
+bot.cleanup.session=Cleaning up before reconnect
+
+# Plugin manager messages
+plugin.loaded=Loaded plugin: %s
+plugin.loading=Trying to load plugin: %s
+plugin.enabled=Enabled plugin: %s
+plugin.disabled=Disabled plugin: %s
+
+# Server member messages
+server.member.joined=[+]%s
+server.member.left=[-]%s
+
+# LangManager messages
+langmanager.loaded=Loaded language %s
+langmanager.error=Error loading language file
+
+# Config messages
+config.loading=Loading config file: %s
+config.error=Error loading config file

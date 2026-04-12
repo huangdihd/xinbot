@@ -1,0 +1,41 @@
+# Xinbot Language File - French
+# Format: key=value
+
+# Bot connection messages
+bot.connecting=Connexion en cours...
+bot.connection.completed=Connexion établie.
+bot.connection.timed.out=Délai de connexion dépassé.
+bot.end.of.stream=Fin du flux
+bot.disconnect.reason=Déconnecté: %s
+bot.starting=Démarrage du bot avec le nom d'utilisateur: %s
+bot.stopped=Bot arrêté.
+bot.error.stopping=Une erreur s'est produite lors de l'arrêt du bot
+
+# Disconnect reasons (Minecraft protocol translation keys)
+disconnect.genericReason=Déconnecté
+disconnect.endOfStream=Fin du flux
+disconnect.timeout=Délai dépassé
+disconnect.loginFailed=Échec de la connexion
+
+# Reconnection messages
+bot.waiting.reconnect=Attente de 3 secondes avant la reconnexion...
+bot.reconnect.interrupted=Reconnexion interrompue
+bot.cleanup.session=Nettoyage de la session avant reconnexion
+
+# Plugin manager messages
+plugin.loaded=Plugin chargé: %s
+plugin.loading=Tentative de chargement du plugin: %s
+plugin.enabled=Plugin activé: %s
+plugin.disabled=Plugin désactivé: %s
+
+# Server member messages
+server.member.joined=[+]%s
+server.member.left=[-]%s
+
+# LangManager messages
+langmanager.loaded=Langue chargée: %s
+langmanager.error=Erreur lors du chargement du fichier de langue
+
+# Config messages
+config.loading=Chargement du fichier de configuration: %s
+config.error=Erreur lors du chargement du fichier de configuration
