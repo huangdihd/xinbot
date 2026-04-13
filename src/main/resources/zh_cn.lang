@@ -141,3 +141,4 @@ command.say.description=发送聊天消息的命令。
 command.say.usage=say <message>
 command.stop.description=停止机器人
 command.stop.usage=stop
+bot.disconnect.command=由命令断开连接

@@ -84,3 +84,4 @@ command.say.description=Ein Befehl zum Senden einer Chatnachricht.
 command.say.usage=say <message>
 command.stop.description=stoppt den Bot
 command.stop.usage=stop
+bot.disconnect.command=Durch Befehl getrennt

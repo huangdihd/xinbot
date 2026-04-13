@@ -141,3 +141,4 @@ command.say.description=A command to say a chat.
 command.say.usage=say <message>
 command.stop.description=stops the bot
 command.stop.usage=stop
+bot.disconnect.command=Disconnected by command

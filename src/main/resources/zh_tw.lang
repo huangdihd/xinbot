@@ -84,3 +84,4 @@ command.say.description=發送聊天訊息的命令。
 command.say.usage=say <message>
 command.stop.description=停止機器人
 command.stop.usage=stop
+bot.disconnect.command=由命令斷開連接

@@ -84,3 +84,4 @@ command.say.description=チャットを送信するコマンド。
 command.say.usage=say <message>
 command.stop.description=ボットを停止します
 command.stop.usage=stop
+bot.disconnect.command=コマンドによって切断されました
