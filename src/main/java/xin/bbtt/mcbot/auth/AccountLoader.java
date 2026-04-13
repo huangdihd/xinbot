@@ -28,6 +28,7 @@ import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.config.BotConfigData;
 
 public class AccountLoader {
@@ -44,11 +45,11 @@ public class AccountLoader {
             return account;
         }
         if (account.getFullSession() == null || account.getFullSession().isEmpty()) {
-            log.warn("No session found for the online account");
-            log.info("Starting device code login...");
+            log.warn(LangManager.get("auth.session.not.found"));
+            log.info(LangManager.get("auth.device.code.start"));
             StepMsaDeviceCode.MsaDeviceCodeCallback callback = new StepMsaDeviceCode.MsaDeviceCodeCallback(
                     msaDeviceCode ->
-                            log.info("Go to {} to login your minecraft account", msaDeviceCode.getDirectVerificationUri())
+                            log.info(LangManager.get("auth.device.code.prompt", msaDeviceCode.getDirectVerificationUri(), msaDeviceCode.getUserCode()))
             );
             javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, callback);
         }

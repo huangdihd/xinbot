@@ -39,3 +39,29 @@ langmanager.error=載入語言檔案時出錯
 # Config messages
 config.loading=正在載入設定檔案：%s
 config.error=載入設定檔案時出錯
+
+jline.init.failed=初始化 JLine 失敗: %s
+xinbot.args.invalid=你只能使用一個參數運行此程式！
+xinbot.version=版本: %s
+
+# Authentication
+auth.session.not.found=未找到正版帳號的會話
+auth.device.code.start=開始設備代碼登入...
+auth.device.code.prompt=請前往 %s 並輸入代碼 %s 以登入你的 Minecraft 帳號
+
+match.login.success=登陆成功
+match.register=注册
+match.join.game1=Game
+match.join.game2=戏
+match.join.game3=队
+match.join.game4=入
+match.ms.auth.failed=§c微软认证失败
+
+command.not.found.error=未找到命令 %s
+command.execute.error=執行命令 %s 時出錯
+command.complete.error=完成命令 %s 時出錯
+
+chat.system.received=收到訊息: %s
+
+autojoin.container.recorded=已記錄容器 ID %s
+login.successful=登入成功

@@ -39,3 +39,29 @@ langmanager.error=Erreur lors du chargement du fichier de langue
 # Config messages
 config.loading=Chargement du fichier de configuration: %s
 config.error=Erreur lors du chargement du fichier de configuration
+
+jline.init.failed=Échec de l'initialisation de JLine : %s
+xinbot.args.invalid=Vous ne pouvez exécuter ce programme qu'avec un seul argument !
+xinbot.version=version : %s
+
+# Authentication
+auth.session.not.found=Aucune session trouvée pour le compte en ligne
+auth.device.code.start=Démarrage de la connexion par code d'appareil...
+auth.device.code.prompt=Allez sur %s pour vous connecter à votre compte Minecraft avec le code : %s
+
+match.login.success=登陆成功
+match.register=注册
+match.join.game1=Game
+match.join.game2=戏
+match.join.game3=队
+match.join.game4=入
+match.ms.auth.failed=§c微软认证失败
+
+command.not.found.error=Aucune commande trouvée pour %s
+command.execute.error=Erreur lors de l'exécution de la commande %s
+command.complete.error=Erreur lors de l'achèvement de la commande %s
+
+chat.system.received=Message reçu : %s
+
+autojoin.container.recorded=ID de conteneur enregistré %s
+login.successful=Connexion réussie

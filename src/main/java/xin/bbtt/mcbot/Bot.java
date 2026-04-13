@@ -164,7 +164,7 @@ public class Bot {
 
         long delay = config.getConfigData().getReconnectDelay();
         if (delay > 0) {
-            log.info("Reconnecting in {}ms.", delay);
+            log.info(LangManager.get("bot.reconnecting", delay));
             scheduler.schedule(() -> {
                 if (running) connect();
             }, delay, TimeUnit.MILLISECONDS);

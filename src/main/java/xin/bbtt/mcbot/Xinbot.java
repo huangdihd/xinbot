@@ -58,18 +58,18 @@ public class Xinbot {
             return true;
 
         if (pluginDir.exists()) {
-            log.error("Plugin directory is not a directory!");
+            log.error(LangManager.get("plugin.dir.not.dir"));
             return false;
         }
 
-        log.info("Plugin directory is not exists, trying to create it.");
+        log.info(LangManager.get("plugin.dir.not.exists"));
 
         if (!pluginDir.mkdir()) {
-            log.error("Failed to create plugins directory: {}", pluginDir.isDirectory());
+            log.error(LangManager.get("plugin.dir.create.failed", pluginDir.isDirectory()));
             return false;
         }
 
-        log.info("Created plugins directory: {}", pluginDir.isDirectory());
+        log.info(LangManager.get("plugin.dir.created", pluginDir.isDirectory()));
         return true;
     }
 
@@ -77,7 +77,7 @@ public class Xinbot {
     private static void copyDefaultConfig(String configPath) {
         try (InputStream is = Xinbot.class.getClassLoader().getResourceAsStream("config.conf")) {
             if (is == null) {
-                log.error("Default config file not found in resources!");
+                log.error(LangManager.get("config.default.not.found"));
                 return;
             }
 
@@ -86,9 +86,9 @@ public class Xinbot {
                 Files.createDirectories(configFilePath.getParent());
             }
             Files.copy(is, configFilePath, StandardCopyOption.REPLACE_EXISTING);
-            log.info("Default config file copied to: {}", configPath);
+            log.info(LangManager.get("config.default.copied", configPath));
         } catch (IOException e) {
-            log.error("Failed to copy default config file: {}", e.getMessage(), e);
+            log.error(LangManager.get("config.default.copy.failed", e.getMessage()), e);
         }
     }
 
@@ -98,7 +98,7 @@ public class Xinbot {
 
         // Handle arguments
         if (args.length > 1) {
-            log.error("You can only run this program with one argument!");
+            log.error(LangManager.get("xinbot.args.invalid"));
             return;
         }
 
@@ -109,7 +109,7 @@ public class Xinbot {
 
         // The version and The license sub command
         if (args[0].equals("--version") || args[0].equals("-v")) {
-            log.info("version: {}", version);
+            log.info(LangManager.get("xinbot.version", version));
             return;
         }
         if (args[0].equals("--license") || args[0].equals("-l")) {
@@ -127,7 +127,7 @@ public class Xinbot {
         if (!Files.exists(configFilePath)) {
             log.info(LangManager.get("config.loading", configPath));
             copyDefaultConfig(configPath);
-            log.info("Please modify the config file: {}", configPath);
+            log.info(LangManager.get("config.modify.prompt", configPath));
             System.exit(1);
         }
         log.info(LangManager.get("config.loading", configPath));
@@ -135,7 +135,7 @@ public class Xinbot {
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
-            log.error("Failed to load configuration file: {}", configPath, e);
+            log.error(LangManager.get("config.load.failed", configPath), e);
             System.exit(1);
         }
 
@@ -145,7 +145,7 @@ public class Xinbot {
         // Initialize minecraft language
         if (config.getConfigData().isEnableTranslation()) LangManager.initMinecraftLang();
 
-        log.info("version: {}", version);
+        log.info(LangManager.get("xinbot.version", version));
 
         // Initialize the plugin directory
         File pluginDir = new File(config.getConfigData().getPlugin().getDirectory());
@@ -156,7 +156,7 @@ public class Xinbot {
             config.getConfigData().setAccount(AccountLoader.init(config.getConfigData().getAccount()));
         }
         catch (Exception e) {
-            log.error("Failed to load your account.", e);
+            log.error(LangManager.get("account.load.failed"), e);
             System.exit(1);
         }
 
@@ -165,7 +165,7 @@ public class Xinbot {
             config.saveToFile();
         }
         catch (Exception e) {
-            log.error("Failed to save the configuration file.", e);
+            log.error(LangManager.get("config.save.failed"), e);
         }
 
         // Initialize the bot
@@ -176,6 +176,6 @@ public class Xinbot {
 
         // After the bot stopped
         log.info(LangManager.get("bot.stopped"));
-        log.info("Bye!");
+        log.info(LangManager.get("bot.bye"));
     }
 }

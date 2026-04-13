@@ -22,6 +22,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import xin.bbtt.mcbot.LangManager;
 
 public class CLI {
     @Getter
@@ -46,7 +47,7 @@ public class CLI {
             JLineConsoleAppender.setLineReader(lineReader);
 
         } catch (Exception e) {
-            System.err.println("Failed to initialize JLine: " + e.getMessage());
+            System.err.println(LangManager.get("jline.init.failed", e.getMessage()));
         }
     }
 }

@@ -1,4 +1,3 @@
-
 /*
  *   Copyright (C) 2024-2026 huangdihd
  *
@@ -85,13 +84,13 @@ public class PluginManager {
     public void loadPlugins(String pluginsDirectory) {
         File pluginsDir = new File(pluginsDirectory);
         if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-            log.error("The plugins directory does not exist or is invalid: {}", pluginsDirectory);
+            log.error(LangManager.get("plugin.dir.invalid", pluginsDirectory));
             return;
         }
 
         File[] files = pluginsDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (files == null || files.length == 0) {
-            log.info("No plugins found.");
+            log.info(LangManager.get("plugin.not.found"));
             return;
         }
 
@@ -101,7 +100,7 @@ public class PluginManager {
                 loadPlugin(file);
             }
             catch (Exception e) {
-                log.error("Failed to load plugin: {}", file.getName(), e);
+                log.error(LangManager.get("plugin.load.failed", file.getName()), e);
             }
         }
     }
@@ -113,13 +112,13 @@ public class PluginManager {
             enabledPlugins.put(plugin.getName(), plugin);
             log.info(LangManager.get("plugin.enabled", plugin.getName()));
         } catch (Exception e) {
-            log.error("Failed to enable plugin: {}", plugin.getName(), e);
+            log.error(LangManager.get("plugin.enable.failed", plugin.getName()), e);
         }
     }
 
     public void disablePlugin(Plugin plugin) {
         if (!enabledPlugins.containsKey(plugin.getName())) {
-            log.error("Plugin {} is not enabled.", plugin.getName());
+            log.error(LangManager.get("plugin.not.enabled", plugin.getName()));
             return;
         }
         eventManager.unregisterAll(plugin);
@@ -132,7 +131,7 @@ public class PluginManager {
             plugin.onDisable();
         }
         catch (Exception e) {
-            log.error("Failed to disable plugin: {}", plugin.getName(), e);
+            log.error(LangManager.get("plugin.disable.failed", plugin.getName()), e);
         }
         finally {
             enabledPlugins.remove(plugin.getName());
@@ -149,11 +148,11 @@ public class PluginManager {
             }
             plugin.onUnload();
         } catch (Exception e) {
-            log.error("Failed to unload plugin: {}", plugin.getName(), e);
+            log.error(LangManager.get("plugin.unload.failed", plugin.getName()), e);
         }
         finally {
             plugins.remove(plugin.getName());
-            log.info("Unloaded plugin: {}", plugin.getClass().getName());
+            log.info(LangManager.get("plugin.unloaded", plugin.getClass().getName()));
         }
     }
 
@@ -163,7 +162,7 @@ public class PluginManager {
             try {
                 unloadPlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                log.error(LangManager.get("plugin.unload.failed", plugin.getName()), e);
             }
         }
     }
@@ -173,7 +172,7 @@ public class PluginManager {
             try {
                 enablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                log.error(LangManager.get("plugin.enable.failed", plugin.getName()), e);
             }
         }
     }
@@ -183,7 +182,7 @@ public class PluginManager {
             try {
                 disablePlugin(plugin);
             } catch (Exception e) {
-                log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                log.error(LangManager.get("plugin.disable.failed", plugin.getName()), e);
             }
         }
     }

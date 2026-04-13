@@ -39,3 +39,85 @@ langmanager.error=Error loading language file
 # Config messages
 config.loading=Loading config file: %s
 config.error=Error loading config file
+
+# Xinbot initialization messages
+plugin.dir.not.dir=Plugin directory is not a directory!
+plugin.dir.not.exists=Plugin directory is not exists, trying to create it.
+plugin.dir.create.failed=Failed to create plugins directory: %s
+plugin.dir.created=Created plugins directory: %s
+
+config.default.not.found=Default config file not found in resources!
+config.default.copied=Default config file copied to: %s
+config.default.copy.failed=Failed to copy default config file: %s
+config.modify.prompt=Please modify the config file: %s
+config.load.failed=Failed to load configuration file: %s
+config.save.failed=Failed to save the configuration file.
+
+account.load.failed=Failed to load your account.
+
+bot.bye=Bye!
+bot.reconnecting=Reconnecting in %sms.
+
+jline.init.failed=Failed to initialize JLine: %s
+xinbot.args.invalid=You can only run this program with one argument!
+xinbot.version=version: %s
+
+# Authentication
+auth.session.not.found=No session found for the online account
+auth.device.code.start=Starting device code login...
+auth.device.code.prompt=Go to %s to login your minecraft account with code: %s
+
+
+plugin.dir.invalid=The plugins directory does not exist or is invalid: %s
+plugin.not.found=No plugins found.
+plugin.load.failed=Failed to load plugin: %s
+plugin.enable.failed=Failed to enable plugin: %s
+plugin.not.enabled=Plugin %s is not enabled.
+plugin.disable.failed=Failed to disable plugin: %s
+plugin.unload.failed=Failed to unload plugin: %s
+plugin.unloaded=Unloaded plugin: %s
+plugin.command.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+plugin.not.found.name=Plugin %s not found.
+plugin.list.header=Plugins:
+plugin.list.item=%s(%s)
+plugin.command.load.usage=PluginManager load <plugin file name1> <plugin file name2> ...
+plugin.dir.not.found=Plugin directory not found.
+plugin.file.not.found=Plugin file not found.
+plugin.command.unload.usage=PluginManager unload <plugin name1> <plugin name2> ...
+plugin.unload.xinbot.denied=Failed to unload plugin: XinbotPlugin because unloading the XinbotPlugin by commands is not allowed.
+plugin.command.reload.usage=PluginManager reload <plugin name1> <plugin name2> ...
+plugin.command.enable.usage=PluginManager enable <plugin name1> <plugin name2> ...
+plugin.command.disable.usage=PluginManager disable <plugin name1> <plugin name2> ...
+plugin.disable.xinbot.denied=Failed to disable plugin: XinbotPlugin because disabling the XinbotPlugin by commands is not allowed.
+plugin.command.reenable.usage=PluginManager re-enable <plugin name1> <plugin name2> ...
+command.help.name=Command: %s
+command.help.plugin=\tPlugin: %s
+command.help.aliases=\tAliases: [ %s ]
+command.help.description=\tDescription: %s
+command.help.usage=\tUsage: %s
+command.not.found=no such command: %s
+
+command.sub.missing=Missing sub-command. Available sub-commands: %s
+command.sub.unknown=Unknown sub-command: %s. Available sub-commands: %s
+plugin.loaded.count=There are %d plugins loaded: %s
+player.online.count=There are %d players online: %s
+login.successful=Login successful
+
+auth.ms.failed=Microsoft authentication failed.
+
+match.login.success=登陆成功
+match.register=注册
+match.join.game1=Game
+match.join.game2=戏
+match.join.game3=队
+match.join.game4=入
+match.ms.auth.failed=§c微软认证失败
+
+command.not.found.error=No command found for command %s
+command.execute.error=Error while executing command %s
+command.complete.error=Error while Complete command %s
+
+chat.system.received=Received message: %s
+
+autojoin.container.recorded=Recorded container id %s
+login.successful=Login successful

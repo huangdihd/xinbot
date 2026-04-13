@@ -39,3 +39,85 @@ langmanager.error=加载语言文件时出错
 # Config messages
 config.loading=正在加载配置文件：%s
 config.error=加载配置文件时出错
+
+# Xinbot initialization messages
+plugin.dir.not.dir=插件目录不是一个文件夹！
+plugin.dir.not.exists=插件目录不存在，尝试创建它。
+plugin.dir.create.failed=无法创建插件目录：%s
+plugin.dir.created=已创建插件目录：%s
+
+config.default.not.found=在资源文件中找不到默认配置文件！
+config.default.copied=默认配置文件已复制到：%s
+config.default.copy.failed=复制默认配置文件失败：%s
+config.modify.prompt=请修改配置文件：%s
+config.load.failed=加载配置文件失败：%s
+config.save.failed=保存配置文件失败。
+
+account.load.failed=加载账号失败。
+
+bot.bye=再见！
+bot.reconnecting=将在 %s 毫秒后重新连接。
+
+jline.init.failed=初始化 JLine 失败：%s
+jline.init.failed=初始化 JLine 失败: %s
+xinbot.args.invalid=你只能使用一个参数运行此程序！
+xinbot.version=版本: %s
+
+# Authentication
+auth.session.not.found=未找到正版账号的会话
+auth.device.code.start=开始设备代码登录...
+auth.device.code.prompt=请前往 %s 并输入代码 %s 以登录你的 Minecraft 账号
+
+plugin.dir.invalid=插件目录不存在或无效：%s
+plugin.not.found=未找到插件。
+plugin.load.failed=加载插件失败：%s
+plugin.enable.failed=启用插件失败：%s
+plugin.not.enabled=插件 %s 未启用。
+plugin.disable.failed=禁用插件失败：%s
+plugin.unload.failed=卸载插件失败：%s
+plugin.unloaded=已卸载插件：%s
+plugin.command.usage=PluginManager list / PluginManager load <插件文件名1> <插件文件名2> ... / PluginManager unload <插件名1> <插件名2> ... / PluginManager reload <插件名1> <插件名2> ... / PluginManager enable <插件名1> <插件名2> ... / PluginManager disable <插件名1> <插件名2> ... / PluginManager re-enable <插件名1> <插件名2> ...
+plugin.not.found.name=未找到插件 %s。
+plugin.list.header=插件列表：
+plugin.list.item=%s(%s)
+plugin.command.load.usage=PluginManager load <插件文件名1> <插件文件名2> ...
+plugin.dir.not.found=未找到插件目录。
+plugin.file.not.found=未找到插件文件。
+plugin.command.unload.usage=PluginManager unload <插件名1> <插件名2> ...
+plugin.unload.xinbot.denied=卸载插件失败：XinbotPlugin，因为不允许通过命令卸载 XinbotPlugin。
+plugin.command.reload.usage=PluginManager reload <插件名1> <插件名2> ...
+plugin.command.enable.usage=PluginManager enable <插件名1> <插件名2> ...
+plugin.command.disable.usage=PluginManager disable <插件名1> <插件名2> ...
+plugin.disable.xinbot.denied=禁用插件失败：XinbotPlugin，因为不允许通过命令禁用 XinbotPlugin。
+plugin.command.reenable.usage=PluginManager re-enable <插件名1> <插件名2> ...
+command.help.name=命令：%s
+command.help.plugin=\t所属插件：%s
+command.help.aliases=\t别名：[ %s ]
+command.help.description=\t描述：%s
+command.help.usage=\t用法：%s
+command.not.found=找不到此命令：%s
+
+command.sub.missing=缺少子命令。可用的子命令：%s
+command.sub.unknown=未知的子命令：%s。可用的子命令：%s
+plugin.loaded.count=已加载 %d 个插件：%s
+player.online.count=有 %d 名玩家在线：%s
+login.successful=登录成功
+
+auth.ms.failed=微软验证失败。
+
+match.login.success=登陆成功
+match.register=注册
+match.join.game1=Game
+match.join.game2=戏
+match.join.game3=队
+match.join.game4=入
+match.ms.auth.failed=§c微软认证失败
+
+command.not.found.error=未找到命令 %s
+command.execute.error=执行命令 %s 时出错
+command.complete.error=完成命令 %s 时出错
+
+chat.system.received=收到消息: %s
+
+autojoin.container.recorded=已记录容器 ID %s
+login.successful=登录成功

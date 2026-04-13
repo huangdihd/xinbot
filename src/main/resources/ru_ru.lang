@@ -39,3 +39,29 @@ langmanager.error=Ошибка загрузки языкового файла
 # Config messages
 config.loading=Загрузка файла конфигурации: %s
 config.error=Ошибка загрузки файла конфигурации
+
+jline.init.failed=Не удалось инициализировать JLine: %s
+xinbot.args.invalid=Вы можете запустить эту программу только с одним аргументом!
+xinbot.version=версия: %s
+
+# Authentication
+auth.session.not.found=Сессия для лицензионного аккаунта не найдена
+auth.device.code.start=Запуск входа по коду устройства...
+auth.device.code.prompt=Перейдите на %s для входа в свой аккаунт Minecraft с кодом: %s
+
+match.login.success=登陆成功
+match.register=注册
+match.join.game1=Game
+match.join.game2=戏
+match.join.game3=队
+match.join.game4=入
+match.ms.auth.failed=§c微软认证失败
+
+command.not.found.error=Команда не найдена для команды %s
+command.execute.error=Ошибка при выполнении команды %s
+command.complete.error=Ошибка при завершении команды %s
+
+chat.system.received=Получено сообщение: %s
+
+autojoin.container.recorded=Записан идентификатор контейнера %s
+login.successful=Вход выполнен успешно

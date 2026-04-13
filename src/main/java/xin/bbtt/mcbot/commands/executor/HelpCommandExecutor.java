@@ -22,6 +22,7 @@ import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.RegisteredCommand;
 import xin.bbtt.mcbot.command.TabHighlightExecutor;
@@ -34,11 +35,11 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
     private final Logger log = LoggerFactory.getLogger(HelpCommandExecutor.class.getSimpleName());
 
     private void printCommandHelp(Command command, Plugin plugin) {
-        log.info("Command: {}", command.getName());
-        log.info("\tPlugin: {}", plugin.getName());
-        log.info("\tAliases: [ {} ]", String.join(", ", command.getAliases()));
-        log.info("\tDescription: {}", command.getDescription());
-        log.info("\tUsage: {}", command.getUsage());
+        log.info(LangManager.get("command.help.name", command.getName()));
+        log.info(LangManager.get("command.help.plugin", plugin.getName()));
+        log.info(LangManager.get("command.help.aliases", String.join(", ", command.getAliases())));
+        log.info(LangManager.get("command.help.description", command.getDescription()));
+        log.info(LangManager.get("command.help.usage", command.getUsage()));
     }
 
     @Override
@@ -58,7 +59,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
                     return;
                 }
             }
-            log.info("no such command: {}", args[0]);
+            log.info(LangManager.get("command.not.found", args[0]));
         }
     }
 

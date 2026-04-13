@@ -24,15 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,35 +40,47 @@ public class LangManager {
     private static final Logger log = LoggerFactory.getLogger(LangManager.class.getSimpleName());
     private static String currentLanguageCode = "en_us";
 
-    // Supported languages for .lang files
-    private static final List<String> SUPPORTED_LANG_FILES = Arrays.asList(
-        "en_us",    // English
-        "zh_cn",    // Simplified Chinese
-        "zh_tw",    // Traditional Chinese
-        "ru_ru",    // Russian
-        "ja_jp",    // Japanese
-        "de_de",    // German
-        "fr_fr"     // French
-    );
-
     public static void clear() {
         currentLang.clear();
     }
 
     public static void initMinecraftLang() {
         String targetLangCode = getSystemLangCode();
-        loadFromJson(targetLangCode);
+        // Load en_us as base fallback
+        loadFromJson("en_us");
+        if (!"en_us".equals(targetLangCode)) {
+            // Override with target language
+            loadFromJson(targetLangCode);
+        }
+        currentLanguageCode = targetLangCode;
         System.gc();
     }
 
     public static void initXinbotLang() {
         String targetLangCode = getSystemLangCode();
-        loadFromJson(targetLangCode);
-        loadFromLangFile(targetLangCode);
+        
+        // 1. Load en_us as base fallback from JSON and internal .lang
+        loadFromJson("en_us");
+        loadFromLangFile("en_us", true);
+        
+        // 2. Override with target language from internal resources
+        if (!"en_us".equals(targetLangCode)) {
+            loadFromJson(targetLangCode);
+            loadFromLangFile(targetLangCode, true);
+        }
+        
+        // 3. Override with external files (allows users to customize without recompiling)
+        loadFromExternalLangFile("en_us");
+        if (!"en_us".equals(targetLangCode)) {
+            loadFromExternalLangFile(targetLangCode);
+        }
+        
+        currentLanguageCode = targetLangCode;
     }
 
     /**
      * Gets the system's default language code (e.g., zh_cn, en_us)
+     * This respects standard JVM parameters like -Duser.language=zh -Duser.country=CN
      */
     private static String getSystemLangCode() {
         Locale locale = Locale.getDefault();
@@ -87,8 +97,7 @@ public class LangManager {
     }
 
     /**
-     * Loads the aggregated lang.json file.
-     * Validates dynamically by checking if the JSON contains the target language key.
+     * Loads the aggregated lang.json file from internal resources.
      */
     public static void loadFromJson(@Nullable String langCode) {
         if (langCode == null || langCode.isBlank()) langCode = "en_us";
@@ -101,10 +110,9 @@ public class LangManager {
 
             JsonObject root = JsonParser.parseReader(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
 
-            // Dynamic validation: Check if the language exists in the JSON root
             if (!root.has(langCode)) {
-                log.warn("Language {} not supported in lang.json, falling back to en_us", langCode);
-                langCode = "en_us";
+                log.debug("Language {} not found in lang.json", langCode);
+                return; // Fallback is already handled by loading en_us first
             }
 
             JsonObject langObj = root.getAsJsonObject(langCode);
@@ -113,63 +121,54 @@ public class LangManager {
                 Map<String, String> jsonMap = new Gson().fromJson(langObj, type);
                 if (jsonMap != null) {
                     currentLang.putAll(jsonMap);
-                    currentLanguageCode = langCode;
-                    log.info("Loaded language {} from lang.json", langCode);
+                    log.debug("Loaded language {} from lang.json", langCode);
                 }
             }
 
         } catch (Exception e) {
-            log.error("Error loading lang.json: {}", e.getMessage(), e);
+            log.error("Error loading lang.json for {}: {}", langCode, e.getMessage(), e);
         }
     }
 
     /**
-     * Loads standalone .lang files (Minecraft format).
-     * Validates against a predefined list of supported languages.
+     * Loads standalone .lang files (Minecraft format) from internal resources.
      */
-    public static void loadFromLangFile(@Nullable String langCode) {
-        if (langCode == null || langCode.isBlank()) langCode = "en_us";
-
-        // Explicit validation: Check against the supported .lang files list
-        if (!SUPPORTED_LANG_FILES.contains(langCode)) {
-            log.warn("Language {} not supported for .lang files, falling back to en_us", langCode);
-            langCode = "en_us";
-        }
+    public static void loadFromLangFile(@Nullable String langCode, boolean internal) {
+        if (langCode == null || langCode.isBlank()) return;
 
         String langFileName = langCode + ".lang";
         try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream(langFileName)) {
             if (is == null) {
-                if (!"en_us".equals(langCode)) {
-                    log.debug("{} not found, trying en_us.lang fallback", langFileName);
-                    tryFallbackLangFile();
-                }
+                log.debug("Internal language file {} not found", langFileName);
                 return;
             }
 
             currentLang.putAll(parseLangStream(is));
-            currentLanguageCode = langCode;
-            log.info("Loaded language {} from {}", langCode, langFileName);
+            log.debug("Loaded language {} from internal {}", langCode, langFileName);
 
         } catch (Exception e) {
-            log.error("Error loading language file {}: {}", langFileName, e.getMessage(), e);
+            log.error("Error loading internal language file {}: {}", langFileName, e.getMessage(), e);
         }
     }
-
+    
     /**
-     * Attempts to load en_us.lang as a fallback
+     * Loads translations from an external directory ./lang/
+     * This allows server admins to customize bot messages.
      */
-    private static void tryFallbackLangFile() {
-        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("en_us.lang")) {
-            if (is != null) {
+    private static void loadFromExternalLangFile(String langCode) {
+        Path langDir = Paths.get("lang");
+        if (!Files.isDirectory(langDir)) {
+            return;
+        }
+        
+        Path langFile = langDir.resolve(langCode + ".lang");
+        if (Files.isRegularFile(langFile)) {
+            try (InputStream is = Files.newInputStream(langFile)) {
                 currentLang.putAll(parseLangStream(is));
-                // Only override currentLanguageCode if it wasn't already set properly by JSON
-                if (!currentLanguageCode.equals(getSystemLangCode())) {
-                    currentLanguageCode = "en_us";
-                }
-                log.info("Loaded fallback language en_us from en_us.lang");
+                log.info("Loaded custom language {} from external {}", langCode, langFile);
+            } catch (Exception e) {
+                log.error("Error loading external language file {}: {}", langFile, e.getMessage(), e);
             }
-        } catch (Exception e) {
-            log.error("Error loading fallback en_us.lang: {}", e.getMessage());
         }
     }
 
@@ -192,8 +191,11 @@ public class LangManager {
                 int equalsIndex = line.indexOf('=');
                 if (equalsIndex > 0) {
                     String key = line.substring(0, equalsIndex).trim();
+                    // Supports empty values, though uncommon
                     String value = line.substring(equalsIndex + 1).trim();
                     if (!key.isEmpty()) {
+                        // Allow basic escaping for newlines if users want multi-line messages
+                        value = value.replace("\\n", "\n");
                         langMap.put(key, value);
                     }
                 }

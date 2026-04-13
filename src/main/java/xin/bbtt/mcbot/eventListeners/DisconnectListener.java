@@ -20,6 +20,7 @@ package xin.bbtt.mcbot.eventListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
@@ -32,7 +33,7 @@ public class DisconnectListener implements Listener {
     private static final Logger log = LoggerFactory.getLogger(DisconnectListener.class.getSimpleName());
     @EventHandler
     public void onDisconnect(DisconnectEvent event) {
-        if ("§c微软认证失败".equals(Utils.toString(event.getReason()))) {
+        if (LangManager.get("match.ms.auth.failed").equals(Utils.toString(event.getReason()))) {
             BotConfig config = Bot.Instance.getConfig();
             BotConfigData configData = config.getConfigData();
 
@@ -41,14 +42,14 @@ public class DisconnectListener implements Listener {
             try {
                 configData.setAccount(AccountLoader.refresh());
             } catch (Exception e) {
-                log.error("Microsoft authentication failed.", e);
+                log.error(LangManager.get("auth.ms.failed"), e);
                 configData.getAccount().setFullSession(null);
                 shouldStopBot = true;
             } finally {
                 try {
                     config.saveToFile();
                 } catch (Exception e) {
-                    log.error("Failed to save the configuration file.", e);
+                    log.error(LangManager.get("config.save.failed"), e);
                 }
             }
 
