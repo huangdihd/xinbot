@@ -103,7 +103,10 @@ public class Utils {
         ArrayList<String> result = new ArrayList<>();
 
         if (component instanceof TranslatableComponent translatable) {
-            String text = LangManager.get(translatable.key());
+            Object[] args = translatable.arguments().stream()
+                    .map(arg -> Utils.toString(arg.asComponent()))
+                    .toArray();
+            String text = LangManager.get(translatable.key(), args);
             if (!text.isEmpty()) {
                 result.add(text);
             }
