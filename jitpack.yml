@@ -2,4 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - ./mvnw -B -ntp -DskipTests=true -Dgpg.skip=true clean install
+  - mvn -B -ntp -DskipTests=true -Dgpg.skip=true clean install
