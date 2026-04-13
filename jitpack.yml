@@ -1,10 +1,5 @@
 jdk:
   - openjdk17
 
-before_install:
-  - wget https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-  - tar xzvf apache-maven-3.9.6-bin.tar.gz
-  - export PATH=$PWD/apache-maven-3.9.6/bin:$PATH
-
 install:
-  - mvn -B -ntp -DskipTests=true -Dgpg.skip=true clean install
+  - ./mvnw -B -ntp -DskipTests=true -Dgpg.skip=true clean install
