@@ -117,6 +117,9 @@ public class Xinbot {
             return;
         }
 
+        // Init xinbot language
+        LangManager.initXinbotLang();
+
         // Load the configuration file
         configPath = args[0];
         // Check if config file exists, if not copy from resources
@@ -139,8 +142,8 @@ public class Xinbot {
         // Initialize JLine
         CLI.init();
 
-        // Initialize the language manager
-        LangManager.Init(config.getConfigData().isEnableTranslation());
+        // Initialize minecraft language
+        if (config.getConfigData().isEnableTranslation()) LangManager.initMinecraftLang();
 
         log.info("version: {}", version);
 

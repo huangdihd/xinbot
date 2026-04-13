@@ -53,26 +53,20 @@ public class LangManager {
         "fr_fr"     // French
     );
 
-    /**
-     * Initialization method. Automatically gets the system language.
-     * @param enableTranslation If true, loads the lang.json file.
-     * The .lang file is loaded regardless of this parameter.
-     */
-    public static void Init(boolean enableTranslation) {
+    public static void clear() {
+        currentLang.clear();
+    }
+
+    public static void initMinecraftLang() {
         String targetLangCode = getSystemLangCode();
-
-        currentLang.clear(); // Clear the history cache
-
-        // Load JSON only if enableTranslate is true
-        if (enableTranslation) {
-            loadFromJson(targetLangCode);
-        }
-
-        // ALWAYS load the .lang file
-        // Since this runs last, .lang values will overwrite JSON values if both exist
-        loadFromLangFile(targetLangCode);
-
+        loadFromJson(targetLangCode);
         System.gc();
+    }
+
+    public static void initXinbotLang() {
+        String targetLangCode = getSystemLangCode();
+        loadFromJson(targetLangCode);
+        loadFromLangFile(targetLangCode);
     }
 
     /**
