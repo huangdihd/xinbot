@@ -23,7 +23,6 @@ import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
-import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
@@ -44,6 +43,10 @@ import xin.bbtt.mcbot.plugin.PluginManager;
 
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
 
@@ -62,6 +65,11 @@ public class Bot {
     private final PluginManager pluginManager;
     @Getter
     private ProxyInfo proxyInfo;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "Bot-Scheduler");
+        t.setDaemon(true);
+        return t;
+    });
 
     public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
     public final static Bot Instance = new Bot();
@@ -74,6 +82,9 @@ public class Bot {
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
+    private final BlockChangedAckRecorder blockChangedAckRecorder = new BlockChangedAckRecorder();
+    @Getter
+    private final AtomicInteger sequence = new AtomicInteger(0);
     @Getter
     @Setter
     private String serverHost = "2b2t.xin";
@@ -107,6 +118,7 @@ public class Bot {
     public void stop() {
         try {
             running = false;
+            scheduler.shutdownNow();
             disconnect("Bot stopped.");
             pluginManager.unloadPlugins();
         }
@@ -149,7 +161,16 @@ public class Bot {
         session.removeListener(messageSender);
         server = null;
         if (!running) return;
-        connect();
+
+        long delay = config.getConfigData().getReconnectDelay();
+        if (delay > 0) {
+            log.info("Reconnecting in {}ms.", delay);
+            scheduler.schedule(() -> {
+                if (running) connect();
+            }, delay, TimeUnit.MILLISECONDS);
+        } else {
+            connect();
+        }
     }
 
     private void connect(){
@@ -164,6 +185,7 @@ public class Bot {
         session.addListener(serverRecorder);
         session.addListener(chatMessagePrinter);
         session.addListener(messageSender);
+        session.addListener(blockChangedAckRecorder);
         pluginManager.enableAll();
         log.info("Connecting.");
         session.connect();
