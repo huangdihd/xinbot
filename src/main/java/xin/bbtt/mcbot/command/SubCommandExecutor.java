@@ -105,10 +105,10 @@ public class SubCommandExecutor extends TabHighlightExecutor {
     }
 
     protected void onNoSubCommand(Command command, String label) {
-        log.error(LangManager.get("command.sub.missing", String.join(", ", subCommandMap.keySet())));
+        log.error(LangManager.get("xinbot.command.sub.missing", String.join(", ", subCommandMap.keySet())));
     }
 
     protected void onUnknownSubCommand(Command command, String label, String unknownSub) {
-        log.error(LangManager.get("command.sub.unknown", unknownSub, String.join(", ", subCommandMap.keySet())));
+        log.error(LangManager.get("xinbot.command.sub.unknown", unknownSub, String.join(", ", subCommandMap.keySet())));
     }
 }

@@ -79,9 +79,9 @@ public class AutoJoinListener extends SessionAdapter {
     private void recordContainer(ClientboundOpenScreenPacket openScreenPacket) {
         if (Bot.Instance.getServer() != Server.Login) return;
         if (!(openScreenPacket.getTitle() instanceof TextComponent title)) return;
-        if (!title.content().contains(LangManager.get("match.join.game1")) && !title.content().contains(LangManager.get("match.join.game2")) && !title.content().contains(LangManager.get("match.join.game3")) && !title.content().contains(LangManager.get("match.join.game4"))) return;
+        if (!title.content().contains(LangManager.get("xinbot.match.join.game1")) && !title.content().contains(LangManager.get("xinbot.match.join.game2")) && !title.content().contains(LangManager.get("xinbot.match.join.game3")) && !title.content().contains(LangManager.get("xinbot.match.join.game4"))) return;
         containerId = openScreenPacket.getContainerId();
-        log.debug(xin.bbtt.mcbot.LangManager.get("autojoin.container.recorded", containerId));
+        log.debug(xin.bbtt.mcbot.LangManager.get("xinbot.autojoin.container.recorded", containerId));
     }
 
     private void onSetContent(ClientboundContainerSetContentPacket containerSetContentPacket, Session session) {

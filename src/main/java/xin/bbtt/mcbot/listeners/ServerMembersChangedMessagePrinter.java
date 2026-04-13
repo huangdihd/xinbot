@@ -27,7 +27,6 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
-import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.events.PlayerJoinEvent;
 import xin.bbtt.mcbot.events.PlayerLeaveEvent;
 
@@ -59,7 +58,7 @@ public class ServerMembersChangedMessagePrinter extends SessionAdapter {
         if (playerInfoUpdatePacket.getEntries()[0].getProfile().getName().equals(Bot.Instance.getConfig().getConfigData().getAccount().getName())) return;
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(playerInfoUpdatePacket.getEntries()[0].getProfile());
         Bot.Instance.getPluginManager().events().callEvent(playerJoinEvent);
-        log.info(parseColors(LangManager.get("server.member.joined", playerInfoUpdatePacket.getEntries()[0].getProfile().getName())));
+        log.info(parseColors("§8[§2+§8]§7{}"), playerInfoUpdatePacket.getEntries()[0].getProfile().getName());
     }
 
     private void playerInfoRemovePacketProcessor(ClientboundPlayerInfoRemovePacket playerInfoRemovePacket) {
@@ -70,7 +69,7 @@ public class ServerMembersChangedMessagePrinter extends SessionAdapter {
         if (gameProfile.getName().equals(Bot.Instance.getConfig().getConfigData().getAccount().getName())) return;
         PlayerLeaveEvent playerLeaveEvent = new PlayerLeaveEvent(gameProfile);
         Bot.Instance.getPluginManager().events().callEvent(playerLeaveEvent);
-        log.info(parseColors(LangManager.get("server.member.left", gameProfile.getName())));
+        log.info(parseColors("§8[§c-§8]§7{}"), gameProfile.getName());
 
     }
 }

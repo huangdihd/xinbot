@@ -33,11 +33,11 @@ public class HelpCommand extends Command {
 
     @Override
     public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("command.help.description");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.help.description");
     }
 
     @Override
     public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("command.help.usage");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.help.usage");
     }
 }

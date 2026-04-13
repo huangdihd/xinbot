@@ -110,7 +110,7 @@ public class Bot {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
         login = false;
-        log.info(LangManager.get("bot.starting", protocol.getProfile().getName()));
+        log.info(LangManager.get("xinbot.bot.starting", protocol.getProfile().getName()));
         connect();
         getInput();
     }
@@ -119,11 +119,11 @@ public class Bot {
         try {
             running = false;
             scheduler.shutdownNow();
-            disconnect(LangManager.get("bot.stopped"));
+            disconnect(LangManager.get("xinbot.bot.stopped"));
             pluginManager.unloadPlugins();
         }
         catch (Exception e) {
-            log.error(LangManager.get("bot.error.stopping"), e);
+            log.error(LangManager.get("xinbot.bot.error.stopping"), e);
         }
         finally {
             mainThread.interrupt();
@@ -164,7 +164,7 @@ public class Bot {
 
         long delay = config.getConfigData().getReconnectDelay();
         if (delay > 0) {
-            log.info(LangManager.get("bot.reconnecting", delay));
+            log.info(LangManager.get("xinbot.bot.reconnecting", delay));
             scheduler.schedule(() -> {
                 if (running) connect();
             }, delay, TimeUnit.MILLISECONDS);
@@ -187,16 +187,16 @@ public class Bot {
         session.addListener(messageSender);
         session.addListener(blockChangedAckRecorder);
         pluginManager.enableAll();
-        log.info(LangManager.get("bot.connecting"));
+        log.info(LangManager.get("xinbot.bot.connecting"));
         session.connect();
         long start_time = System.currentTimeMillis();
         while (server == null && running){
             if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
-                disconnect(LangManager.get("bot.connection.timed.out"));
+                disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
                 break;
             }
         }
-        log.info(LangManager.get("bot.connection.completed"));
+        log.info(LangManager.get("xinbot.bot.connection.completed"));
     }
 
     public void disconnect(String reason){

@@ -47,7 +47,7 @@ public class CLI {
             JLineConsoleAppender.setLineReader(lineReader);
 
         } catch (Exception e) {
-            System.err.println(LangManager.get("jline.init.failed", e.getMessage()));
+            System.err.println(LangManager.get("xinbot.jline.init.failed", e.getMessage()));
         }
     }
 }

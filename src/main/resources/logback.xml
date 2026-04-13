@@ -16,13 +16,17 @@
   -->
 
 <configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
     <property name="log.charset" value="${log.charset:-UTF-8}" />
     <property name="log.level" value="${log.level:-INFO}" />
+
+    <conversionRule conversionWord="translatedLevel" class="xin.bbtt.mcbot.jLine.TranslatedLevelConverter" />
 
     <appender name="CONSOLE" class="xin.bbtt.mcbot.jLine.JLineConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>[%d{HH:mm:ss} %highlight(%5level)] [%cyan(%logger)]%marker: %msg%n</pattern>
+            <pattern>[%d{HH:mm:ss} %highlight(%translatedLevel)] [%cyan(%logger)]%marker: %msg%n</pattern>
             <charset>${log.charset}</charset>
         </encoder>
     </appender>

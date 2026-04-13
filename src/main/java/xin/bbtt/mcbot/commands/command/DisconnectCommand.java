@@ -33,11 +33,11 @@ public class DisconnectCommand extends Command {
 
     @Override
     public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("command.disconnect.description");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.disconnect.description");
     }
 
     @Override
     public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("command.disconnect.usage");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.disconnect.usage");
     }
 }

@@ -35,11 +35,11 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
     private final Logger log = LoggerFactory.getLogger(HelpCommandExecutor.class.getSimpleName());
 
     private void printCommandHelp(Command command, Plugin plugin) {
-        log.info(LangManager.get("command.help.name", command.getName()));
-        log.info(LangManager.get("command.help.plugin", plugin.getName()));
-        log.info(LangManager.get("command.help.aliases", String.join(", ", command.getAliases())));
-        log.info(LangManager.get("command.help.description", command.getDescription()));
-        log.info(LangManager.get("command.help.usage", command.getUsage()));
+        log.info(LangManager.get("xinbot.command.help.name", command.getName()));
+        log.info(LangManager.get("xinbot.command.help.plugin", plugin.getName()));
+        log.info(LangManager.get("xinbot.command.help.aliases", String.join(", ", command.getAliases())));
+        log.info(LangManager.get("xinbot.command.help.description", command.getDescription()));
+        log.info(LangManager.get("xinbot.command.help.usage", command.getUsage()));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
                     return;
                 }
             }
-            log.info(LangManager.get("command.not.found", args[0]));
+            log.info(LangManager.get("xinbot.command.not.found", args[0]));
         }
     }
 

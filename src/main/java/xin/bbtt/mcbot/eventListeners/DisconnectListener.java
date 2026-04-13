@@ -33,7 +33,7 @@ public class DisconnectListener implements Listener {
     private static final Logger log = LoggerFactory.getLogger(DisconnectListener.class.getSimpleName());
     @EventHandler
     public void onDisconnect(DisconnectEvent event) {
-        if (LangManager.get("match.ms.auth.failed").equals(Utils.toString(event.getReason()))) {
+        if (LangManager.get("xinbot.match.ms.auth.failed").equals(Utils.toString(event.getReason()))) {
             BotConfig config = Bot.Instance.getConfig();
             BotConfigData configData = config.getConfigData();
 
@@ -42,14 +42,14 @@ public class DisconnectListener implements Listener {
             try {
                 configData.setAccount(AccountLoader.refresh());
             } catch (Exception e) {
-                log.error(LangManager.get("auth.ms.failed"), e);
+                log.error(LangManager.get("xinbot.auth.ms.failed"), e);
                 configData.getAccount().setFullSession(null);
                 shouldStopBot = true;
             } finally {
                 try {
                     config.saveToFile();
                 } catch (Exception e) {
-                    log.error(LangManager.get("config.save.failed"), e);
+                    log.error(LangManager.get("xinbot.config.save.failed"), e);
                 }
             }
 

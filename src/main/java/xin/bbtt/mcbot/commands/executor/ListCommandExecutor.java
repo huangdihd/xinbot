@@ -34,7 +34,7 @@ public class ListCommandExecutor extends TabExecutor {
     public void onCommand(Command command, String label, String[] args) {
 
         if (args.length == 1 &&args[0].equals("uuid")) {
-            log.info(LangManager.get("player.online.count", Bot.Instance.players.size(),
+            log.info(LangManager.get("xinbot.player.online.count", Bot.Instance.players.size(),
                     Bot.Instance.players.values().parallelStream().map((
                             gameProfile -> gameProfile.getName() + "(" + gameProfile.getId() + ")")
                     ).collect(Collectors.joining(", ")
@@ -42,7 +42,7 @@ public class ListCommandExecutor extends TabExecutor {
             ));
             return;
         }
-        log.info(LangManager.get("player.online.count", Bot.Instance.players.size(),
+        log.info(LangManager.get("xinbot.player.online.count", Bot.Instance.players.size(),
                 Bot.Instance.players.values().parallelStream().map(GameProfile::getName).collect(Collectors.joining(", "))
         ));
     }

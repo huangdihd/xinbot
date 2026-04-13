@@ -45,11 +45,11 @@ public class AccountLoader {
             return account;
         }
         if (account.getFullSession() == null || account.getFullSession().isEmpty()) {
-            log.warn(LangManager.get("auth.session.not.found"));
-            log.info(LangManager.get("auth.device.code.start"));
+            log.warn(LangManager.get("xinbot.auth.session.not.found"));
+            log.info(LangManager.get("xinbot.auth.device.code.start"));
             StepMsaDeviceCode.MsaDeviceCodeCallback callback = new StepMsaDeviceCode.MsaDeviceCodeCallback(
                     msaDeviceCode ->
-                            log.info(LangManager.get("auth.device.code.prompt", msaDeviceCode.getDirectVerificationUri(), msaDeviceCode.getUserCode()))
+                            log.info(LangManager.get("xinbot.auth.device.code.prompt", msaDeviceCode.getDirectVerificationUri(), msaDeviceCode.getUserCode()))
             );
             javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.getFromInput(httpClient, callback);
         }

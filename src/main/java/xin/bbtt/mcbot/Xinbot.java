@@ -58,18 +58,18 @@ public class Xinbot {
             return true;
 
         if (pluginDir.exists()) {
-            log.error(LangManager.get("plugin.dir.not.dir"));
+            log.error(LangManager.get("xinbot.plugin.dir.not.dir"));
             return false;
         }
 
-        log.info(LangManager.get("plugin.dir.not.exists"));
+        log.info(LangManager.get("xinbot.plugin.dir.not.exists"));
 
         if (!pluginDir.mkdir()) {
-            log.error(LangManager.get("plugin.dir.create.failed", pluginDir.isDirectory()));
+            log.error(LangManager.get("xinbot.plugin.dir.create.failed", pluginDir.isDirectory()));
             return false;
         }
 
-        log.info(LangManager.get("plugin.dir.created", pluginDir.isDirectory()));
+        log.info(LangManager.get("xinbot.plugin.dir.created", pluginDir.isDirectory()));
         return true;
     }
 
@@ -77,7 +77,7 @@ public class Xinbot {
     private static void copyDefaultConfig(String configPath) {
         try (InputStream is = Xinbot.class.getClassLoader().getResourceAsStream("config.conf")) {
             if (is == null) {
-                log.error(LangManager.get("config.default.not.found"));
+                log.error(LangManager.get("xinbot.config.default.not.found"));
                 return;
             }
 
@@ -86,9 +86,9 @@ public class Xinbot {
                 Files.createDirectories(configFilePath.getParent());
             }
             Files.copy(is, configFilePath, StandardCopyOption.REPLACE_EXISTING);
-            log.info(LangManager.get("config.default.copied", configPath));
+            log.info(LangManager.get("xinbot.config.default.copied", configPath));
         } catch (IOException e) {
-            log.error(LangManager.get("config.default.copy.failed", e.getMessage()), e);
+            log.error(LangManager.get("xinbot.config.default.copy.failed", e.getMessage()), e);
         }
     }
 
@@ -125,17 +125,17 @@ public class Xinbot {
         // Check if config file exists, if not copy from resources
         Path configFilePath = Paths.get(configPath);
         if (!Files.exists(configFilePath)) {
-            log.info(LangManager.get("config.loading", configPath));
+            log.info(LangManager.get("xinbot.config.loading", configPath));
             copyDefaultConfig(configPath);
-            log.info(LangManager.get("config.modify.prompt", configPath));
+            log.info(LangManager.get("xinbot.config.modify.prompt", configPath));
             System.exit(1);
         }
-        log.info(LangManager.get("config.loading", configPath));
+        log.info(LangManager.get("xinbot.config.loading", configPath));
         try {
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
-            log.error(LangManager.get("config.load.failed", configPath), e);
+            log.error(LangManager.get("xinbot.config.load.failed", configPath), e);
             System.exit(1);
         }
 
@@ -156,7 +156,7 @@ public class Xinbot {
             config.getConfigData().setAccount(AccountLoader.init(config.getConfigData().getAccount()));
         }
         catch (Exception e) {
-            log.error(LangManager.get("account.load.failed"), e);
+            log.error(LangManager.get("xinbot.account.load.failed"), e);
             System.exit(1);
         }
 
@@ -165,7 +165,7 @@ public class Xinbot {
             config.saveToFile();
         }
         catch (Exception e) {
-            log.error(LangManager.get("config.save.failed"), e);
+            log.error(LangManager.get("xinbot.config.save.failed"), e);
         }
 
         // Initialize the bot
@@ -175,7 +175,7 @@ public class Xinbot {
         Bot.Instance.start();
 
         // After the bot stopped
-        log.info(LangManager.get("bot.stopped"));
-        log.info(LangManager.get("bot.bye"));
+        log.info(LangManager.get("xinbot.bot.stopped"));
+        log.info(LangManager.get("xinbot.bot.bye"));
     }
 }

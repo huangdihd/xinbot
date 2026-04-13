@@ -50,13 +50,13 @@ public class AutoLoginListener extends SessionAdapter {
     }
 
     private void login(ClientboundSetTitleTextPacket titlePacket) {
-        if (titlePacket.toString().contains(LangManager.get("match.login.success"))) {
+        if (titlePacket.toString().contains(LangManager.get("xinbot.match.login.success"))) {
             LoginSuccessEvent loginSuccessEvent = new LoginSuccessEvent();
             Bot.Instance.getPluginManager().events().callEvent(loginSuccessEvent);
-            log.info(xin.bbtt.mcbot.LangManager.get("login.successful"));
+            log.info(xin.bbtt.mcbot.LangManager.get("xinbot.login.successful"));
             Bot.Instance.login = true;
         }
-        else if (titlePacket.toString().contains(LangManager.get("match.register"))) {
+        else if (titlePacket.toString().contains(LangManager.get("xinbot.match.register"))) {
             String registerCommand = "reg " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword() + " " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword();
             SendRegisterCommandEvent registerCommandEvent = new SendRegisterCommandEvent(registerCommand);
             Bot.Instance.getPluginManager().events().callEvent(registerCommandEvent);

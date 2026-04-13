@@ -55,6 +55,6 @@ public class ChatMessagePrinter extends SessionAdapter {
         }
         Arrays.stream(event.getText().split("\n"))
                 .forEach((line) -> log.info(marker, parseColors(line)));
-        log.debug(marker, xin.bbtt.mcbot.LangManager.get("chat.system.received", toStrings(systemChatPacket.getContent())));
+        log.debug(marker, xin.bbtt.mcbot.LangManager.get("xinbot.chat.system.received", toStrings(systemChatPacket.getContent())));
     }
 }

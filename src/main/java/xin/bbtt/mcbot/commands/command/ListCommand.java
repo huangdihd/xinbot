@@ -33,11 +33,11 @@ public class ListCommand extends Command {
 
     @Override
     public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("command.list.description");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.description");
     }
 
     @Override
     public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("command.list.usage");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.usage");
     }
 }

@@ -32,11 +32,11 @@ public class StopCommand extends Command {
 
     @Override
     public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("command.stop.description");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.stop.description");
     }
 
     @Override
     public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("command.stop.usage");
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.stop.usage");
     }
 }
