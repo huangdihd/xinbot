@@ -19,7 +19,6 @@ package xin.bbtt.mcbot;
 
 import xin.bbtt.mcbot.commands.command.*;
 import xin.bbtt.mcbot.commands.executor.*;
-import xin.bbtt.mcbot.eventListeners.DisconnectListener;
 import xin.bbtt.mcbot.eventListeners.PositonInQueueOverlayListener;
 import xin.bbtt.mcbot.eventListeners.PrivateChatMessageListener;
 import xin.bbtt.mcbot.eventListeners.PublicChatMessageListener;
@@ -63,7 +62,6 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.getPluginManager().registerEvents(new PositonInQueueOverlayListener(), this);
         Bot.Instance.getPluginManager().registerEvents(new PrivateChatMessageListener(), this);
         Bot.Instance.getPluginManager().registerEvents(new PublicChatMessageListener(), this);
-        Bot.Instance.getPluginManager().registerEvents(new DisconnectListener(), this);
     }
 
     @Override

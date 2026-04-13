@@ -1,0 +1,41 @@
+# Xinbot Language File - Russian
+# Format: key=value
+
+# Bot connection messages
+bot.connecting=Подключение...
+bot.connection.completed=Подключение завершено.
+bot.connection.timed.out=Время подключения истекло.
+bot.end.of.stream=Конец потока
+bot.disconnect.reason=Отключено: %s
+bot.starting=Запуск бота с именем пользователя: %s
+bot.stopped=Бот остановлен.
+bot.error.stopping=Произошла ошибка при остановке бота
+
+# Disconnect reasons (Minecraft protocol translation keys)
+disconnect.genericReason=Отключено
+disconnect.endOfStream=Конец потока
+disconnect.timeout=Время ожидания истекло
+disconnect.loginFailed=Ошибка входа
+
+# Reconnection messages
+bot.waiting.reconnect=Ожидание 3 секунд перед переподключением...
+bot.reconnect.interrupted=Переподключение прервано
+bot.cleanup.session=Очистка сессии перед переподключением
+
+# Plugin manager messages
+plugin.loaded=Загружен плагин: %s
+plugin.loading=Попытка загрузить плагин: %s
+plugin.enabled=Включен плагин: %s
+plugin.disabled=Отключен плагин: %s
+
+# Server member messages
+server.member.joined=[+]%s
+server.member.left=[-]%s
+
+# LangManager messages
+langmanager.loaded=Загружен язык: %s
+langmanager.error=Ошибка загрузки языкового файла
+
+# Config messages
+config.loading=Загрузка файла конфигурации: %s
+config.error=Ошибка загрузки файла конфигурации

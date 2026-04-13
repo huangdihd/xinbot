@@ -23,10 +23,8 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
-import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 import java.util.*;
@@ -191,35 +189,5 @@ public class Utils {
             AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN),
             AttributedStyle.DEFAULT.foreground(AttributedStyle.RED)
         );
-    }
-
-    public static HashedStack itemStackToHashedStack(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getId() == 0) {
-            return new HashedStack(0, 0, Map.of(), Set.of());
-        }
-
-        int id = itemStack.getId();
-        int count = itemStack.getAmount();
-
-        Map<DataComponentType<?>, Integer> addedComponents = new HashMap<>();
-        Set<DataComponentType<?>> removedComponents = new HashSet<>();
-
-        DataComponents patch = itemStack.getDataComponentsPatch();
-
-        if (patch == null) {
-            return new HashedStack(id, count, addedComponents, removedComponents);
-        }
-
-        patch.getDataComponents().forEach((type, componentWrapper) -> {
-            Object realValue = componentWrapper.getValue();
-
-            if (realValue == null) {
-                removedComponents.add(type);
-            } else {
-                addedComponents.put(type, realValue.hashCode());
-            }
-        });
-
-        return new HashedStack(id, count, addedComponents, removedComponents);
     }
 }

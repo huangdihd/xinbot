@@ -122,12 +122,12 @@ public class Xinbot {
         // Check if config file exists, if not copy from resources
         Path configFilePath = Paths.get(configPath);
         if (!Files.exists(configFilePath)) {
-            log.info("Config file not found, copying default config...");
+            log.info(LangManager.get("config.loading", configPath));
             copyDefaultConfig(configPath);
             log.info("Please modify the config file: {}", configPath);
             System.exit(1);
         }
-        log.info("Loading config file: {}", configPath);
+        log.info(LangManager.get("config.loading", configPath));
         try {
             config = new BotConfig(configPath);
         }
@@ -140,7 +140,7 @@ public class Xinbot {
         CLI.init();
 
         // Initialize the language manager
-        if (config.getConfigData().isEnableTranslation()) LangManager.Init();
+        LangManager.Init(config.getConfigData().isEnableTranslation());
 
         log.info("version: {}", version);
 
@@ -172,7 +172,7 @@ public class Xinbot {
         Bot.Instance.start();
 
         // After the bot stopped
-        log.info("Bot stopped.");
+        log.info(LangManager.get("bot.stopped"));
         log.info("Bye!");
     }
 }

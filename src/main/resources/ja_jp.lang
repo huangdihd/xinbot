@@ -1,0 +1,41 @@
+# Xinbot Language File - Japanese
+# Format: key=value
+
+# Bot connection messages
+bot.connecting=接続中...
+bot.connection.completed=接続が完了しました。
+bot.connection.timed.out=接続がタイムアウトしました。
+bot.end.of.stream=ストリーム終了
+bot.disconnect.reason=切断されました: %s
+bot.starting=ユーザー名 %s でボットを起動中
+bot.stopped=ボットを停止しました。
+bot.error.stopping=ボットの停止中にエラーが発生しました
+
+# Disconnect reasons (Minecraft protocol translation keys)
+disconnect.genericReason=切断されました
+disconnect.endOfStream=ストリーム終了
+disconnect.timeout=タイムアウトしました
+disconnect.loginFailed=ログインに失敗しました
+
+# Reconnection messages
+bot.waiting.reconnect=再接続まで3秒待機中...
+bot.reconnect.interrupted=再接続が中断されました
+bot.cleanup.session=再接続前にセッションをクリーンアップ中
+
+# Plugin manager messages
+plugin.loaded=プラグインを読み込みました: %s
+plugin.loading=プラグインの読み込みを試行中: %s
+plugin.enabled=プラグインを有効化しました: %s
+plugin.disabled=プラグインを無効化しました: %s
+
+# Server member messages
+server.member.joined=[+]%s
+server.member.left=[-]%s
+
+# LangManager messages
+langmanager.loaded=言語を読み込みました: %s
+langmanager.error=言語ファイルの読み込み中にエラーが発生しました
+
+# Config messages
+config.loading=設定ファイルを読み込み中: %s
+config.error=設定ファイルの読み込み中にエラーが発生しました

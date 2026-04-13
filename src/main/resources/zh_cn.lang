@@ -1,0 +1,41 @@
+# Xinbot Language File - Chinese (Simplified)
+# Format: key=value
+
+# Bot connection messages
+bot.connecting=正在连接...
+bot.connection.completed=连接完成。
+bot.connection.timed.out=连接超时。
+bot.end.of.stream=数据流结束
+bot.disconnect.reason=断开连接：%s
+bot.starting=正在启动机器人，用户名：%s
+bot.stopped=机器人已停止。
+bot.error.stopping=停止机器人时发生错误
+
+# Disconnect reasons (Minecraft protocol translation keys)
+disconnect.genericReason=已断开连接
+disconnect.endOfStream=数据流结束
+disconnect.timeout=连接超时
+disconnect.loginFailed=登录失败
+
+# Reconnection messages
+bot.waiting.reconnect=等待3秒后重新连接...
+bot.reconnect.interrupted=重连被中断
+bot.cleanup.session=重连前清理会话
+
+# Plugin manager messages
+plugin.loaded=已加载插件：%s
+plugin.loading=尝试加载插件：%s
+plugin.enabled=已启用插件：%s
+plugin.disabled=已禁用插件：%s
+
+# Server member messages
+server.member.joined=[+]%s
+server.member.left=[-]%s
+
+# LangManager messages
+langmanager.loaded=已加载语言：%s
+langmanager.error=加载语言文件时出错
+
+# Config messages
+config.loading=正在加载配置文件：%s
+config.error=加载配置文件时出错
