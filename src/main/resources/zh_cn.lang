@@ -145,3 +145,7 @@ xinbot.level.warn=警告
 xinbot.level.error=错误
 xinbot.level.debug=调试
 xinbot.level.trace=追踪
+
+# Markers
+xinbot.marker.chat=聊天
+xinbot.marker.overlay=悬浮

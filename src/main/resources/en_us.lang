@@ -145,3 +145,7 @@ xinbot.level.warn=WARN
 xinbot.level.error=ERROR
 xinbot.level.debug=DEBUG
 xinbot.level.trace=TRACE
+
+# Markers
+xinbot.marker.chat=Chat
+xinbot.marker.overlay=Over

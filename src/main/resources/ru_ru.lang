@@ -88,3 +88,7 @@ xinbot.level.warn=ПРЕДУПР
 xinbot.level.error=ОШИБКА
 xinbot.level.debug=ОТЛАДКА
 xinbot.level.trace=ТРАССИР
+
+# Markers
+xinbot.marker.chat=ЧАТ
+xinbot.marker.overlay=ОВЕР

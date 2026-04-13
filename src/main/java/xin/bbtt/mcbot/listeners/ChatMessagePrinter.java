@@ -30,6 +30,8 @@ import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.events.OverlayUpdateEvent;
 import xin.bbtt.mcbot.events.SystemChatMessageEvent;
 
+import xin.bbtt.mcbot.LangManager;
+
 import java.util.Arrays;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
@@ -37,16 +39,18 @@ import static xin.bbtt.mcbot.Utils.toStrings;
 
 public class ChatMessagePrinter extends SessionAdapter {
     private static final Logger log = LoggerFactory.getLogger(ChatMessagePrinter.class.getSimpleName());
-    private static final Marker chatMessageMarker = MarkerFactory.getMarker("[SysChatMessage]");
-    private static final Marker overlayMessageMarker = MarkerFactory.getMarker("[OverlayMessage]");
     private static String overlayMessage;
+
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
         boolean overlay = systemChatPacket.isOverlay();
         SystemChatMessageEvent event = new SystemChatMessageEvent(systemChatPacket.getContent(), systemChatPacket.isOverlay());
         Bot.Instance.getPluginManager().events().callEvent(event);
-        Marker marker = overlay ? overlayMessageMarker : chatMessageMarker;
+
+        String markerName = overlay ? LangManager.get("xinbot.marker.overlay") : LangManager.get("xinbot.marker.chat");
+        Marker marker = MarkerFactory.getMarker("[" + markerName + "]");
+
         if (overlay) {
             if (Utils.toString(systemChatPacket.getContent()).equals(overlayMessage)) return;
             overlayMessage = Utils.toString(systemChatPacket.getContent());
