@@ -222,4 +222,8 @@ public class Bot {
         }
         to_be_sent_messages.add(message);
     }
+
+    public int getAndIncreaseSequence() {
+        return this.sequence.getAndAdd(1);
+    }
 }
