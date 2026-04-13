@@ -44,38 +44,54 @@ public class LangManager {
         currentLang.clear();
     }
 
-    public static void initMinecraftLang() {
-        String targetLangCode = getSystemLangCode();
+    /**
+     * Initializes the language manager by detecting the system language.
+     */
+    public static void init() {
+        currentLanguageCode = getSystemLangCode();
+    }
+
+    /**
+     * Loads Minecraft protocol translations from internal lang.json.
+     */
+    public static void loadMinecraft() {
+        String targetLangCode = getCurrentLanguage();
         // Load en_us as base fallback
         loadFromJson("en_us");
         if (!"en_us".equals(targetLangCode)) {
-            // Override with target language
             loadFromJson(targetLangCode);
         }
-        currentLanguageCode = targetLangCode;
         System.gc();
     }
 
-    public static void initXinbotLang() {
-        String targetLangCode = getSystemLangCode();
-        
-        // 1. Load en_us as base fallback from JSON and internal .lang
-        loadFromJson("en_us");
-        loadFromLangFile("en_us", true);
-        
-        // 2. Override with target language from internal resources
-        if (!"en_us".equals(targetLangCode)) {
-            loadFromJson(targetLangCode);
-            loadFromLangFile(targetLangCode, true);
-        }
-        
-        // 3. Override with external files (allows users to customize without recompiling)
+    /**
+     * Loads external overrides from the ./lang/ directory.
+     */
+    public static void loadExternal() {
+        String targetLangCode = getCurrentLanguage();
+        // 1. Load en_us as base fallback
         loadFromExternalLangFile("en_us");
+        // 2. Override with target language
         if (!"en_us".equals(targetLangCode)) {
             loadFromExternalLangFile(targetLangCode);
         }
-        
-        currentLanguageCode = targetLangCode;
+    }
+
+    /**
+     * Initializes translations for a component (core or plugin) using its ClassLoader.
+     * @param classLoader The ClassLoader to load resources from
+     */
+    public static void initLang(ClassLoader classLoader) {
+        if (classLoader == null) return;
+        String targetLangCode = getCurrentLanguage();
+
+        // 1. Load en_us as base fallback from resources
+        loadFromClassLoader(classLoader, "en_us");
+
+        // 2. Override with target language if not en_us
+        if (!"en_us".equals(targetLangCode)) {
+            loadFromClassLoader(classLoader, targetLangCode);
+        }
     }
 
     /**
@@ -112,17 +128,17 @@ public class LangManager {
 
             if (!root.has(langCode)) {
                 log.debug("Language {} not found in lang.json", langCode);
-                return; // Fallback is already handled by loading en_us first
+                return;
             }
 
             JsonObject langObj = root.getAsJsonObject(langCode);
-            if (langObj != null) {
-                Type type = new TypeToken<Map<String, String>>() {}.getType();
-                Map<String, String> jsonMap = new Gson().fromJson(langObj, type);
-                if (jsonMap != null) {
-                    currentLang.putAll(jsonMap);
-                    log.debug("Loaded language {} from lang.json", langCode);
-                }
+            if (langObj == null) return;
+
+            Type type = new TypeToken<Map<String, String>>() {}.getType();
+            Map<String, String> jsonMap = new Gson().fromJson(langObj, type);
+            if (jsonMap != null) {
+                currentLang.putAll(jsonMap);
+                log.debug("Loaded language {} from lang.json", langCode);
             }
 
         } catch (Exception e) {
@@ -131,44 +147,65 @@ public class LangManager {
     }
 
     /**
-     * Loads standalone .lang files (Minecraft format) from internal resources.
-     */
-    public static void loadFromLangFile(@Nullable String langCode, boolean internal) {
-        if (langCode == null || langCode.isBlank()) return;
-
-        String langFileName = langCode + ".lang";
-        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream(langFileName)) {
-            if (is == null) {
-                log.debug("Internal language file {} not found", langFileName);
-                return;
-            }
-
-            currentLang.putAll(parseLangStream(is));
-            log.debug("Loaded language {} from internal {}", langCode, langFileName);
-
-        } catch (Exception e) {
-            log.error("Error loading internal language file {}: {}", langFileName, e.getMessage(), e);
-        }
-    }
-    
-    /**
      * Loads translations from an external directory ./lang/
-     * This allows server admins to customize bot messages.
      */
     private static void loadFromExternalLangFile(String langCode) {
         Path langDir = Paths.get("lang");
-        if (!Files.isDirectory(langDir)) {
-            return;
-        }
+        if (!Files.isDirectory(langDir)) return;
         
         Path langFile = langDir.resolve(langCode + ".lang");
-        if (Files.isRegularFile(langFile)) {
-            try (InputStream is = Files.newInputStream(langFile)) {
-                currentLang.putAll(parseLangStream(is));
-                log.info("Loaded custom language {} from external {}", langCode, langFile);
-            } catch (Exception e) {
-                log.error("Error loading external language file {}: {}", langFile, e.getMessage(), e);
-            }
+        if (!Files.isRegularFile(langFile)) return;
+
+        try (InputStream is = Files.newInputStream(langFile)) {
+            currentLang.putAll(parseLangStream(is));
+            log.info("Loaded custom language {} from external {}", langCode, langFile);
+        } catch (Exception e) {
+            log.error("Error loading external language file {}: {}", langFile, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Adds a map of translations to the current language.
+     * @param translations Map of key-value pairs to add
+     */
+    public static void addTranslations(Map<String, String> translations) {
+        if (translations == null) return;
+        currentLang.putAll(translations);
+    }
+
+    /**
+     * Loads translations from a .lang format input stream.
+     * @param is Input stream to parse
+     * @throws IOException If reading fails
+     */
+    public static void loadFromStream(InputStream is) throws IOException {
+        if (is == null) return;
+        currentLang.putAll(parseLangStream(is));
+    }
+
+    /**
+     * Loads translations from a .lang file.
+     * @param file File to load
+     * @throws IOException If reading fails
+     */
+    public static void loadFromFile(File file) throws IOException {
+        if (file == null || !file.exists()) return;
+        try (InputStream is = Files.newInputStream(file.toPath())) {
+            loadFromStream(is);
+        }
+    }
+
+    /**
+     * Loads translations from a ClassLoader's resources.
+     */
+    public static void loadFromClassLoader(ClassLoader classLoader, String langCode) {
+        if (classLoader == null || langCode == null || langCode.isBlank()) return;
+        String fileName = langCode + ".lang";
+        try (InputStream is = classLoader.getResourceAsStream(fileName)) {
+            if (is == null) return;
+            loadFromStream(is);
+        } catch (Exception e) {
+            log.error("Error loading language {} from classloader: {}", langCode, e.getMessage());
         }
     }
 
@@ -191,7 +228,6 @@ public class LangManager {
                 int equalsIndex = line.indexOf('=');
                 if (equalsIndex > 0) {
                     String key = line.substring(0, equalsIndex).trim();
-                    // Supports empty values, though uncommon
                     String value = line.substring(equalsIndex + 1).trim();
                     if (!key.isEmpty()) {
                         // Allow basic escaping for newlines and tabs

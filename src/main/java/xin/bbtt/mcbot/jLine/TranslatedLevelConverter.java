@@ -26,9 +26,9 @@ public class TranslatedLevelConverter extends ClassicConverter {
     public String convert(ILoggingEvent event) {
         String levelStr = event.getLevel().toString();
         String key = "xinbot.level." + levelStr.toLowerCase();
-        
+
         String translated = LangManager.get(key);
-        
+
         return translated.equals(key) ? levelStr : translated;
-    }
-}
+        }
+        }

@@ -118,7 +118,9 @@ public class Xinbot {
         }
 
         // Init xinbot language
-        LangManager.initXinbotLang();
+        LangManager.init();
+        LangManager.initLang(Xinbot.class.getClassLoader());
+        LangManager.loadExternal();
 
         // Load the configuration file
         configPath = args[0];
@@ -143,7 +145,7 @@ public class Xinbot {
         CLI.init();
 
         // Initialize minecraft language
-        if (config.getConfigData().isEnableTranslation()) LangManager.initMinecraftLang();
+        if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();
 
         log.info(LangManager.get("xinbot.version", version));
 
