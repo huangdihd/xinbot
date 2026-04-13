@@ -21,6 +21,7 @@ package xin.bbtt.mcbot.command;
 import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.LangManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,10 +105,10 @@ public class SubCommandExecutor extends TabHighlightExecutor {
     }
 
     protected void onNoSubCommand(Command command, String label) {
-        log.error("Missing sub-command. Available sub-commands: {}", String.join(", ", subCommandMap.keySet()));
+        log.error(LangManager.get("xinbot.command.sub.missing", String.join(", ", subCommandMap.keySet())));
     }
 
     protected void onUnknownSubCommand(Command command, String label, String unknownSub) {
-        log.error("Unknown sub-command: {}. Available sub-commands: {}", unknownSub, String.join(", ", subCommandMap.keySet()));
+        log.error(LangManager.get("xinbot.command.sub.unknown", unknownSub, String.join(", ", subCommandMap.keySet())));
     }
 }

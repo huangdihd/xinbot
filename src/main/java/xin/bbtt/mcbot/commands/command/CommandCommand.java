@@ -33,11 +33,11 @@ public class CommandCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "A command to send commands.";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.command.description");
     }
 
     @Override
     public String getUsage() {
-        return "command command";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.command.usage");
     }
 }

@@ -15,28 +15,20 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.command;
+package xin.bbtt.mcbot.jLine;
 
-import xin.bbtt.mcbot.command.Command;
+import ch.qos.logback.classic.pattern.ClassicConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import xin.bbtt.mcbot.LangManager;
 
-public class LicenseCommand extends Command {
+public class TranslatedLevelConverter extends ClassicConverter {
     @Override
-    public String getName() {
-        return "license";
-    }
+    public String convert(ILoggingEvent event) {
+        String levelStr = event.getLevel().toString();
+        String key = "xinbot.level." + levelStr.toLowerCase();
 
-    @Override
-    public String[] getAliases() {
-        return new String[]{"license", "lic"};
-    }
+        String translated = LangManager.get(key);
 
-    @Override
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.description");
-    }
-
-    @Override
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.usage");
-    }
-}
+        return translated.equals(key) ? levelStr : translated;
+        }
+        }

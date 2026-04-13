@@ -1,0 +1,94 @@
+# Xinbot Language File - Russian
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=Подключение...
+xinbot.bot.connection.completed=Подключение завершено.
+xinbot.bot.connection.timed.out=Время подключения истекло.
+xinbot.bot.end.of.stream=Конец потока
+xinbot.bot.disconnect.reason=Отключено: %s
+xinbot.bot.starting=Запуск бота с именем пользователя: %s
+xinbot.bot.stopped=Бот остановлен.
+xinbot.bot.error.stopping=Произошла ошибка при остановке бота
+
+# Disconnect reasons (Minecraft protocol translation keys)
+xinbot.disconnect.genericReason=Отключено
+xinbot.disconnect.endOfStream=Конец потока
+xinbot.disconnect.timeout=Время ожидания истекло
+xinbot.disconnect.loginFailed=Ошибка входа
+
+# Reconnection messages
+xinbot.bot.waiting.reconnect=Ожидание 3 секунд перед переподключением...
+xinbot.bot.reconnect.interrupted=Переподключение прервано
+xinbot.bot.cleanup.session=Очистка сессии перед переподключением
+
+# Plugin manager messages
+xinbot.plugin.loaded=Загружен плагин: %s
+xinbot.plugin.loading=Попытка загрузить плагин: %s
+xinbot.plugin.enabled=Включен плагин: %s
+xinbot.plugin.disabled=Отключен плагин: %s
+
+# LangManager messages
+xinbot.langmanager.loaded=Загружен язык: %s
+xinbot.langmanager.error=Ошибка загрузки языкового файла
+
+# Config messages
+xinbot.config.loading=Загрузка файла конфигурации: %s
+xinbot.config.error=Ошибка загрузки файла конфигурации
+
+xinbot.jline.init.failed=Не удалось инициализировать JLine: %s
+xinbot.args.invalid=Вы можете запустить эту программу только с одним аргументом!
+xinbot.version=версия: %s
+
+# Authentication
+xinbot.auth.session.not.found=Сессия для лицензионного аккаунта не найдена
+xinbot.auth.device.code.start=Запуск входа по коду устройства...
+xinbot.auth.device.code.prompt=Перейдите на %s для входа в свой аккаунт Minecraft с кодом: %s
+
+xinbot.match.login.success=登陆成功
+xinbot.match.register=注册
+xinbot.match.join.game1=Game
+xinbot.match.join.game2=戏
+xinbot.match.join.game3=队
+xinbot.match.join.game4=入
+xinbot.match.ms.auth.failed=§c微软认证失败
+
+xinbot.command.not.found.error=Команда не найдена для команды %s
+xinbot.command.execute.error=Ошибка при выполнении команды %s
+xinbot.command.complete.error=Ошибка при завершении команды %s
+
+xinbot.chat.system.received=Получено сообщение: %s
+
+xinbot.autojoin.container.recorded=Записан идентификатор контейнера %s
+xinbot.login.successful=Вход выполнен успешно
+
+xinbot.command.command.description=Команда для отправки команд.
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=Команда для отключения от сервера.
+xinbot.command.disconnect.usage=disconnect
+xinbot.command.help.cmd.description=Показывает список доступных команд
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=Показать лицензию Xinbot
+xinbot.command.license.usage=license
+xinbot.command.list.description=Показывает список игроков
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=Команда для управления плагинами.
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=Команда для показа всех плагинов
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=Команда для отправки сообщения в чат.
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=останавливает бота
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=Отключено командой
+
+# Log levels
+xinbot.level.info=ИНФО
+xinbot.level.warn=ПРЕДУПР
+xinbot.level.error=ОШИБКА
+xinbot.level.debug=ОТЛАДКА
+xinbot.level.trace=ТРАССИР
+
+# Markers
+xinbot.marker.chat=ЧАТ
+xinbot.marker.overlay=ОВЕР

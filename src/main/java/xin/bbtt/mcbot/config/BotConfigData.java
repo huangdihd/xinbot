@@ -30,6 +30,7 @@ public class  BotConfigData {
     private Proxy proxy;
     private boolean enableTranslation;
     private int reconnectTimeout = 5000;
+    private int reconnectDelay = 3000;
 
     @Data
     public static class Account {

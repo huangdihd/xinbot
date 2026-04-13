@@ -15,28 +15,19 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.command;
+package xin.bbtt.mcbot.listeners;
 
-import xin.bbtt.mcbot.command.Command;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
+import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
+import xin.bbtt.mcbot.Bot;
 
-public class LicenseCommand extends Command {
-    @Override
-    public String getName() {
-        return "license";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[]{"license", "lic"};
-    }
+public class BlockChangedAckRecorder extends SessionAdapter {
 
     @Override
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.description");
-    }
-
-    @Override
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.usage");
+    public void packetReceived(Session session, Packet packet) {
+        if (!(packet instanceof ClientboundBlockChangedAckPacket blockChangedAckPacket)) return;
+        Bot.Instance.getSequence().set(blockChangedAckPacket.getSequence());
     }
 }

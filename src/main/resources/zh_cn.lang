@@ -1,0 +1,151 @@
+# Xinbot Language File - Chinese (Simplified)
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=正在连接...
+xinbot.bot.connection.completed=连接完成。
+xinbot.bot.connection.timed.out=连接超时。
+xinbot.bot.end.of.stream=数据流结束
+xinbot.bot.disconnect.reason=断开连接：%s
+xinbot.bot.starting=正在启动机器人，用户名：%s
+xinbot.bot.stopped=机器人已停止。
+xinbot.bot.error.stopping=停止机器人时发生错误
+
+# Disconnect reasons (Minecraft protocol translation keys)
+xinbot.disconnect.genericReason=已断开连接
+xinbot.disconnect.endOfStream=数据流结束
+xinbot.disconnect.timeout=连接超时
+xinbot.disconnect.loginFailed=登录失败
+
+# Reconnection messages
+xinbot.bot.waiting.reconnect=等待3秒后重新连接...
+xinbot.bot.reconnect.interrupted=重连被中断
+xinbot.bot.cleanup.session=重连前清理会话
+
+# Plugin manager messages
+xinbot.plugin.loaded=已加载插件：%s
+xinbot.plugin.loading=尝试加载插件：%s
+xinbot.plugin.enabled=已启用插件：%s
+xinbot.plugin.disabled=已禁用插件：%s
+
+# LangManager messages
+xinbot.langmanager.loaded=已加载语言：%s
+xinbot.langmanager.error=加载语言文件时出错
+
+# Config messages
+xinbot.config.loading=正在加载配置文件：%s
+xinbot.config.error=加载配置文件时出错
+
+# Xinbot initialization messages
+xinbot.plugin.dir.not.dir=插件目录不是一个文件夹！
+xinbot.plugin.dir.not.exists=插件目录不存在，尝试创建它。
+xinbot.plugin.dir.create.failed=无法创建插件目录：%s
+xinbot.plugin.dir.created=已创建插件目录：%s
+
+xinbot.config.default.not.found=在资源文件中找不到默认配置文件！
+xinbot.config.default.copied=默认配置文件已复制到：%s
+xinbot.config.default.copy.failed=复制默认配置文件失败：%s
+xinbot.config.modify.prompt=请修改配置文件：%s
+xinbot.config.load.failed=加载配置文件失败：%s
+xinbot.config.save.failed=保存配置文件失败。
+
+xinbot.account.load.failed=加载账号失败。
+
+xinbot.bot.bye=再见！
+xinbot.bot.reconnecting=将在 %s 毫秒后重新连接。
+
+xinbot.jline.init.failed=初始化 JLine 失败：%s
+xinbot.jline.init.failed=初始化 JLine 失败: %s
+xinbot.args.invalid=你只能使用一个参数运行此程序！
+xinbot.version=版本: %s
+
+# Authentication
+xinbot.auth.session.not.found=未找到正版账号的会话
+xinbot.auth.device.code.start=开始设备代码登录...
+xinbot.auth.device.code.prompt=请前往 %s 并输入代码 %s 以登录你的 Minecraft 账号
+
+xinbot.plugin.dir.invalid=插件目录不存在或无效：%s
+xinbot.plugin.not.found=未找到插件。
+xinbot.plugin.load.failed=加载插件失败：%s
+xinbot.plugin.enable.failed=启用插件失败：%s
+xinbot.plugin.not.enabled=插件 %s 未启用。
+xinbot.plugin.disable.failed=禁用插件失败：%s
+xinbot.plugin.unload.failed=卸载插件失败：%s
+xinbot.plugin.unloaded=已卸载插件：%s
+xinbot.plugin.command.usage=PluginManager list / PluginManager load <插件文件名1> <插件文件名2> ... / PluginManager unload <插件名1> <插件名2> ... / PluginManager reload <插件名1> <插件名2> ... / PluginManager enable <插件名1> <插件名2> ... / PluginManager disable <插件名1> <插件名2> ... / PluginManager re-enable <插件名1> <插件名2> ...
+xinbot.plugin.not.found.name=未找到插件 %s。
+xinbot.plugin.list.header=插件列表：
+xinbot.plugin.list.item=%s(%s)
+xinbot.plugin.command.load.usage=PluginManager load <插件文件名1> <插件文件名2> ...
+xinbot.plugin.dir.not.found=未找到插件目录。
+xinbot.plugin.file.not.found=未找到插件文件。
+xinbot.plugin.command.unload.usage=PluginManager unload <插件名1> <插件名2> ...
+xinbot.plugin.unload.xinbot.denied=卸载插件失败：XinbotPlugin，因为不允许通过命令卸载 XinbotPlugin。
+xinbot.plugin.command.reload.usage=PluginManager reload <插件名1> <插件名2> ...
+xinbot.plugin.command.enable.usage=PluginManager enable <插件名1> <插件名2> ...
+xinbot.plugin.command.disable.usage=PluginManager disable <插件名1> <插件名2> ...
+xinbot.plugin.disable.xinbot.denied=禁用插件失败：XinbotPlugin，因为不允许通过命令禁用 XinbotPlugin。
+xinbot.plugin.command.reenable.usage=PluginManager re-enable <插件名1> <插件名2> ...
+xinbot.command.help.name=命令：%s
+xinbot.command.help.plugin=\t所属插件：%s
+xinbot.command.help.aliases=\t别名：[ %s ]
+xinbot.command.help.description=\t描述：%s
+xinbot.command.help.usage=\t用法：%s
+xinbot.command.not.found=找不到此命令：%s
+
+xinbot.command.sub.missing=缺少子命令。可用的子命令：%s
+xinbot.command.sub.unknown=未知的子命令：%s。可用的子命令：%s
+xinbot.plugin.loaded.count=已加载 %d 个插件：%s
+xinbot.player.online.count=有 %d 名玩家在线：%s
+xinbot.login.successful=登录成功
+
+xinbot.auth.ms.failed=微软验证失败。
+
+xinbot.match.login.success=登陆成功
+xinbot.match.register=注册
+xinbot.match.join.game1=Game
+xinbot.match.join.game2=戏
+xinbot.match.join.game3=队
+xinbot.match.join.game4=入
+xinbot.match.ms.auth.failed=§c微软认证失败
+
+xinbot.command.not.found.error=未找到命令 %s
+xinbot.command.execute.error=执行命令 %s 时出错
+xinbot.command.complete.error=完成命令 %s 时出错
+
+xinbot.chat.system.received=收到消息: %s
+
+xinbot.autojoin.container.recorded=已记录容器 ID %s
+xinbot.login.successful=登录成功
+
+xinbot.command.command.description=发送命令的命令。
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=断开与服务器连接的命令。
+xinbot.command.disconnect.usage=disconnect
+# command usages
+xinbot.command.help.cmd.description=显示可用命令列表
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=显示 Xinbot 的许可证
+xinbot.command.license.usage=license
+xinbot.command.list.description=显示玩家列表
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=管理插件的命令。
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=显示所有插件的命令
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=发送聊天消息的命令。
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=停止机器人
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=由命令断开连接
+
+# Log levels
+xinbot.level.info=信息
+xinbot.level.warn=警告
+xinbot.level.error=错误
+xinbot.level.debug=调试
+xinbot.level.trace=追踪
+
+# Markers
+xinbot.marker.chat=聊天
+xinbot.marker.overlay=悬浮

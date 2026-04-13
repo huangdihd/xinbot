@@ -21,9 +21,11 @@ import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 
+import xin.bbtt.mcbot.LangManager;
+
 public class DisconnectExecutor extends CommandExecutor {
     @Override
     public void onCommand(Command command, String label, String[] args) {
-        Bot.Instance.disconnect("Disconnected by command");
+        Bot.Instance.disconnect(LangManager.get("xinbot.bot.disconnect.command"));
     }
 }

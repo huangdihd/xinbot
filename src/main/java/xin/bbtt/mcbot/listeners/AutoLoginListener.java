@@ -27,6 +27,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.Serv
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.Server;
 import xin.bbtt.mcbot.events.LoginSuccessEvent;
 import xin.bbtt.mcbot.events.SendLoginCommandEvent;
@@ -49,13 +50,13 @@ public class AutoLoginListener extends SessionAdapter {
     }
 
     private void login(ClientboundSetTitleTextPacket titlePacket) {
-        if (titlePacket.toString().contains("登陆成功")) {
+        if (titlePacket.toString().contains(LangManager.get("xinbot.match.login.success"))) {
             LoginSuccessEvent loginSuccessEvent = new LoginSuccessEvent();
             Bot.Instance.getPluginManager().events().callEvent(loginSuccessEvent);
-            log.info("Login successful");
+            log.info(xin.bbtt.mcbot.LangManager.get("xinbot.login.successful"));
             Bot.Instance.login = true;
         }
-        else if (titlePacket.toString().contains("注册")) {
+        else if (titlePacket.toString().contains(LangManager.get("xinbot.match.register"))) {
             String registerCommand = "reg " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword() + " " + Bot.Instance.getConfig().getConfigData().getAccount().getPassword();
             SendRegisterCommandEvent registerCommandEvent = new SendRegisterCommandEvent(registerCommand);
             Bot.Instance.getPluginManager().events().callEvent(registerCommandEvent);

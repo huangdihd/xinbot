@@ -33,11 +33,11 @@ public class ListCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Shows the list of players";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.description");
     }
 
     @Override
     public String getUsage() {
-        return "list / list uuid";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.usage");
     }
 }

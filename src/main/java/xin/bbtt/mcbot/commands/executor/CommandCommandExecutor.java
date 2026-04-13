@@ -73,11 +73,11 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
             AttributedStyle.DEFAULT.foreground(AttributedStyle.RED);
 
         if (args.length == 1) return styles;
-        
+
         String[] commandArgs = Arrays.stream(args).toList().subList(1, args.length).toArray(new String[0]);
         AttributedStyle[] argStyles = parseHighlight(commandArgs);
         System.arraycopy(argStyles, 0, styles, 1, argStyles.length);
-        
+
         return styles;
     }
 }

@@ -23,6 +23,7 @@ import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.SubCommandExecutor;
@@ -53,14 +54,14 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
     @Override
     protected void onNoSubCommand(Command command, String label) {
-        log.error("PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...");
+        log.error(LangManager.get("xinbot.plugin.command.usage"));
     }
 
     @Nullable
     private static Plugin findPlugin(String pluginName) {
         Plugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
         if (plugin == null) {
-            log.error("Plugin {} not found.", pluginName);
+            log.error(LangManager.get("xinbot.plugin.not.found.name", pluginName));
         }
         return plugin;
     }
@@ -68,9 +69,9 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
     private static class ListCommand extends CommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
-            log.info("Plugins:");
+            log.info(LangManager.get("xinbot.plugin.list.header"));
             for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
-                log.info("{}({})", plugin.getName(), plugin.getVersion());
+                log.info(LangManager.get("xinbot.plugin.list.item", plugin.getName(), plugin.getVersion()));
             }
         }
     }
@@ -79,23 +80,23 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager load <plugin file name1> <plugin file name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.load.usage"));
                 return;
             }
             File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
             if (!dir.exists() || !dir.isDirectory()) {
-                log.error("Plugin directory not found.");
+                log.error(LangManager.get("xinbot.plugin.dir.not.found"));
                 return;
             }
             File file = new File(dir, args[0]);
             if (!file.exists() || !file.isFile()) {
-                log.error("Plugin file not found.");
+                log.error(LangManager.get("xinbot.plugin.file.not.found"));
                 return;
             }
             try {
                 Bot.Instance.getPluginManager().loadPlugin(file);
             } catch (Exception e) {
-                log.error("Failed to load plugin: {}", file.getName(), e);
+                log.error(LangManager.get("xinbot.plugin.load.failed", file.getName()), e);
             }
         }
 
@@ -131,12 +132,12 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager unload <plugin name1> <plugin name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.unload.usage"));
                 return;
             }
             for (String pluginName : args) {
                 if (pluginName.equals("XinbotPlugin")) {
-                    log.error("Failed to unload plugin: XinbotPlugin because unloading the XinbotPlugin by commands is not allowed.");
+                    log.error(LangManager.get("xinbot.plugin.unload.xinbot.denied"));
                     continue;
                 }
                 Plugin plugin = findPlugin(pluginName);
@@ -144,7 +145,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 try {
                     Bot.Instance.getPluginManager().unloadPlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.unload.failed", plugin.getName()), e);
                 }
             }
         }
@@ -168,7 +169,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager reload <plugin name1> <plugin name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.reload.usage"));
                 return;
             }
             for (String pluginName : args) {
@@ -177,13 +178,13 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 try {
                     Bot.Instance.getPluginManager().unloadPlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to unload plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.unload.failed", plugin.getName()), e);
                     continue;
                 }
                 try {
                     Bot.Instance.getPluginManager().loadPlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to load plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.load.failed", plugin.getName()), e);
                 }
             }
         }
@@ -206,7 +207,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager enable <plugin name1> <plugin name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.enable.usage"));
             }
             for (String pluginName : args) {
                 Plugin plugin = findPlugin(pluginName);
@@ -214,7 +215,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 try {
                     Bot.Instance.getPluginManager().enablePlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
                 }
             }
         }
@@ -237,11 +238,11 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager disable <plugin name1> <plugin name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.disable.usage"));
             }
             for (String pluginName : args) {
                 if (pluginName.equals("XinbotPlugin")) {
-                    log.error("Failed to disable plugin: XinbotPlugin because disabling the XinbotPlugin by commands is not allowed.");
+                    log.error(LangManager.get("xinbot.plugin.disable.xinbot.denied"));
                     continue;
                 }
                 Plugin plugin = findPlugin(pluginName);
@@ -249,7 +250,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 try {
                     Bot.Instance.getPluginManager().disablePlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
                 }
             }
         }
@@ -273,7 +274,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             if (args.length < 1) {
-                log.error("PluginManager re-enable <plugin name1> <plugin name2> ...");
+                log.error(LangManager.get("xinbot.plugin.command.reenable.usage"));
             }
             for (String pluginName : args) {
                 Plugin plugin = findPlugin(pluginName);
@@ -281,13 +282,13 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 try {
                     Bot.Instance.getPluginManager().disablePlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to disable plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
                     continue;
                 }
                 try {
                     Bot.Instance.getPluginManager().enablePlugin(plugin);
                 } catch (Exception e) {
-                    log.error("Failed to enable plugin: {}", plugin.getName(), e);
+                    log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
                 }
             }
         }

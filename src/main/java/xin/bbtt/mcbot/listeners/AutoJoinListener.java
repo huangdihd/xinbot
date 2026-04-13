@@ -35,6 +35,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.S
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.Server;
 import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.events.ClickJoinItemEvent;
@@ -78,9 +79,9 @@ public class AutoJoinListener extends SessionAdapter {
     private void recordContainer(ClientboundOpenScreenPacket openScreenPacket) {
         if (Bot.Instance.getServer() != Server.Login) return;
         if (!(openScreenPacket.getTitle() instanceof TextComponent title)) return;
-        if (!title.content().contains("Game") && !title.content().contains("戏") && !title.content().contains("队") && !title.content().contains("入")) return;
+        if (!title.content().contains(LangManager.get("xinbot.match.join.game1")) && !title.content().contains(LangManager.get("xinbot.match.join.game2")) && !title.content().contains(LangManager.get("xinbot.match.join.game3")) && !title.content().contains(LangManager.get("xinbot.match.join.game4"))) return;
         containerId = openScreenPacket.getContainerId();
-        log.debug("Recorded container id {}", containerId);
+        log.debug(xin.bbtt.mcbot.LangManager.get("xinbot.autojoin.container.recorded", containerId));
     }
 
     private void onSetContent(ClientboundContainerSetContentPacket containerSetContentPacket, Session session) {

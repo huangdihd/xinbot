@@ -32,11 +32,11 @@ public class PluginManagerCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "A command to manage plugins.";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.pluginmanager.description");
     }
 
     @Override
     public String getUsage() {
-        return "PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.pluginmanager.usage");
     }
 }

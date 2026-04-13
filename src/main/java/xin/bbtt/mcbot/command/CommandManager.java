@@ -130,9 +130,8 @@ public class CommandManager {
 
         RegisteredCommand registeredCommand = getCommandByLabel(label);
 
-
         if (registeredCommand == null) {
-            log.warn(commandErrorMarker, "No command found for command {}", label);
+            log.warn(commandErrorMarker, xin.bbtt.mcbot.LangManager.get("xinbot.command.not.found.error", label));
             return;
         }
 
@@ -144,7 +143,7 @@ public class CommandManager {
             registeredCommand.callCommand(label, args);
         }
         catch (Exception e) {
-            log.error(commandErrorMarker, "Error while executing command {}", command, e);
+            log.error(commandErrorMarker, xin.bbtt.mcbot.LangManager.get("xinbot.command.execute.error", command), e);
         }
     }
 
@@ -189,7 +188,7 @@ public class CommandManager {
             return registeredCommand.callComplete(label, args);
         }
         catch (Exception e) {
-            log.error(commandErrorMarker, "Error while Complete command {}", command, e);
+            log.error(commandErrorMarker, xin.bbtt.mcbot.LangManager.get("xinbot.command.complete.error", command), e);
         }
         return List.of();
     }

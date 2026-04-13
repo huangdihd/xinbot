@@ -33,11 +33,11 @@ public class PluginsCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "A command to show all plugins";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.plugins.description");
     }
 
     @Override
     public String getUsage() {
-        return "plugins";
+        return xin.bbtt.mcbot.LangManager.get("xinbot.command.plugins.usage");
     }
 }
