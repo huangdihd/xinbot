@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 public class LangManager {
     // Use HashMap to support key-value merging and overriding across multiple loads
@@ -116,7 +117,9 @@ public class LangManager {
      * Loads the aggregated lang.json file from internal resources.
      */
     public static void loadFromJson(@Nullable String langCode) {
-        if (langCode == null || langCode.isBlank()) langCode = "en_us";
+        final String targetLang = Optional.ofNullable(langCode)
+            .filter(s -> !s.isBlank())
+            .orElse("en_us");
 
         try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang.json")) {
             if (is == null) {
@@ -126,23 +129,23 @@ public class LangManager {
 
             JsonObject root = JsonParser.parseReader(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
 
-            if (!root.has(langCode)) {
-                log.debug("Language {} not found in lang.json", langCode);
+            if (!root.has(targetLang)) {
+                log.debug("Language {} not found in lang.json", targetLang);
                 return;
             }
 
-            JsonObject langObj = root.getAsJsonObject(langCode);
+            JsonObject langObj = root.getAsJsonObject(targetLang);
             if (langObj == null) return;
 
             Type type = new TypeToken<Map<String, String>>() {}.getType();
             Map<String, String> jsonMap = new Gson().fromJson(langObj, type);
             if (jsonMap != null) {
                 currentLang.putAll(jsonMap);
-                log.debug("Loaded language {} from lang.json", langCode);
+                log.debug("Loaded language {} from lang.json", targetLang);
             }
 
         } catch (Exception e) {
-            log.error("Error loading lang.json for {}: {}", langCode, e.getMessage(), e);
+            log.error("Error loading lang.json for {}: {}", targetLang, e.getMessage(), e);
         }
     }
 
