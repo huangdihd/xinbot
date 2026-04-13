@@ -32,11 +32,11 @@ public class LicenseCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "Show the license of Xinbot";
+        return xin.bbtt.mcbot.LangManager.get("command.license.description");
     }
 
     @Override
     public String getUsage() {
-        return "license";
+        return xin.bbtt.mcbot.LangManager.get("command.license.usage");
     }
 }

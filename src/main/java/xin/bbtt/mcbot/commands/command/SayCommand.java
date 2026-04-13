@@ -33,11 +33,11 @@ public class SayCommand extends Command {
 
     @Override
     public String getDescription() {
-        return "A command to say a chat.";
+        return xin.bbtt.mcbot.LangManager.get("command.say.description");
     }
 
     @Override
     public String getUsage() {
-        return "say <message>";
+        return xin.bbtt.mcbot.LangManager.get("command.say.usage");
     }
 }

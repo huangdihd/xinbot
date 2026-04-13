@@ -65,3 +65,22 @@ chat.system.received=收到訊息: %s
 
 autojoin.container.recorded=已記錄容器 ID %s
 login.successful=登入成功
+
+command.command.description=發送命令的命令。
+command.command.usage=command command
+command.disconnect.description=斷開與伺服器連接的命令。
+command.disconnect.usage=disconnect
+command.help.cmd.description=顯示可用命令列表
+command.help.cmd.usage=help / help <command>
+command.license.description=顯示 Xinbot 的授權條款
+command.license.usage=license
+command.list.description=顯示玩家列表
+command.list.usage=list / list uuid
+command.pluginmanager.description=管理插件的命令。
+command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+command.plugins.description=顯示所有插件的命令
+command.plugins.usage=plugins
+command.say.description=發送聊天訊息的命令。
+command.say.usage=say <message>
+command.stop.description=停止機器人
+command.stop.usage=stop

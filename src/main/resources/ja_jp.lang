@@ -65,3 +65,22 @@ chat.system.received=メッセージを受信しました: %s
 
 autojoin.container.recorded=コンテナ ID %s を記録しました
 login.successful=ログインに成功しました
+
+command.command.description=コマンドを送信するコマンド。
+command.command.usage=command command
+command.disconnect.description=サーバーから切断するコマンド。
+command.disconnect.usage=disconnect
+command.help.cmd.description=利用可能なコマンドのリストを表示します
+command.help.cmd.usage=help / help <command>
+command.license.description=Xinbotのライセンスを表示します
+command.license.usage=license
+command.list.description=プレイヤーのリストを表示します
+command.list.usage=list / list uuid
+command.pluginmanager.description=プラグインを管理するコマンド。
+command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+command.plugins.description=すべてのプラグインを表示するコマンド
+command.plugins.usage=plugins
+command.say.description=チャットを送信するコマンド。
+command.say.usage=say <message>
+command.stop.description=ボットを停止します
+command.stop.usage=stop

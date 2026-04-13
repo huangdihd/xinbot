@@ -65,3 +65,22 @@ chat.system.received=Nachricht erhalten: %s
 
 autojoin.container.recorded=Aufgezeichnete Container-ID %s
 login.successful=Anmeldung erfolgreich
+
+command.command.description=Ein Befehl zum Senden von Befehlen.
+command.command.usage=command command
+command.disconnect.description=Ein Befehl zum Trennen der Verbindung zum Server.
+command.disconnect.usage=disconnect
+command.help.cmd.description=Zeigt die Liste der verfügbaren Befehle
+command.help.cmd.usage=help / help <command>
+command.license.description=Zeigt die Lizenz von Xinbot
+command.license.usage=license
+command.list.description=Zeigt die Liste der Spieler
+command.list.usage=list / list uuid
+command.pluginmanager.description=Ein Befehl zur Verwaltung von Plugins.
+command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+command.plugins.description=Ein Befehl zur Anzeige aller Plugins
+command.plugins.usage=plugins
+command.say.description=Ein Befehl zum Senden einer Chatnachricht.
+command.say.usage=say <message>
+command.stop.description=stoppt den Bot
+command.stop.usage=stop

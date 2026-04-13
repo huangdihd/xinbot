@@ -121,3 +121,23 @@ chat.system.received=Received message: %s
 
 autojoin.container.recorded=Recorded container id %s
 login.successful=Login successful
+
+command.command.description=A command to send commands.
+command.command.usage=command command
+command.disconnect.description=A command to disconnect with server.
+command.disconnect.usage=disconnect
+# command usages
+command.help.cmd.description=Shows the list of available commands
+command.help.cmd.usage=help / help <command>
+command.license.description=Show the license of Xinbot
+command.license.usage=license
+command.list.description=Shows the list of players
+command.list.usage=list / list uuid
+command.pluginmanager.description=A command to manage plugins.
+command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+command.plugins.description=A command to show all plugins
+command.plugins.usage=plugins
+command.say.description=A command to say a chat.
+command.say.usage=say <message>
+command.stop.description=stops the bot
+command.stop.usage=stop

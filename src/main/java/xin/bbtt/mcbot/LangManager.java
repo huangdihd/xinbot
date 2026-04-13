@@ -194,8 +194,8 @@ public class LangManager {
                     // Supports empty values, though uncommon
                     String value = line.substring(equalsIndex + 1).trim();
                     if (!key.isEmpty()) {
-                        // Allow basic escaping for newlines if users want multi-line messages
-                        value = value.replace("\\n", "\n");
+                        // Allow basic escaping for newlines and tabs
+                        value = value.replace("\\n", "\n").replace("\\t", "\t");
                         langMap.put(key, value);
                     }
                 }

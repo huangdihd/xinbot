@@ -65,3 +65,22 @@ chat.system.received=Получено сообщение: %s
 
 autojoin.container.recorded=Записан идентификатор контейнера %s
 login.successful=Вход выполнен успешно
+
+command.command.description=Команда для отправки команд.
+command.command.usage=command command
+command.disconnect.description=Команда для отключения от сервера.
+command.disconnect.usage=disconnect
+command.help.cmd.description=Показывает список доступных команд
+command.help.cmd.usage=help / help <command>
+command.license.description=Показать лицензию Xinbot
+command.license.usage=license
+command.list.description=Показывает список игроков
+command.list.usage=list / list uuid
+command.pluginmanager.description=Команда для управления плагинами.
+command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+command.plugins.description=Команда для показа всех плагинов
+command.plugins.usage=plugins
+command.say.description=Команда для отправки сообщения в чат.
+command.say.usage=say <message>
+command.stop.description=останавливает бота
+command.stop.usage=stop
