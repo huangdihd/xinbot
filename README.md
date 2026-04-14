@@ -72,6 +72,7 @@ English / [简体中文](README_CN.md)
         }, 
         "enableTranslation" : true,         // Language file loading (higher memory usage)
         "reconnectTimeout" : 5000,          // Reconnection timeout (ms)
+        "reconnectDelay" : 3000,            // Reconnection delay (ms)
         "owner" : "[Owner name]",           // Bot owner's name
         "plugin" : {
             "directory" : "plugin"          // Plugin directory

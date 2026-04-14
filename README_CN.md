@@ -72,6 +72,7 @@
         },
         "enableTranslation" : true,         // 加载语言文件(更高内存占用)
         "reconnectTimeout" : 5000,          // 重连超时时间(毫秒)
+        "reconnectDelay" : 3000,            // 重连延迟(毫秒)
         "owner" : "[Owner name]",           // 机器人的主人名称
         "plugin" : {
             "directory" : "plugin"          // 插件目录
