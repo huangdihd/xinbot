@@ -17,8 +17,11 @@
 
 package xin.bbtt.mcbot.plugin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 
 public class PluginClassLoader extends URLClassLoader {
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
@@ -27,5 +30,25 @@ public class PluginClassLoader extends URLClassLoader {
 
     public void addURLFile(URL url) {
         super.addURL(url);
+    }
+
+    @Override
+    public URL getResource(String name) {
+        return findResource(name);
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String name) {
+        URL url = getResource(name);
+        try {
+            return url != null ? url.openStream() : null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        return findResources(name);
     }
 }
