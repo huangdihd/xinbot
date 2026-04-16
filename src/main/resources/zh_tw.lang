@@ -92,3 +92,4 @@ xinbot.level.trace=追蹤
 # Markers
 xinbot.marker.chat=聊天
 xinbot.marker.overlay=懸浮
+xinbot.command.help.subcommands=\t子命令：

@@ -91,6 +91,7 @@ xinbot.command.help.plugin=\tPlugin: %s
 xinbot.command.help.aliases=\tAliases: [ %s ]
 xinbot.command.help.description=\tDescription: %s
 xinbot.command.help.usage=\tUsage: %s
+xinbot.command.help.subcommands=\tSubcommands:
 xinbot.command.not.found=no such command: %s
 
 xinbot.command.sub.missing=Missing sub-command. Available sub-commands: %s
