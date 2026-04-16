@@ -37,6 +37,10 @@ public class SubCommandExecutor extends TabHighlightExecutor {
         subCommandMap.put(name.toLowerCase(), executor);
     }
 
+    public Map<String, CommandExecutor> getSubCommands() {
+        return subCommandMap;
+    }
+
     @Override
     public void onCommand(Command command, String label, String[] args) {
         if (args.length == 0) {

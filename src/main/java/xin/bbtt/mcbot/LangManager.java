@@ -229,14 +229,14 @@ public class LangManager {
 
                 // Parse key=value format
                 int equalsIndex = line.indexOf('=');
-                if (equalsIndex > 0) {
-                    String key = line.substring(0, equalsIndex).trim();
-                    String value = line.substring(equalsIndex + 1).trim();
-                    if (!key.isEmpty()) {
-                        // Allow basic escaping for newlines and tabs
-                        value = value.replace("\\n", "\n").replace("\\t", "\t");
-                        langMap.put(key, value);
-                    }
+                if (equalsIndex <= 0) continue;
+
+                String key = line.substring(0, equalsIndex).trim();
+                String value = line.substring(equalsIndex + 1).trim();
+                if (!key.isEmpty()) {
+                    // Allow basic escaping for newlines and tabs
+                    value = value.replace("\\n", "\n").replace("\\t", "\t");
+                    langMap.put(key, value);
                 }
             }
         }

@@ -92,3 +92,4 @@ xinbot.level.trace=トレース
 # Markers
 xinbot.marker.chat=チャット
 xinbot.marker.overlay=オーバー
+xinbot.command.help.subcommands=\tサブコマンド:

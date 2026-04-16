@@ -92,3 +92,4 @@ xinbot.level.trace=TRACE
 # Markers
 xinbot.marker.chat=CHAT
 xinbot.marker.overlay=OVER
+xinbot.command.help.subcommands=\tUnterbefehle:

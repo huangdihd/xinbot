@@ -162,6 +162,8 @@ public class Bot {
         server = null;
         if (!running) return;
 
+        protocol = AccountLoader.getProtocol();
+
         long delay = config.getConfigData().getReconnectDelay();
         if (delay > 0) {
             log.info(LangManager.get("xinbot.bot.reconnecting", delay));

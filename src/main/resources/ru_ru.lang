@@ -92,3 +92,4 @@ xinbot.level.trace=ТРАССИР
 # Markers
 xinbot.marker.chat=ЧАТ
 xinbot.marker.overlay=ОВЕР
+xinbot.command.help.subcommands=\tПодменю:

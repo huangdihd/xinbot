@@ -24,22 +24,43 @@ import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.command.Command;
+import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.RegisteredCommand;
+import xin.bbtt.mcbot.command.SubCommandExecutor;
 import xin.bbtt.mcbot.command.TabHighlightExecutor;
 import xin.bbtt.mcbot.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HelpCommandExecutor extends TabHighlightExecutor {
     private final Logger log = LoggerFactory.getLogger(HelpCommandExecutor.class.getSimpleName());
 
-    private void printCommandHelp(Command command, Plugin plugin) {
+    private void printCommandHelp(RegisteredCommand cmd) {
+        Command command = cmd.command();
+        Plugin plugin = cmd.plugin();
         log.info(LangManager.get("xinbot.command.help.name", command.getName()));
         log.info(LangManager.get("xinbot.command.help.plugin", plugin.getName()));
         log.info(LangManager.get("xinbot.command.help.aliases", String.join(", ", command.getAliases())));
         log.info(LangManager.get("xinbot.command.help.description", command.getDescription()));
         log.info(LangManager.get("xinbot.command.help.usage", command.getUsage()));
+
+        if (cmd.executor() instanceof SubCommandExecutor subExec) {
+            printSubCommands(subExec, "\t");
+        }
+    }
+
+    private void printSubCommands(SubCommandExecutor executor, String prefix) {
+        if (!executor.getSubCommands().isEmpty()) {
+            log.info(prefix + LangManager.get("xinbot.command.help.subcommands", "Subcommands:"));
+            for (Map.Entry<String, CommandExecutor> entry : executor.getSubCommands().entrySet()) {
+                log.info(prefix + "  - " + entry.getKey());
+                if (entry.getValue() instanceof SubCommandExecutor subExec) {
+                    printSubCommands(subExec, prefix + "  ");
+                }
+            }
+        }
     }
 
     @Override
@@ -47,7 +68,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
         if (args.length == 0) {
             for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
                 for (RegisteredCommand cmd : Bot.Instance.getPluginManager().commands().getCommandsByPlugin(plugin)) {
-                    printCommandHelp(cmd.command(), plugin);
+                    printCommandHelp(cmd);
                 }
             }
         }
@@ -55,7 +76,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
             for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
                 for (RegisteredCommand cmd : Bot.Instance.getPluginManager().commands().getCommandsByPlugin(plugin)) {
                     if (!cmd.command().getName().equalsIgnoreCase(args[0])) continue;
-                    printCommandHelp(cmd.command(), plugin);
+                    printCommandHelp(cmd);
                     return;
                 }
             }

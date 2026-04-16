@@ -91,6 +91,7 @@ xinbot.command.help.plugin=\t所属插件：%s
 xinbot.command.help.aliases=\t别名：[ %s ]
 xinbot.command.help.description=\t描述：%s
 xinbot.command.help.usage=\t用法：%s
+xinbot.command.help.subcommands=\t子命令：
 xinbot.command.not.found=找不到此命令：%s
 
 xinbot.command.sub.missing=缺少子命令。可用的子命令：%s
