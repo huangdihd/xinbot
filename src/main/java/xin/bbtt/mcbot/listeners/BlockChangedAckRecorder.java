@@ -24,10 +24,9 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.play
 import xin.bbtt.mcbot.Bot;
 
 public class BlockChangedAckRecorder extends SessionAdapter {
-
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundBlockChangedAckPacket blockChangedAckPacket)) return;
-        Bot.Instance.getSequence().set(blockChangedAckPacket.getSequence());
+        Bot.Instance.getSequence().set(Math.max(blockChangedAckPacket.getSequence(), 0));
     }
 }
