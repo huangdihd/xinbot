@@ -50,6 +50,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         registerSubCommand("enable", new EnableCommand());
         registerSubCommand("disable", new DisableCommand());
         registerSubCommand("re-enable", new ReEnableCommand());
+        registerSubCommand("tree", new TreeCommand());
     }
 
     @Override
@@ -64,6 +65,56 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
             log.error(LangManager.get("xinbot.plugin.not.found.name", pluginName));
         }
         return plugin;
+    }
+
+    private static class TreeCommand extends CommandExecutor {
+        @Override
+        public void onCommand(Command command, String label, String[] args) {
+            log.info(LangManager.get("xinbot.plugin.tree.header"));
+            java.util.Map<String, java.util.List<String>> deps = Bot.Instance.getPluginManager().getPluginDependencies();
+            
+            // Build dependents map (who depends on me)
+            java.util.Map<String, java.util.List<String>> dependents = new java.util.HashMap<>();
+            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+                dependents.putIfAbsent(plugin.getName(), new java.util.ArrayList<>());
+            }
+            
+            for (java.util.Map.Entry<String, java.util.List<String>> entry : deps.entrySet()) {
+                String dependentPlugin = entry.getKey();
+                for (String dependency : entry.getValue()) {
+                    dependents.computeIfAbsent(dependency, k -> new java.util.ArrayList<>()).add(dependentPlugin);
+                }
+            }
+            
+            // Find plugins with inDegree == 0 (no loaded dependencies)
+            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+                java.util.List<String> myDeps = deps.getOrDefault(plugin.getName(), java.util.Collections.emptyList());
+                boolean hasLoadedDeps = false;
+                for (String dep : myDeps) {
+                    if (Bot.Instance.getPluginManager().isPluginLoaded(dep)) {
+                        hasLoadedDeps = true;
+                        break;
+                    }
+                }
+                
+                if (!hasLoadedDeps) {
+                    printTree(plugin.getName(), dependents, "", true, new java.util.HashSet<>());
+                }
+            }
+        }
+
+        private void printTree(String pluginName, java.util.Map<String, java.util.List<String>> dependents, String prefix, boolean isTail, java.util.Set<String> visited) {
+            log.info(prefix + (isTail ? "└── " : "├── ") + pluginName);
+            if (visited.contains(pluginName)) {
+                log.info(prefix + (isTail ? "    " : "│   ") + "└── [Circular Reference]");
+                return;
+            }
+            visited.add(pluginName);
+            java.util.List<String> children = dependents.getOrDefault(pluginName, java.util.Collections.emptyList());
+            for (int i = 0; i < children.size(); i++) {
+                printTree(children.get(i), dependents, prefix + (isTail ? "    " : "│   "), i == children.size() - 1, new java.util.HashSet<>(visited));
+            }
+        }
     }
 
     private static class ListCommand extends CommandExecutor {

@@ -24,12 +24,59 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 
 public class PluginClassLoader extends URLClassLoader {
+    private final java.util.List<PluginClassLoader> extraDependencies = new java.util.ArrayList<>();
+
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
+    public void addDependency(PluginClassLoader loader) {
+        if (loader != null && !extraDependencies.contains(loader)) {
+            extraDependencies.add(loader);
+        }
+    }
+
     public void addURLFile(URL url) {
         super.addURL(url);
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> loadedClass = findLoadedClass(name);
+            if (loadedClass != null) {
+                if (resolve) resolveClass(loadedClass);
+                return loadedClass;
+            }
+
+            try {
+                loadedClass = getParent().loadClass(name);
+                if (loadedClass != null) {
+                    if (resolve) resolveClass(loadedClass);
+                    return loadedClass;
+                }
+            } catch (ClassNotFoundException ignored) {
+            }
+
+            try {
+                loadedClass = findClass(name);
+                if (loadedClass != null) {
+                    if (resolve) resolveClass(loadedClass);
+                    return loadedClass;
+                }
+            } catch (ClassNotFoundException ignored) {
+            }
+
+            for (PluginClassLoader depLoader : extraDependencies) {
+                try {
+                    loadedClass = depLoader.loadClass(name, resolve);
+                    if (loadedClass != null) return loadedClass;
+                } catch (ClassNotFoundException ignored) {
+                }
+            }
+
+            throw new ClassNotFoundException(name);
+        }
     }
 
     @Override
