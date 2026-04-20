@@ -15,29 +15,30 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.command;
+package xin.bbtt.mcbot.plugin;
 
+import lombok.Getter;
 import xin.bbtt.mcbot.command.Command;
 
-public class ListCommand extends Command {
+import java.io.File;
+import java.net.SocketAddress;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
-    @Override
-    public String getName() {
-        return "list";
+@Getter
+public class RegisteredMetaPlugin extends RegisteredPlugin {
+
+    public RegisteredMetaPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, MetaPlugin plugin, Map<String, Command> commands) {
+        super(name, version, mainClass, depends, file, url, plugin, PluginType.META_PLUGIN, commands);
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"list"};
+    public MetaPlugin getPlugin() {
+        return (MetaPlugin) super.getPlugin();
     }
 
-    @Override
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.description");
-    }
-
-    @Override
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.list.usage");
+    public SocketAddress getServerSocketAddress() {
+        return getPlugin().getServerSocketAddress();
     }
 }

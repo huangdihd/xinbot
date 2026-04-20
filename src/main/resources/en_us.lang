@@ -27,6 +27,25 @@ xinbot.plugin.loaded=Loaded plugin: %s
 xinbot.plugin.loading=Trying to load plugin: %s
 xinbot.plugin.enabled=Enabled plugin: %s
 xinbot.plugin.disabled=Disabled plugin: %s
+xinbot.plugin.unloaded=Unloaded plugin: %s
+xinbot.plugin.tree.header=Plugin Dependency Tree:
+xinbot.plugin.dependency.missing=Missing dependency '%s' required by plugin '%s'
+xinbot.plugin.load.all.failed=Failed to load all plugins. Circular dependency or missing dependencies detected.
+xinbot.plugin.not.loaded=- Plugin '%s' was not loaded (Missing dependency or circular loop)
+xinbot.plugin.load.smoothly.failed=Failed to load plugin smoothly: %s
+xinbot.plugin.unload.dependent=Unloading plugin %s because it depends on %s
+
+xinbot.metaplugin.loaded=Loaded MetaPlugin: %s
+xinbot.metaplugin.loading=Trying to load MetaPlugin: %s
+xinbot.metaplugin.enabled=Enabled MetaPlugin: %s
+xinbot.metaplugin.disabled=Disabled MetaPlugin: %s
+xinbot.metaplugin.unloaded=Unloaded MetaPlugin: %s
+
+xinbot.metaplugin.error.load_runtime=Cannot load MetaPlugin during runtime!
+xinbot.metaplugin.error.enable_runtime=Cannot enable MetaPlugin during runtime!
+xinbot.metaplugin.error.disable_runtime=Cannot disable MetaPlugin during runtime!
+xinbot.metaplugin.error.unload_runtime=Cannot unload MetaPlugin during runtime!
+xinbot.metaplugin.error.count=Bot must have exactly one MetaPlugin to start! (Found: %d)
 
 # LangManager messages
 xinbot.langmanager.loaded=Loaded language %s
@@ -71,11 +90,6 @@ xinbot.plugin.enable.failed=Failed to enable plugin: %s
 xinbot.plugin.not.enabled=Plugin %s is not enabled.
 xinbot.plugin.disable.failed=Failed to disable plugin: %s
 xinbot.plugin.unload.failed=Failed to unload plugin: %s
-xinbot.plugin.unloaded=Unloaded plugin: %s
-xinbot.plugin.dependency.missing=Missing dependency '%s' required by plugin '%s'
-xinbot.plugin.load.all.failed=Failed to load all plugins. Circular dependency or missing dependencies detected.
-xinbot.plugin.not.loaded=- Plugin '%s' was not loaded (Missing dependency or circular loop)
-xinbot.plugin.load.smoothly.failed=Failed to load plugin smoothly: %s
 xinbot.plugin.command.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
 xinbot.plugin.not.found.name=Plugin %s not found.
 xinbot.plugin.list.header=Plugins:

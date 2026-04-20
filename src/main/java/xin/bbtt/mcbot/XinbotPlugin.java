@@ -17,16 +17,18 @@
 
 package xin.bbtt.mcbot;
 
-import xin.bbtt.mcbot.commands.command.*;
-import xin.bbtt.mcbot.commands.executor.*;
 import xin.bbtt.mcbot.eventListeners.DisconnectListener;
 import xin.bbtt.mcbot.eventListeners.PositonInQueueOverlayListener;
 import xin.bbtt.mcbot.eventListeners.PrivateChatMessageListener;
 import xin.bbtt.mcbot.eventListeners.PublicChatMessageListener;
-import xin.bbtt.mcbot.plugin.Plugin;
+import xin.bbtt.mcbot.plugin.MetaPlugin;
 import xin.bbtt.mcbot.listeners.*;
 
-public class XinbotPlugin implements Plugin {
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+
+public class XinbotPlugin implements MetaPlugin {
+
 
     @Override
     public void onLoad() {
@@ -48,17 +50,6 @@ public class XinbotPlugin implements Plugin {
         Bot.Instance.addPacketListener(new JoinButtonRecorder(), this);
         Bot.Instance.addPacketListener(new CommandsRecorder(), this);
 
-        // Commands
-        Bot.Instance.getPluginManager().registerCommand(new SayCommand(), new SayCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new CommandCommand(), new CommandCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new StopCommand(), new StopCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new HelpCommand(), new HelpCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new DisconnectCommand(), new DisconnectExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new ListCommand(), new ListCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new PluginManagerCommand(), new PluginManagerCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new PluginsCommand(), new PluginsCommandExecutor(), this);
-        Bot.Instance.getPluginManager().registerCommand(new LicenseCommand(), new LicenseExecutor(), this);
-
         // Event listeners
         Bot.Instance.getPluginManager().registerEvents(new PositonInQueueOverlayListener(), this);
         Bot.Instance.getPluginManager().registerEvents(new PrivateChatMessageListener(), this);
@@ -68,5 +59,10 @@ public class XinbotPlugin implements Plugin {
 
     @Override
     public void onDisable() {
+    }
+
+    @Override
+    public SocketAddress getServerSocketAddress() {
+        return  new InetSocketAddress("2b2t.xin", 25565);
     }
 }

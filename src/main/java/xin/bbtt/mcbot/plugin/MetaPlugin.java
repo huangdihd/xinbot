@@ -15,28 +15,12 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.command;
+package xin.bbtt.mcbot.plugin;
 
-import xin.bbtt.mcbot.command.Command;
+import java.net.SocketAddress;
 
-public class LicenseCommand extends Command {
-    @Override
-    public String getName() {
-        return "license";
-    }
+public interface MetaPlugin extends Plugin {
 
-    @Override
-    public String[] getAliases() {
-        return new String[]{"license", "lic"};
-    }
+    SocketAddress getServerSocketAddress();
 
-    @Override
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.description");
-    }
-
-    @Override
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.license.usage");
-    }
 }

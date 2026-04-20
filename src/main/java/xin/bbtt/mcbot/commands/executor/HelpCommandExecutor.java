@@ -41,7 +41,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
         Command command = cmd.command();
         Plugin plugin = cmd.plugin();
         log.info(LangManager.get("xinbot.command.help.name", command.getName()));
-        log.info(LangManager.get("xinbot.command.help.plugin", plugin.getName()));
+        log.info(LangManager.get("xinbot.command.help.plugin", Bot.Instance.getPluginManager().getPluginName(plugin)));
         log.info(LangManager.get("xinbot.command.help.aliases", String.join(", ", command.getAliases())));
         log.info(LangManager.get("xinbot.command.help.description", command.getDescription()));
         log.info(LangManager.get("xinbot.command.help.usage", command.getUsage()));
@@ -65,16 +65,30 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
 
     @Override
     public void onCommand(Command command, String label, String[] args) {
+        xin.bbtt.mcbot.command.CommandManager cm = Bot.Instance.getPluginManager().commands();
         if (args.length == 0) {
-            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
-                for (RegisteredCommand cmd : Bot.Instance.getPluginManager().commands().getCommandsByPlugin(plugin)) {
+            // Print built-in commands
+            for (RegisteredCommand cmd : cm.getCommandsByPlugin(null)) {
+                printCommandHelp(cmd);
+            }
+            // Print plugin commands
+            for (xin.bbtt.mcbot.plugin.RegisteredPlugin rp : Bot.Instance.getPluginManager().getPlugins()) {
+                for (RegisteredCommand cmd : cm.getCommandsByPlugin(rp.getPlugin())) {
                     printCommandHelp(cmd);
                 }
             }
         }
         else if (args.length == 1) {
-            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
-                for (RegisteredCommand cmd : Bot.Instance.getPluginManager().commands().getCommandsByPlugin(plugin)) {
+            // Search built-in commands
+            for (RegisteredCommand cmd : cm.getCommandsByPlugin(null)) {
+                if (cmd.command().getName().equalsIgnoreCase(args[0])) {
+                    printCommandHelp(cmd);
+                    return;
+                }
+            }
+            // Search plugin commands
+            for (xin.bbtt.mcbot.plugin.RegisteredPlugin rp : Bot.Instance.getPluginManager().getPlugins()) {
+                for (RegisteredCommand cmd : cm.getCommandsByPlugin(rp.getPlugin())) {
                     if (!cmd.command().getName().equalsIgnoreCase(args[0])) continue;
                     printCommandHelp(cmd);
                     return;
@@ -88,8 +102,15 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
     public List<String> onTabComplete(Command command, String label, String[] args) {
         if (args.length > 1) return List.of();
         List<String> list = new ArrayList<>();
-        for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
-            for (RegisteredCommand cmd : Bot.Instance.getPluginManager().commands().getCommandsByPlugin(plugin)) {
+        xin.bbtt.mcbot.command.CommandManager cm = Bot.Instance.getPluginManager().commands();
+        
+        // Add built-in commands
+        for (RegisteredCommand cmd : cm.getCommandsByPlugin(null)) {
+            list.add(cmd.command().getName());
+        }
+        // Add plugin commands
+        for (xin.bbtt.mcbot.plugin.RegisteredPlugin rp : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredCommand cmd : cm.getCommandsByPlugin(rp.getPlugin())) {
                 list.add(cmd.command().getName());
             }
         }

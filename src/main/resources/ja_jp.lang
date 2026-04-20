@@ -27,10 +27,25 @@ xinbot.plugin.loaded=プラグインを読み込みました: %s
 xinbot.plugin.loading=プラグインの読み込みを試行中: %s
 xinbot.plugin.enabled=プラグインを有効化しました: %s
 xinbot.plugin.disabled=プラグインを無効化しました: %s
+xinbot.plugin.unloaded=プラグインをアンロードしました: %s
+xinbot.plugin.tree.header=プラグイン依存関係ツリー:
 xinbot.plugin.dependency.missing=プラグイン '%2$s' に必要な依存関係 '%1$s' が見つかりません
 xinbot.plugin.load.all.failed=すべてのプラグインの読み込みに失敗しました。循環依存または依存関係の欠如が検出されました。
 xinbot.plugin.not.loaded=- プラグイン '%s' は読み込まれませんでした（依存関係の欠如または循環ループ）
 xinbot.plugin.load.smoothly.failed=プラグインを正常に読み込めませんでした: %s
+xinbot.plugin.unload.dependent=プラグイン %s をアンロードしています（%s に依存しているため）
+
+xinbot.metaplugin.loaded=MetaPlugin を読み込みました: %s
+xinbot.metaplugin.loading=MetaPlugin を読み込んでいます: %s
+xinbot.metaplugin.enabled=MetaPlugin を有効にしました: %s
+xinbot.metaplugin.disabled=MetaPlugin を無効にしました: %s
+xinbot.metaplugin.unloaded=MetaPlugin をアンロードしました: %s
+
+xinbot.metaplugin.error.load_runtime=実行中に MetaPlugin を読み込むことはできません！
+xinbot.metaplugin.error.enable_runtime=実行中に MetaPlugin を有効にすることはできません！
+xinbot.metaplugin.error.disable_runtime=実行中に MetaPlugin を無効にすることはできません！
+xinbot.metaplugin.error.unload_runtime=実行中に MetaPlugin をアンロードすることはできません！
+xinbot.metaplugin.error.count=ボットを開始するには、正確に1つの MetaPlugin が必要です！（見つかった数: %d）
 
 # LangManager messages
 xinbot.langmanager.loaded=言語を読み込みました: %s
@@ -70,6 +85,7 @@ xinbot.command.command.description=コマンドを送信するコマンド。
 xinbot.command.command.usage=command command
 xinbot.command.disconnect.description=サーバーから切断するコマンド。
 xinbot.command.disconnect.usage=disconnect
+# command usages
 xinbot.command.help.cmd.description=利用可能なコマンドのリストを表示します
 xinbot.command.help.cmd.usage=help / help <command>
 xinbot.command.license.description=Xinbotのライセンスを表示します

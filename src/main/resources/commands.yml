@@ -1,0 +1,42 @@
+say:
+  description: "xinbot.command.say.description"
+  usage: "xinbot.command.say.usage"
+  aliases: ["chat"]
+  executor: "xin.bbtt.mcbot.commands.executor.SayCommandExecutor"
+command:
+  description: "xinbot.command.command.description"
+  usage: "xinbot.command.command.usage"
+  aliases: ["cmd"]
+  executor: "xin.bbtt.mcbot.commands.executor.CommandCommandExecutor"
+stop:
+  description: "xinbot.command.stop.description"
+  usage: "xinbot.command.stop.usage"
+  executor: "xin.bbtt.mcbot.commands.executor.StopCommandExecutor"
+help:
+  description: "xinbot.command.help.cmd.description"
+  usage: "xinbot.command.help.cmd.usage"
+  aliases: ["?"]
+  executor: "xin.bbtt.mcbot.commands.executor.HelpCommandExecutor"
+disconnect:
+  description: "xinbot.command.disconnect.description"
+  usage: "xinbot.command.disconnect.usage"
+  aliases: ["dc"]
+  executor: "xin.bbtt.mcbot.commands.executor.DisconnectExecutor"
+list:
+  description: "xinbot.command.list.description"
+  usage: "xinbot.command.list.usage"
+  executor: "xin.bbtt.mcbot.commands.executor.ListCommandExecutor"
+pluginmanager:
+  description: "xinbot.command.pluginmanager.description"
+  usage: "xinbot.command.pluginmanager.usage"
+  aliases: ["pm"]
+  executor: "xin.bbtt.mcbot.commands.executor.PluginManagerCommandExecutor"
+plugins:
+  description: "xinbot.command.plugins.description"
+  usage: "xinbot.command.plugins.usage"
+  aliases: ["pl"]
+  executor: "xin.bbtt.mcbot.commands.executor.PluginsCommandExecutor"
+license:
+  description: "xinbot.command.license.description"
+  usage: "xinbot.command.license.usage"
+  executor: "xin.bbtt.mcbot.commands.executor.LicenseExecutor"

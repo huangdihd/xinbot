@@ -36,7 +36,7 @@ public class MessageSender extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (System.currentTimeMillis() - last_send_time < 3000 && Bot.Instance.getServer() == Server.Xin) return;
+        if (System.currentTimeMillis() - last_send_time < 3000 && Bot.Instance.getServer() == Server.Game) return;
         if (Bot.Instance.getProtocol().getOutboundState() != ProtocolState.GAME) return;
         if (Bot.Instance.getProtocol().getInboundState() != ProtocolState.GAME) return;
         if (Bot.Instance.to_be_sent_messages.isEmpty()) return;

@@ -27,10 +27,25 @@ xinbot.plugin.loaded=Plugin geladen: %s
 xinbot.plugin.loading=Versuche Plugin zu laden: %s
 xinbot.plugin.enabled=Plugin aktiviert: %s
 xinbot.plugin.disabled=Plugin deaktiviert: %s
+xinbot.plugin.unloaded=Plugin entladen: %s
+xinbot.plugin.tree.header=Plugin-Abhängigkeitsbaum:
 xinbot.plugin.dependency.missing=Fehlende Abhängigkeit '%s' erforderlich für Plugin '%s'
 xinbot.plugin.load.all.failed=Alle Plugins konnten nicht geladen werden. Zirkuläre Abhängigkeit oder fehlende Abhängigkeiten erkannt.
 xinbot.plugin.not.loaded=- Plugin '%s' wurde nicht geladen (Fehlende Abhängigkeit oder zirkuläre Schleife)
 xinbot.plugin.load.smoothly.failed=Plugin konnte nicht reibungslos geladen werden: %s
+xinbot.plugin.unload.dependent=Entlade Plugin %s, da es von %s abhängt
+
+xinbot.metaplugin.loaded=MetaPlugin geladen: %s
+xinbot.metaplugin.loading=Versuche MetaPlugin zu laden: %s
+xinbot.metaplugin.enabled=MetaPlugin aktiviert: %s
+xinbot.metaplugin.disabled=MetaPlugin deaktiviert: %s
+xinbot.metaplugin.unloaded=MetaPlugin entladen: %s
+
+xinbot.metaplugin.error.load_runtime=MetaPlugin kann während der Laufzeit nicht geladen werden!
+xinbot.metaplugin.error.enable_runtime=MetaPlugin kann während der Laufzeit nicht aktiviert werden!
+xinbot.metaplugin.error.disable_runtime=MetaPlugin kann während der Laufzeit nicht deaktiviert werden!
+xinbot.metaplugin.error.unload_runtime=MetaPlugin kann während der Laufzeit nicht entladen werden!
+xinbot.metaplugin.error.count=Der Bot muss genau ein MetaPlugin zum Starten haben! (Gefunden: %d)
 
 # LangManager messages
 xinbot.langmanager.loaded=Sprache geladen: %s
@@ -59,7 +74,7 @@ xinbot.match.ms.auth.failed=§c微软认证失败
 
 xinbot.command.not.found.error=Kein Befehl für %s gefunden
 xinbot.command.execute.error=Fehler beim Ausführen des Befehls %s
-xinbot.command.complete.error=Fehler beim Abschließen des Befehls %s
+xinbot.command.complete.error=Kehler beim Abschließen des Befehls %s
 
 xinbot.chat.system.received=Nachricht erhalten: %s
 
@@ -70,6 +85,7 @@ xinbot.command.command.description=Ein Befehl zum Senden von Befehlen.
 xinbot.command.command.usage=command command
 xinbot.command.disconnect.description=Ein Befehl zum Trennen der Verbindung zum Server.
 xinbot.command.disconnect.usage=disconnect
+# command usages
 xinbot.command.help.cmd.description=Zeigt die Liste der verfügbaren Befehle
 xinbot.command.help.cmd.usage=help / help <command>
 xinbot.command.license.description=Zeigt die Lizenz von Xinbot

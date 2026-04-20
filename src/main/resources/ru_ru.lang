@@ -27,10 +27,25 @@ xinbot.plugin.loaded=Загружен плагин: %s
 xinbot.plugin.loading=Попытка загрузить плагин: %s
 xinbot.plugin.enabled=Включен плагин: %s
 xinbot.plugin.disabled=Отключен плагин: %s
+xinbot.plugin.unloaded=Выгружен плагин: %s
+xinbot.plugin.tree.header=Дерево зависимостей плагина:
 xinbot.plugin.dependency.missing=Отсутствует зависимость '%s', необходимая для плагина '%s'
 xinbot.plugin.load.all.failed=Не удалось загрузить все плагины. Обнаружена циклическая зависимость или отсутствие зависимостей.
 xinbot.plugin.not.loaded=- Плагин '%s' не был загружен (отсутствующая зависимость или циклический цикл)
 xinbot.plugin.load.smoothly.failed=Не удалось плавно загрузить плагин: %s
+xinbot.plugin.unload.dependent=Выгрузка плагина %s, так как он зависит от %s
+
+xinbot.metaplugin.loaded=Загружен MetaPlugin: %s
+xinbot.metaplugin.loading=Попытка загрузки MetaPlugin: %s
+xinbot.metaplugin.enabled=Включен MetaPlugin: %s
+xinbot.metaplugin.disabled=Отключен MetaPlugin: %s
+xinbot.metaplugin.unloaded=Выгружен MetaPlugin: %s
+
+xinbot.metaplugin.error.load_runtime=Невозможно загрузить MetaPlugin во время работы!
+xinbot.metaplugin.error.enable_runtime=Невозможно включить MetaPlugin во время работы!
+xinbot.metaplugin.error.disable_runtime=Невозможно отключить MetaPlugin во время работы!
+xinbot.metaplugin.error.unload_runtime=Невозможно выгрузить MetaPlugin во время работы!
+xinbot.metaplugin.error.count=Для запуска бота должен быть ровно один MetaPlugin! (Найдено: %d)
 
 # LangManager messages
 xinbot.langmanager.loaded=Загружен язык: %s
@@ -70,6 +85,7 @@ xinbot.command.command.description=Команда для отправки ком
 xinbot.command.command.usage=command command
 xinbot.command.disconnect.description=Команда для отключения от сервера.
 xinbot.command.disconnect.usage=disconnect
+# command usages
 xinbot.command.help.cmd.description=Показывает список доступных команд
 xinbot.command.help.cmd.usage=help / help <command>
 xinbot.command.license.description=Показать лицензию Xinbot

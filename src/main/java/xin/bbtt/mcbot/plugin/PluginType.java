@@ -15,29 +15,9 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.command;
+package xin.bbtt.mcbot.plugin;
 
-import xin.bbtt.mcbot.command.Command;
-
-public class CommandCommand extends Command {
-
-    @Override
-    public String getName() {
-        return "command";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[] { "command" , "cmd" };
-    }
-
-    @Override
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.command.description");
-    }
-
-    @Override
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get("xinbot.command.command.usage");
-    }
+public enum PluginType {
+    PLUGIN,
+    META_PLUGIN
 }

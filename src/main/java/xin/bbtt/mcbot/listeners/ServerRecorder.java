@@ -33,7 +33,7 @@ public class ServerRecorder extends SessionAdapter {
         if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;
         Server newServer = null;
         if (loginPacket.getCommonPlayerSpawnInfo().getGameMode().equals(GameMode.ADVENTURE)) newServer = Server.Login;
-        if (loginPacket.getCommonPlayerSpawnInfo().getGameMode().equals(GameMode.SURVIVAL)) newServer = Server.Xin;
+        if (loginPacket.getCommonPlayerSpawnInfo().getGameMode().equals(GameMode.SURVIVAL)) newServer = Server.Game;
         ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.Instance.getServer());
         if (newServer != null) Bot.Instance.setServer(newServer);
         Bot.Instance.getPluginManager().events().callEvent(event);

@@ -24,11 +24,23 @@ xinbot.bot.cleanup.session=重連前清理會話
 
 # Plugin manager messages
 xinbot.plugin.unloaded=已載入外掛程式：%s
+xinbot.plugin.tree.header=外掛程式相依樹：
 xinbot.plugin.dependency.missing=外掛程式「%2$s」缺少相依項目「%1$s」
 xinbot.plugin.load.all.failed=無法載入所有外掛程式。偵測到循環相依或缺少相依項目。
 xinbot.plugin.not.loaded=- 外掛程式「%s」未載入（缺少相依項目或循環相依）
 xinbot.plugin.load.smoothly.failed=無法順利載入外掛程式：%s
-xinbot.plugin.loading=嘗試載入外掛程式：%s
+xinbot.plugin.unload.dependent=正在卸載外掛程式 %s，因為它依賴於 %s
+xinbot.metaplugin.loaded=已載入元外掛程式：%s
+xinbot.metaplugin.loading=嘗試載入元外掛程式：%s
+xinbot.metaplugin.enabled=已啟用元外掛程式：%s
+xinbot.metaplugin.disabled=已停用元外掛程式：%s
+xinbot.metaplugin.unloaded=已卸載元外掛程式：%s
+
+xinbot.metaplugin.error.load_runtime=不允許在運行過程中載入元外掛程式！
+xinbot.metaplugin.error.enable_runtime=不允許在運行過程中啟用元外掛程式！
+xinbot.metaplugin.error.disable_runtime=不允許在運行過程中停用元外掛程式！
+xinbot.metaplugin.error.unload_runtime=不允許在運行過程中卸載元外掛程式！
+xinbot.metaplugin.error.count=機器人啟動必須有且僅有一個元外掛程式！（當前找到：%d 個）
 xinbot.plugin.enabled=已啟用外掛程式：%s
 xinbot.plugin.disabled=已停用外掛程式：%s
 

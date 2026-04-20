@@ -27,10 +27,25 @@ xinbot.plugin.loaded=Plugin chargé: %s
 xinbot.plugin.loading=Tentative de chargement du plugin: %s
 xinbot.plugin.enabled=Plugin activé: %s
 xinbot.plugin.disabled=Plugin désactivé: %s
+xinbot.plugin.unloaded=Plugin déchargé: %s
+xinbot.plugin.tree.header=Arbre des dépendances du plugin :
 xinbot.plugin.dependency.missing=Dépendance manquante '%s' requise par le plugin '%s'
 xinbot.plugin.load.all.failed=Échec du chargement de tous les plugins. Dépendance circulaire ou dépendances manquantes détectées.
 xinbot.plugin.not.loaded=- Le plugin '%s' n'a pas été chargé (dépendance manquante ou boucle circulaire)
 xinbot.plugin.load.smoothly.failed=Échec du chargement du plugin en douceur : %s
+xinbot.plugin.unload.dependent=Déchargement du plugin %s car il dépend de %s
+
+xinbot.metaplugin.loaded=MetaPlugin chargé : %s
+xinbot.metaplugin.loading=Tentative de chargement du MetaPlugin : %s
+xinbot.metaplugin.enabled=MetaPlugin activé : %s
+xinbot.metaplugin.disabled=MetaPlugin désactivé : %s
+xinbot.metaplugin.unloaded=MetaPlugin déchargé : %s
+
+xinbot.metaplugin.error.load_runtime=Impossible de charger le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.enable_runtime=Impossible d'activer le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.disable_runtime=Impossible de désactiver le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.unload_runtime=Impossible de décharger le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.count=Le bot doit avoir exactement un MetaPlugin pour démarrer ! (Trouvé : %d)
 
 # LangManager messages
 xinbot.langmanager.loaded=Langue chargée: %s
@@ -70,6 +85,7 @@ xinbot.command.command.description=Une commande pour envoyer des commandes.
 xinbot.command.command.usage=command command
 xinbot.command.disconnect.description=Une commande pour se déconnecter du serveur.
 xinbot.command.disconnect.usage=disconnect
+# command usages
 xinbot.command.help.cmd.description=Affiche la liste des commandes disponibles
 xinbot.command.help.cmd.usage=help / help <command>
 xinbot.command.license.description=Afficher la licence de Xinbot

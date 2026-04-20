@@ -40,8 +40,8 @@ import java.util.jar.JarFile;
 
 // Plugin Manager
 public class PluginManager {
-    private final Map<String, Plugin> plugins = new HashMap<>();
-    private final Map<String, Plugin> enabledPlugins = new HashMap<>();
+    private final Map<String, RegisteredPlugin> plugins = new HashMap<>();
+    private final Map<String, RegisteredPlugin> enabledPlugins = new HashMap<>();
     private final Map<String, List<SessionListener>> sessionListeners = new HashMap<>();
     @Getter
     private final Map<String, List<String>> pluginDependencies = new HashMap<>();
@@ -69,13 +69,53 @@ public class PluginManager {
         return pluginLoaders.get(name);
     }
 
-    public void loadPlugin(Plugin plugin) {
-        plugins.put(plugin.getName(), plugin);
-        plugin.onLoad();
-        if (Bot.Instance.getSession() != null) {
-            enablePlugin(plugin);
+    public long countMetaPlugins() {
+        return plugins.values().stream().filter(rp -> rp instanceof RegisteredMetaPlugin).count();
+    }
+
+    public RegisteredMetaPlugin getMetaPlugin() {
+        return (RegisteredMetaPlugin) plugins.values().stream()
+                .filter(rp -> rp instanceof RegisteredMetaPlugin)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public String getPluginName(Plugin plugin) {
+        if (plugin == null) return "Core";
+        for (RegisteredPlugin rp : plugins.values()) {
+            if (rp.getPlugin() == plugin) {
+                return rp.getName();
+            }
         }
-        log.info(LangManager.get("xinbot.plugin.loaded", plugin.getName()));
+        return plugin.getClass().getSimpleName();
+    }
+
+    public void loadPlugin(Plugin plugin) {
+        String name = plugin.getClass().getSimpleName();
+        String version = plugin.getClass().getPackage().getImplementationVersion();
+        if (version == null) version = "1.0.0";
+        
+        RegisteredPlugin rp;
+        if (plugin instanceof MetaPlugin) {
+            rp = new RegisteredMetaPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, (MetaPlugin) plugin, new HashMap<>());
+        } else {
+            rp = new RegisteredPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, plugin, PluginType.PLUGIN, new HashMap<>());
+        }
+        loadPlugin(rp);
+    }
+
+    public void loadPlugin(RegisteredPlugin rp) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+            log.error(LangManager.get("xinbot.metaplugin.error.load_runtime"));
+            return;
+        }
+        plugins.put(rp.getName(), rp);
+        rp.getPlugin().onLoad();
+        if (Bot.Instance.getSession() != null) {
+            enablePlugin(rp);
+        }
+        String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.loaded" : "xinbot.plugin.loaded";
+        log.info(LangManager.get(key, rp.getName()));
     }
 
     static class PluginInfo {
@@ -83,7 +123,9 @@ public class PluginManager {
         String name;
         String mainClass;
         String version;
+        PluginType type;
         List<String> depends = new ArrayList<>();
+        Map<String, Command> commands = new HashMap<>();
         URL url;
     }
 
@@ -102,7 +144,14 @@ public class PluginManager {
         
         Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
         Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
-        loadPlugin(plugin);
+        
+        RegisteredPlugin rp;
+        if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
+            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, (MetaPlugin) plugin, info.commands);
+        } else {
+            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, plugin, PluginType.PLUGIN, info.commands);
+        }
+        loadPlugin(rp);
     }
 
     public void loadPlugins(String pluginsDirectory) {
@@ -123,13 +172,13 @@ public class PluginManager {
         for (File file : files) {
             try {
                 PluginInfo info = loadPluginYaml(file);
-                if (info != null) {
-                    info.file = file;
-                    info.url = file.toURI().toURL();
-                    infoMap.put(info.name, info);
-                } else {
+                if (info == null) {
                     log.error("Failed to load plugin from {}: Missing or invalid plugin.yml", file.getName());
+                    continue;
                 }
+                info.file = file;
+                info.url = file.toURI().toURL();
+                infoMap.put(info.name, info);
             } catch (Exception e) {
                 log.error(LangManager.get("xinbot.plugin.load.failed", file.getName()), e);
             }
@@ -140,39 +189,49 @@ public class PluginManager {
         for (PluginInfo info : sortedInfos) {
             log.info(LangManager.get("xinbot.plugin.loading", info.name));
             try {
-                ClassLoader parent = PluginManager.class.getClassLoader();
-                if (!info.depends.isEmpty()) {
-                    PluginClassLoader firstDepLoader = pluginLoaders.get(info.depends.get(0));
-                    if (firstDepLoader != null) {
-                        parent = firstDepLoader;
-                    }
-                }
-
-                PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{info.url}, parent);
-                
-                for (int i = 1; i < info.depends.size(); i++) {
-                    PluginClassLoader depLoader = pluginLoaders.get(info.depends.get(i));
-                    if (depLoader != null) {
-                        pluginClassLoader.addDependency(depLoader);
-                    }
-                }
-
-                pluginLoaders.put(info.name, pluginClassLoader);
-                this.pluginDependencies.put(info.name, info.depends);
-                
-                Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
-                Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
-                
-                if (plugins.containsKey(plugin.getName())) {
-                    pluginClassLoader.close();
-                    continue;
-                }
-                
-                loadPlugin(plugin);
+                instantiateAndLoad(info);
             } catch (Exception e) {
                 log.error(LangManager.get("xinbot.plugin.load.smoothly.failed", info.name), e);
             }
         }
+    }
+
+    private void instantiateAndLoad(PluginInfo info) throws Exception {
+        ClassLoader parent = PluginManager.class.getClassLoader();
+        if (!info.depends.isEmpty()) {
+            PluginClassLoader firstDepLoader = pluginLoaders.get(info.depends.get(0));
+            if (firstDepLoader != null) {
+                parent = firstDepLoader;
+            }
+        }
+
+        PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{info.url}, parent);
+        
+        for (int i = 1; i < info.depends.size(); i++) {
+            PluginClassLoader depLoader = pluginLoaders.get(info.depends.get(i));
+            if (depLoader != null) {
+                pluginClassLoader.addDependency(depLoader);
+            }
+        }
+
+        pluginLoaders.put(info.name, pluginClassLoader);
+        this.pluginDependencies.put(info.name, info.depends);
+        
+        Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
+        Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
+        
+        if (plugins.containsKey(info.name)) {
+            pluginClassLoader.close();
+            return;
+        }
+        
+        RegisteredPlugin rp;
+        if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
+            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, (MetaPlugin) plugin, info.commands);
+        } else {
+            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, plugin, PluginType.PLUGIN, info.commands);
+        }
+        loadPlugin(rp);
     }
 
     private PluginInfo loadPluginYaml(File file) throws IOException {
@@ -181,39 +240,51 @@ public class PluginManager {
             if (entry == null) return null;
             
             try (InputStream is = jar.getInputStream(entry)) {
-                Yaml yaml = new Yaml();
-                Map<String, Object> map = yaml.load(is);
-                if (map == null || !map.containsKey("name") || !map.containsKey("main")) {
-                    return null;
-                }
+                Map<String, Object> map = new Yaml().load(is);
+                if (map == null || !map.containsKey("name") || !map.containsKey("main")) return null;
                 
                 PluginInfo info = new PluginInfo();
                 info.name = String.valueOf(map.get("name"));
                 info.mainClass = String.valueOf(map.get("main"));
-                info.version = map.containsKey("version") ? String.valueOf(map.get("version")) : "1.0.0";
+                info.version = String.valueOf(map.getOrDefault("version", "1.0.0"));
+                info.type = PluginType.valueOf(String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase());
                 
-                if (map.containsKey("depend")) {
-                    Object dependObj = map.get("depend");
-                    if (dependObj instanceof List) {
-                        for (Object dep : (List<?>) dependObj) {
-                            info.depends.add(String.valueOf(dep));
-                        }
-                    } else if (dependObj instanceof String) {
-                        info.depends.add((String) dependObj);
-                    }
-                }
-                if (map.containsKey("depends")) {
-                    Object dependObj = map.get("depends");
-                    if (dependObj instanceof List) {
-                        for (Object dep : (List<?>) dependObj) {
-                            info.depends.add(String.valueOf(dep));
-                        }
-                    } else if (dependObj instanceof String) {
-                        info.depends.add((String) dependObj);
-                    }
-                }
+                parseDepends(map, info.depends);
+                parseCommands(map, info.commands);
                 return info;
             }
+        }
+    }
+
+    private void parseDepends(Map<String, Object> map, List<String> target) {
+        Object dependObj = map.getOrDefault("depend", map.get("depends"));
+        if (dependObj instanceof List) {
+            for (Object dep : (List<?>) dependObj) target.add(String.valueOf(dep));
+        } else if (dependObj instanceof String) {
+            target.add((String) dependObj);
+        }
+    }
+
+    private void parseCommands(Map<String, Object> map, Map<String, Command> target) {
+        Object commandsObj = map.get("commands");
+        if (!(commandsObj instanceof Map<?, ?> cmdsMap)) return;
+
+        for (Map.Entry<?, ?> cmdEntry : cmdsMap.entrySet()) {
+            String cmdName = String.valueOf(cmdEntry.getKey());
+            if (!(cmdEntry.getValue() instanceof Map<?, ?> props)) continue;
+
+            String desc = props.containsKey("description") ? String.valueOf(props.get("description")) : "";
+            String usage = props.containsKey("usage") ? String.valueOf(props.get("usage")) : "";
+            
+            List<String> aliases = new ArrayList<>();
+            Object aliasObj = props.get("aliases");
+            if (aliasObj instanceof List) {
+                for (Object a : (List<?>) aliasObj) aliases.add(String.valueOf(a));
+            } else if (aliasObj instanceof String) {
+                aliases.add((String) aliasObj);
+            }
+            
+            target.put(cmdName, new Command(cmdName, aliases.toArray(new String[0]), desc, usage));
         }
     }
 
@@ -271,49 +342,63 @@ public class PluginManager {
         return sortedList;
     }
 
-    public void enablePlugin(Plugin plugin) {
-        try {
-            sessionListeners.put(plugin.getName(), new ArrayList<>());
-            plugin.onEnable();
-            enabledPlugins.put(plugin.getName(), plugin);
-            log.info(LangManager.get("xinbot.plugin.enabled", plugin.getName()));
-        } catch (Exception e) {
-            log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
-        }
-    }
-
-    public void disablePlugin(Plugin plugin) {
-        if (!enabledPlugins.containsKey(plugin.getName())) {
-            log.error(LangManager.get("xinbot.plugin.not.enabled", plugin.getName()));
+    public void enablePlugin(RegisteredPlugin rp) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+            log.error(LangManager.get("xinbot.metaplugin.error.enable_runtime"));
             return;
         }
-        eventManager.unregisterAll(plugin);
-        commandManager.unregisterAll(plugin);
-        for (SessionListener sessionListener : sessionListeners.getOrDefault(plugin.getName(), Collections.emptyList())) {
-            Bot.Instance.getSession().removeListener(sessionListener);
-        }
-        sessionListeners.remove(plugin.getName());
         try {
-            plugin.onDisable();
-        }
-        catch (Exception e) {
-            log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
-        }
-        finally {
-            enabledPlugins.remove(plugin.getName());
-            DisablePluginEvent disablePluginEvent = new DisablePluginEvent(plugin);
-            eventManager.callEvent(disablePluginEvent);
-            log.info(LangManager.get("xinbot.plugin.disabled", plugin.getName()));
+            sessionListeners.put(rp.getName(), new ArrayList<>());
+            rp.getPlugin().onEnable();
+            enabledPlugins.put(rp.getName(), rp);
+            String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.enabled" : "xinbot.plugin.enabled";
+            log.info(LangManager.get(key, rp.getName()));
+        } catch (Exception e) {
+            log.error(LangManager.get("xinbot.plugin.enable.failed", rp.getName()), e);
         }
     }
 
-    public void unloadPlugin(Plugin plugin) {
-        if (!plugins.containsKey(plugin.getName())) return;
+    public void disablePlugin(RegisteredPlugin rp) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+            log.error(LangManager.get("xinbot.metaplugin.error.disable_runtime"));
+            return;
+        }
+        if (!enabledPlugins.containsKey(rp.getName())) {
+            log.error(LangManager.get("xinbot.plugin.not.enabled", rp.getName()));
+            return;
+        }
+        eventManager.unregisterAll(rp.getPlugin());
+        commandManager.unregisterAll(rp.getPlugin());
+        for (SessionListener sessionListener : sessionListeners.getOrDefault(rp.getName(), Collections.emptyList())) {
+            Bot.Instance.getSession().removeListener(sessionListener);
+        }
+        sessionListeners.remove(rp.getName());
+        try {
+            rp.getPlugin().onDisable();
+        }
+        catch (Exception e) {
+            log.error(LangManager.get("xinbot.plugin.disable.failed", rp.getName()), e);
+        }
+        finally {
+            enabledPlugins.remove(rp.getName());
+            DisablePluginEvent disablePluginEvent = new DisablePluginEvent(rp.getPlugin());
+            eventManager.callEvent(disablePluginEvent);
+            String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.disabled" : "xinbot.plugin.disabled";
+            log.info(LangManager.get(key, rp.getName()));
+        }
+    }
 
-        String pluginName = plugin.getName();
+    public void unloadPlugin(RegisteredPlugin rp) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+            log.error(LangManager.get("xinbot.metaplugin.error.unload_runtime"));
+            return;
+        }
+        if (!plugins.containsKey(rp.getName())) return;
 
-        List<Plugin> dependents = new ArrayList<>();
-        for (Plugin p : plugins.values()) {
+        String pluginName = rp.getName();
+
+        List<RegisteredPlugin> dependents = new ArrayList<>();
+        for (RegisteredPlugin p : plugins.values()) {
             if (p.getName().equals(pluginName)) continue;
             List<String> deps = pluginDependencies.get(p.getName());
             if (deps != null && deps.contains(pluginName)) {
@@ -321,7 +406,7 @@ public class PluginManager {
             }
         }
 
-        for (Plugin dependent : dependents) {
+        for (RegisteredPlugin dependent : dependents) {
             if (plugins.containsKey(dependent.getName())) {
                 log.info(LangManager.get("xinbot.plugin.unload.dependent", dependent.getName(), pluginName));
                 unloadPlugin(dependent);
@@ -330,9 +415,9 @@ public class PluginManager {
 
         try {
             if (enabledPlugins.containsKey(pluginName)) {
-                disablePlugin(plugin);
+                disablePlugin(rp);
             }
-            plugin.onUnload();
+            rp.getPlugin().onUnload();
         } catch (Exception e) {
             log.error(LangManager.get("xinbot.plugin.unload.failed", pluginName), e);
         }
@@ -345,42 +430,51 @@ public class PluginManager {
                     loader.close();
                 } catch (IOException ignored) {}
             }
-            log.info(LangManager.get("xinbot.plugin.unloaded", plugin.getClass().getName()));
+            String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.unloaded" : "xinbot.plugin.unloaded";
+            log.info(LangManager.get(key, rp.getPlugin().getClass().getName()));
         }
     }
 
     public void unloadPlugins() {
-        List<Plugin> plugins = new ArrayList<>(this.plugins.values());
-        for (Plugin plugin : plugins) {
+        List<RegisteredPlugin> pluginsList = new ArrayList<>(this.plugins.values());
+        for (RegisteredPlugin rp : pluginsList) {
             try {
-                unloadPlugin(plugin);
+                unloadPlugin(rp);
             } catch (Exception e) {
-                log.error(LangManager.get("xinbot.plugin.unload.failed", plugin.getName()), e);
+                log.error(LangManager.get("xinbot.plugin.unload.failed", rp.getName()), e);
             }
         }
     }
 
     public void enableAll() {
-        for (Plugin plugin : plugins.values()) {
+        for (RegisteredPlugin rp : plugins.values()) {
             try {
-                enablePlugin(plugin);
+                if (rp.getType() == PluginType.PLUGIN) enablePlugin(rp);
             } catch (Exception e) {
-                log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
+                log.error(LangManager.get("xinbot.plugin.enable.failed", rp.getName()), e);
             }
+        }
+
+        RegisteredMetaPlugin meta = getMetaPlugin();
+        if (meta != null) {
+            sessionListeners.put(meta.getName(), new ArrayList<>());
+            meta.getPlugin().onEnable();
+            enabledPlugins.put(meta.getName(), meta);
+            log.info(LangManager.get("xinbot.metaplugin.enabled", meta.getName()));
         }
     }
 
     public void disableAll() {
-        for (Plugin plugin : plugins.values()) {
+        for (RegisteredPlugin rp : plugins.values()) {
             try {
-                disablePlugin(plugin);
+                disablePlugin(rp);
             } catch (Exception e) {
-                log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
+                log.error(LangManager.get("xinbot.plugin.disable.failed", rp.getName()), e);
             }
         }
     }
 
-    public Plugin getPlugin(String name) {
+    public RegisteredPlugin getPlugin(String name) {
         return plugins.get(name);
     }
 
@@ -393,17 +487,17 @@ public class PluginManager {
         return enabledPlugins.containsKey(name);
     }
 
-    public Collection<Plugin> getPlugins() {
+    public Collection<RegisteredPlugin> getPlugins() {
         return plugins.values();
     }
 
     public void addListener(SessionListener sessionListener, Plugin plugin) {
-        sessionListeners.get(plugin.getName()).add(sessionListener);
+        sessionListeners.get(getPluginName(plugin)).add(sessionListener);
         Bot.Instance.getSession().addListener(sessionListener);
     }
 
     public void removeListener(SessionListener sessionListener, Plugin plugin) {
-        sessionListeners.get(plugin.getName()).remove(sessionListener);
+        sessionListeners.get(getPluginName(plugin)).remove(sessionListener);
         Bot.Instance.getSession().removeListener(sessionListener);
     }
 }

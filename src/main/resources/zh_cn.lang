@@ -27,6 +27,25 @@ xinbot.plugin.loaded=已加载插件：%s
 xinbot.plugin.loading=尝试加载插件：%s
 xinbot.plugin.enabled=已启用插件：%s
 xinbot.plugin.disabled=已禁用插件：%s
+xinbot.plugin.unloaded=已卸载插件：%s
+xinbot.plugin.tree.header=插件依赖树：
+xinbot.plugin.dependency.missing=插件“%2$s”缺少依赖项“%1$s”
+xinbot.plugin.load.all.failed=无法加载所有插件。检测到循环依赖或缺少依赖项。
+xinbot.plugin.not.loaded=- 插件“%s”未加载（缺少依赖项或循环依赖）
+xinbot.plugin.load.smoothly.failed=无法顺利加载插件：%s
+xinbot.plugin.unload.dependent=正在卸载插件 %s，因为它依赖于 %s
+
+xinbot.metaplugin.loaded=已加载元插件：%s
+xinbot.metaplugin.loading=尝试加载元插件：%s
+xinbot.metaplugin.enabled=已启用元插件：%s
+xinbot.metaplugin.disabled=已禁用元插件：%s
+xinbot.metaplugin.unloaded=已卸载元插件：%s
+
+xinbot.metaplugin.error.load_runtime=不允许在运行过程中加载元插件！
+xinbot.metaplugin.error.enable_runtime=不允许在运行过程中启用元插件！
+xinbot.metaplugin.error.disable_runtime=不允许在运行过程中禁用元插件！
+xinbot.metaplugin.error.unload_runtime=不允许在运行过程中卸载元插件！
+xinbot.metaplugin.error.count=机器人启动必须有且仅有一个元插件！（当前找到：%d 个）
 
 # LangManager messages
 xinbot.langmanager.loaded=已加载语言：%s
@@ -55,7 +74,6 @@ xinbot.bot.bye=再见！
 xinbot.bot.reconnecting=将在 %s 毫秒后重新连接。
 
 xinbot.jline.init.failed=初始化 JLine 失败：%s
-xinbot.jline.init.failed=初始化 JLine 失败: %s
 xinbot.args.invalid=你只能使用一个参数运行此程序！
 xinbot.version=版本: %s
 
@@ -71,11 +89,6 @@ xinbot.plugin.enable.failed=启用插件失败：%s
 xinbot.plugin.not.enabled=插件 %s 未启用。
 xinbot.plugin.disable.failed=禁用插件失败：%s
 xinbot.plugin.unload.failed=卸载插件失败：%s
-xinbot.plugin.unloaded=已卸载插件：%s
-xinbot.plugin.dependency.missing=插件“%2$s”缺少依赖项“%1$s”
-xinbot.plugin.load.all.failed=无法加载所有插件。检测到循环依赖或缺少依赖项。
-xinbot.plugin.not.loaded=- 插件“%s”未加载（缺少依赖项或循环依赖）
-xinbot.plugin.load.smoothly.failed=无法顺利加载插件：%s
 xinbot.plugin.command.usage=PluginManager list / PluginManager load <插件文件名1> <插件文件名2> ... / PluginManager unload <插件名1> <插件名2> ... / PluginManager reload <插件名1> <插件名2> ... / PluginManager enable <插件名1> <插件名2> ... / PluginManager disable <插件名1> <插件名2> ... / PluginManager re-enable <插件名1> <插件名2> ...
 xinbot.plugin.not.found.name=未找到插件 %s。
 xinbot.plugin.list.header=插件列表：

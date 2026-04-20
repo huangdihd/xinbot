@@ -41,7 +41,6 @@ import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
-import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -85,12 +84,6 @@ public class Bot {
     private final BlockChangedAckRecorder blockChangedAckRecorder = new BlockChangedAckRecorder();
     @Getter
     private final AtomicInteger sequence = new AtomicInteger(0);
-    @Getter
-    @Setter
-    private String serverHost = "2b2t.xin";
-    @Getter
-    @Setter
-    private int serverPort = 25565;
 
     private Bot() {
         this.pluginManager = new PluginManager();
@@ -104,6 +97,14 @@ public class Bot {
 
     public void start() {
         mainThread = Thread.currentThread();
+
+        long metaCount = pluginManager.countMetaPlugins();
+        if (metaCount != 1) {
+            log.error(LangManager.get("xinbot.metaplugin.error.count", metaCount));
+            running = false;
+            return;
+        }
+
         running = true;
         protocol = AccountLoader.getProtocol();
         if (config.getConfigData().getProxy().isEnable()) {
@@ -176,7 +177,7 @@ public class Bot {
     }
 
     private void connect(){
-        session = new ClientNetworkSession( new InetSocketAddress(serverHost, serverPort), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
+        session = new ClientNetworkSession( pluginManager.getMetaPlugin().getServerSocketAddress(), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
         session.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {

@@ -27,7 +27,7 @@ import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 import xin.bbtt.mcbot.command.SubCommandExecutor;
-import xin.bbtt.mcbot.plugin.Plugin;
+import xin.bbtt.mcbot.plugin.RegisteredPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,8 +59,8 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
     }
 
     @Nullable
-    private static Plugin findPlugin(String pluginName) {
-        Plugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
+    private static RegisteredPlugin findPlugin(String pluginName) {
+        RegisteredPlugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
         if (plugin == null) {
             log.error(LangManager.get("xinbot.plugin.not.found.name", pluginName));
         }
@@ -75,7 +75,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
             
             // Build dependents map (who depends on me)
             java.util.Map<String, java.util.List<String>> dependents = new java.util.HashMap<>();
-            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
                 dependents.putIfAbsent(plugin.getName(), new java.util.ArrayList<>());
             }
             
@@ -87,7 +87,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
             }
             
             // Find plugins with inDegree == 0 (no loaded dependencies)
-            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
                 java.util.List<String> myDeps = deps.getOrDefault(plugin.getName(), java.util.Collections.emptyList());
                 boolean hasLoadedDeps = false;
                 for (String dep : myDeps) {
@@ -121,7 +121,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             log.info(LangManager.get("xinbot.plugin.list.header"));
-            for (Plugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
                 log.info(LangManager.get("xinbot.plugin.list.item", plugin.getName(), plugin.getVersion()));
             }
         }
@@ -191,7 +191,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                     log.error(LangManager.get("xinbot.plugin.unload.xinbot.denied"));
                     continue;
                 }
-                Plugin plugin = findPlugin(pluginName);
+                RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
                     Bot.Instance.getPluginManager().unloadPlugin(plugin);
@@ -203,7 +203,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             result.remove("XinbotPlugin");
             return result;
@@ -224,7 +224,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 return;
             }
             for (String pluginName : args) {
-                Plugin plugin = findPlugin(pluginName);
+                RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
                     Bot.Instance.getPluginManager().unloadPlugin(plugin);
@@ -242,7 +242,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
@@ -261,7 +261,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 log.error(LangManager.get("xinbot.plugin.command.enable.usage"));
             }
             for (String pluginName : args) {
-                Plugin plugin = findPlugin(pluginName);
+                RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
                     Bot.Instance.getPluginManager().enablePlugin(plugin);
@@ -273,7 +273,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
@@ -296,7 +296,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                     log.error(LangManager.get("xinbot.plugin.disable.xinbot.denied"));
                     continue;
                 }
-                Plugin plugin = findPlugin(pluginName);
+                RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
                     Bot.Instance.getPluginManager().disablePlugin(plugin);
@@ -308,7 +308,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             result.remove("XinbotPlugin");
             return result;
@@ -328,7 +328,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 log.error(LangManager.get("xinbot.plugin.command.reenable.usage"));
             }
             for (String pluginName : args) {
-                Plugin plugin = findPlugin(pluginName);
+                RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
                     Bot.Instance.getPluginManager().disablePlugin(plugin);
@@ -346,7 +346,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(Plugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
