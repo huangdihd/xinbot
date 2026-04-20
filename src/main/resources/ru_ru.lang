@@ -27,6 +27,10 @@ xinbot.plugin.loaded=Загружен плагин: %s
 xinbot.plugin.loading=Попытка загрузить плагин: %s
 xinbot.plugin.enabled=Включен плагин: %s
 xinbot.plugin.disabled=Отключен плагин: %s
+xinbot.plugin.dependency.missing=Отсутствует зависимость '%s', необходимая для плагина '%s'
+xinbot.plugin.load.all.failed=Не удалось загрузить все плагины. Обнаружена циклическая зависимость или отсутствие зависимостей.
+xinbot.plugin.not.loaded=- Плагин '%s' не был загружен (отсутствующая зависимость или циклический цикл)
+xinbot.plugin.load.smoothly.failed=Не удалось плавно загрузить плагин: %s
 
 # LangManager messages
 xinbot.langmanager.loaded=Загружен язык: %s

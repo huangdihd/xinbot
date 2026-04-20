@@ -27,6 +27,10 @@ xinbot.plugin.loaded=Plugin geladen: %s
 xinbot.plugin.loading=Versuche Plugin zu laden: %s
 xinbot.plugin.enabled=Plugin aktiviert: %s
 xinbot.plugin.disabled=Plugin deaktiviert: %s
+xinbot.plugin.dependency.missing=Fehlende Abhängigkeit '%s' erforderlich für Plugin '%s'
+xinbot.plugin.load.all.failed=Alle Plugins konnten nicht geladen werden. Zirkuläre Abhängigkeit oder fehlende Abhängigkeiten erkannt.
+xinbot.plugin.not.loaded=- Plugin '%s' wurde nicht geladen (Fehlende Abhängigkeit oder zirkuläre Schleife)
+xinbot.plugin.load.smoothly.failed=Plugin konnte nicht reibungslos geladen werden: %s
 
 # LangManager messages
 xinbot.langmanager.loaded=Sprache geladen: %s

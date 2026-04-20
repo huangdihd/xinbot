@@ -27,6 +27,10 @@ xinbot.plugin.loaded=プラグインを読み込みました: %s
 xinbot.plugin.loading=プラグインの読み込みを試行中: %s
 xinbot.plugin.enabled=プラグインを有効化しました: %s
 xinbot.plugin.disabled=プラグインを無効化しました: %s
+xinbot.plugin.dependency.missing=プラグイン '%2$s' に必要な依存関係 '%1$s' が見つかりません
+xinbot.plugin.load.all.failed=すべてのプラグインの読み込みに失敗しました。循環依存または依存関係の欠如が検出されました。
+xinbot.plugin.not.loaded=- プラグイン '%s' は読み込まれませんでした（依存関係の欠如または循環ループ）
+xinbot.plugin.load.smoothly.failed=プラグインを正常に読み込めませんでした: %s
 
 # LangManager messages
 xinbot.langmanager.loaded=言語を読み込みました: %s

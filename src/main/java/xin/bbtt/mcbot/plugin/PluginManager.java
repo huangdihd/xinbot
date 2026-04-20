@@ -35,6 +35,8 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.util.ServiceLoader;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 // Plugin Manager
 public class PluginManager {
@@ -94,15 +96,118 @@ public class PluginManager {
             return;
         }
 
+        Map<String, Plugin> discoveredPlugins = new HashMap<>();
+        Map<String, List<String>> pluginDependencies = new HashMap<>();
+
         for (File file : files) {
-            log.info(LangManager.get("xinbot.plugin.loading", file.getName()));
             try {
-                loadPlugin(file);
-            }
-            catch (Exception e) {
+                URL url = file.toURI().toURL();
+                classLoader.addURLFile(url);
+                ClassLoader pluginClassLoader = new URLClassLoader(new URL[]{url}, classLoader);
+
+                Properties jarProps = new Properties();
+                try (JarFile jar = new JarFile(file)) {
+                    JarEntry entry = jar.getJarEntry("META-INF/plugin.properties");
+                    if (entry != null) {
+                        try (InputStream is = jar.getInputStream(entry)) {
+                            jarProps.load(is);
+                        }
+                    }
+                }
+
+                ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, pluginClassLoader);
+                for (Plugin plugin : serviceLoader) {
+                    String pluginName = plugin.getName();
+                    if (plugins.containsKey(pluginName)) continue;
+
+                    discoveredPlugins.put(pluginName, plugin);
+
+                    List<String> deps = new ArrayList<>();
+                    String depStr = jarProps.getProperty(pluginName + ".depends");
+                    if (depStr == null || depStr.trim().isEmpty()) {
+                        depStr = jarProps.getProperty("depends");
+                    }
+
+                    if (depStr != null && !depStr.trim().isEmpty()) {
+                        for (String dep : depStr.split(",")) {
+                            deps.add(dep.trim());
+                        }
+                    }
+                    pluginDependencies.put(pluginName, deps);
+                }
+            } catch (Exception e) {
                 log.error(LangManager.get("xinbot.plugin.load.failed", file.getName()), e);
             }
         }
+
+        List<Plugin> sortedPlugins = sortPluginsTopologically(discoveredPlugins, pluginDependencies);
+
+        for (Plugin plugin : sortedPlugins) {
+            log.info(LangManager.get("xinbot.plugin.loading", plugin.getName()));
+            try {
+                loadPlugin(plugin);
+            } catch (Exception e) {
+                log.error(LangManager.get("xinbot.plugin.load.smoothly.failed", plugin.getName()), e);
+            }
+        }
+    }
+
+    private List<Plugin> sortPluginsTopologically(Map<String, Plugin> discoveredPlugins, Map<String, List<String>> pluginDependencies) {
+        Map<String, Integer> inDegree = new HashMap<>();
+        Map<String, List<String>> dependents = new HashMap<>();
+
+        for (String name : discoveredPlugins.keySet()) {
+            inDegree.put(name, 0);
+            dependents.put(name, new ArrayList<>());
+        }
+
+        for (Plugin plugin : discoveredPlugins.values()) {
+            String currentPluginName = plugin.getName();
+            List<String> dependencies = pluginDependencies.getOrDefault(currentPluginName, Collections.emptyList());
+
+            for (String dep : dependencies) {
+                if (!discoveredPlugins.containsKey(dep) && !plugins.containsKey(dep)) {
+                    log.error(LangManager.get("xinbot.plugin.dependency.missing", dep, currentPluginName));
+                    inDegree.put(currentPluginName, inDegree.getOrDefault(currentPluginName, 0) + 1);
+                } else if (discoveredPlugins.containsKey(dep)) {
+                    dependents.putIfAbsent(dep, new ArrayList<>());
+                    dependents.get(dep).add(currentPluginName);
+                    inDegree.put(currentPluginName, inDegree.get(currentPluginName) + 1);
+                }
+            }
+        }
+
+        Queue<String> queue = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
+            if (entry.getValue() == 0) {
+                queue.offer(entry.getKey());
+            }
+        }
+
+        List<Plugin> sortedList = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+            sortedList.add(discoveredPlugins.get(current));
+
+            for (String dependent : dependents.getOrDefault(current, Collections.emptyList())) {
+                int newInDegree = inDegree.get(dependent) - 1;
+                inDegree.put(dependent, newInDegree);
+                if (newInDegree == 0) {
+                    queue.offer(dependent);
+                }
+            }
+        }
+
+        if (sortedList.size() != discoveredPlugins.size()) {
+            log.error(LangManager.get("xinbot.plugin.load.all.failed"));
+            for (String name : discoveredPlugins.keySet()) {
+                if (inDegree.get(name) > 0) {
+                    log.error(LangManager.get("xinbot.plugin.not.loaded", name));
+                }
+            }
+        }
+
+        return sortedList;
     }
 
     public void enablePlugin(Plugin plugin) {

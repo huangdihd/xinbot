@@ -27,6 +27,10 @@ xinbot.plugin.loaded=Plugin chargé: %s
 xinbot.plugin.loading=Tentative de chargement du plugin: %s
 xinbot.plugin.enabled=Plugin activé: %s
 xinbot.plugin.disabled=Plugin désactivé: %s
+xinbot.plugin.dependency.missing=Dépendance manquante '%s' requise par le plugin '%s'
+xinbot.plugin.load.all.failed=Échec du chargement de tous les plugins. Dépendance circulaire ou dépendances manquantes détectées.
+xinbot.plugin.not.loaded=- Le plugin '%s' n'a pas été chargé (dépendance manquante ou boucle circulaire)
+xinbot.plugin.load.smoothly.failed=Échec du chargement du plugin en douceur : %s
 
 # LangManager messages
 xinbot.langmanager.loaded=Langue chargée: %s
