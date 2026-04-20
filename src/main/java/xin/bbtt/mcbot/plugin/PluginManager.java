@@ -96,14 +96,12 @@ public class PluginManager {
             return;
         }
 
-        Map<String, Plugin> discoveredPlugins = new HashMap<>();
-        Map<String, List<String>> pluginDependencies = new HashMap<>();
+        Map<String, Properties> jarPropertiesMap = new HashMap<>();
 
         for (File file : files) {
             try {
                 URL url = file.toURI().toURL();
                 classLoader.addURLFile(url);
-                ClassLoader pluginClassLoader = new URLClassLoader(new URL[]{url}, classLoader);
 
                 Properties jarProps = new Properties();
                 try (JarFile jar = new JarFile(file)) {
@@ -114,29 +112,41 @@ public class PluginManager {
                         }
                     }
                 }
-
-                ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, pluginClassLoader);
-                for (Plugin plugin : serviceLoader) {
-                    String pluginName = plugin.getName();
-                    if (plugins.containsKey(pluginName)) continue;
-
-                    discoveredPlugins.put(pluginName, plugin);
-
-                    List<String> deps = new ArrayList<>();
-                    String depStr = jarProps.getProperty(pluginName + ".depends");
-                    if (depStr == null || depStr.trim().isEmpty()) {
-                        depStr = jarProps.getProperty("depends");
-                    }
-
-                    if (depStr != null && !depStr.trim().isEmpty()) {
-                        for (String dep : depStr.split(",")) {
-                            deps.add(dep.trim());
-                        }
-                    }
-                    pluginDependencies.put(pluginName, deps);
-                }
+                jarPropertiesMap.put(url.toString(), jarProps);
             } catch (Exception e) {
                 log.error(LangManager.get("xinbot.plugin.load.failed", file.getName()), e);
+            }
+        }
+
+        Map<String, Plugin> discoveredPlugins = new HashMap<>();
+        Map<String, List<String>> pluginDependencies = new HashMap<>();
+
+        ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class, classLoader);
+
+        for (Plugin plugin : serviceLoader) {
+            try {
+                String pluginName = plugin.getName();
+                if (plugins.containsKey(pluginName)) continue;
+
+                discoveredPlugins.put(pluginName, plugin);
+
+                String jarUrlStr = plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+                Properties jarProps = jarPropertiesMap.getOrDefault(jarUrlStr, new Properties());
+
+                List<String> deps = new ArrayList<>();
+                String depStr = jarProps.getProperty(pluginName + ".depends");
+                if (depStr == null || depStr.trim().isEmpty()) {
+                    depStr = jarProps.getProperty("depends");
+                }
+
+                if (depStr != null && !depStr.trim().isEmpty()) {
+                    for (String dep : depStr.split(",")) {
+                        deps.add(dep.trim());
+                    }
+                }
+                pluginDependencies.put(pluginName, deps);
+            } catch (Exception e) {
+                log.error("Failed to parse metadata for plugin: {}", plugin.getClass().getName(), e);
             }
         }
 
