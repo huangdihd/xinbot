@@ -97,9 +97,9 @@ public class PluginManager {
         
         RegisteredPlugin rp;
         if (plugin instanceof MetaPlugin) {
-            rp = new RegisteredMetaPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, (MetaPlugin) plugin, new HashMap<>());
+            rp = new RegisteredMetaPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, (MetaPlugin) plugin);
         } else {
-            rp = new RegisteredPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, plugin, PluginType.PLUGIN, new HashMap<>());
+            rp = new RegisteredPlugin(name, version, plugin.getClass().getName(), new ArrayList<>(), null, null, plugin, PluginType.PLUGIN);
         }
         loadPlugin(rp);
     }
@@ -125,7 +125,6 @@ public class PluginManager {
         String version;
         PluginType type;
         List<String> depends = new ArrayList<>();
-        Map<String, Command> commands = new HashMap<>();
         URL url;
     }
 
@@ -147,9 +146,9 @@ public class PluginManager {
         
         RegisteredPlugin rp;
         if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
-            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, (MetaPlugin) plugin, info.commands);
+            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, (MetaPlugin) plugin);
         } else {
-            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, plugin, PluginType.PLUGIN, info.commands);
+            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, plugin, PluginType.PLUGIN);
         }
         loadPlugin(rp);
     }
@@ -227,9 +226,9 @@ public class PluginManager {
         
         RegisteredPlugin rp;
         if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
-            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, (MetaPlugin) plugin, info.commands);
+            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, (MetaPlugin) plugin);
         } else {
-            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, plugin, PluginType.PLUGIN, info.commands);
+            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, info.url, plugin, PluginType.PLUGIN);
         }
         loadPlugin(rp);
     }
@@ -250,7 +249,6 @@ public class PluginManager {
                 info.type = PluginType.valueOf(String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase());
                 
                 parseDepends(map, info.depends);
-                parseCommands(map, info.commands);
                 return info;
             }
         }
@@ -262,29 +260,6 @@ public class PluginManager {
             for (Object dep : (List<?>) dependObj) target.add(String.valueOf(dep));
         } else if (dependObj instanceof String) {
             target.add((String) dependObj);
-        }
-    }
-
-    private void parseCommands(Map<String, Object> map, Map<String, Command> target) {
-        Object commandsObj = map.get("commands");
-        if (!(commandsObj instanceof Map<?, ?> cmdsMap)) return;
-
-        for (Map.Entry<?, ?> cmdEntry : cmdsMap.entrySet()) {
-            String cmdName = String.valueOf(cmdEntry.getKey());
-            if (!(cmdEntry.getValue() instanceof Map<?, ?> props)) continue;
-
-            String desc = props.containsKey("description") ? String.valueOf(props.get("description")) : "";
-            String usage = props.containsKey("usage") ? String.valueOf(props.get("usage")) : "";
-            
-            List<String> aliases = new ArrayList<>();
-            Object aliasObj = props.get("aliases");
-            if (aliasObj instanceof List) {
-                for (Object a : (List<?>) aliasObj) aliases.add(String.valueOf(a));
-            } else if (aliasObj instanceof String) {
-                aliases.add((String) aliasObj);
-            }
-            
-            target.put(cmdName, new Command(cmdName, aliases.toArray(new String[0]), desc, usage));
         }
     }
 
@@ -348,6 +323,13 @@ public class PluginManager {
             return;
         }
         try {
+            try (InputStream is = rp.getPlugin().getClass().getClassLoader().getResourceAsStream("commands.yml")) {
+                if (is != null) {
+                    commandManager.registerCommands(is, rp.getPlugin());
+                }
+            } catch (Exception e) {
+                log.error("Failed to load commands.yml for plugin " + rp.getName(), e);
+            }
             sessionListeners.put(rp.getName(), new ArrayList<>());
             rp.getPlugin().onEnable();
             enabledPlugins.put(rp.getName(), rp);

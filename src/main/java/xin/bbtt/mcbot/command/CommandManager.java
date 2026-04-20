@@ -51,53 +51,57 @@ public class CommandManager {
                 log.warn("commands.yml not found in resources");
                 return;
             }
-            Map<String, Object> map = new Yaml().load(is);
-            if (map == null) return;
-            
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                parseAndRegisterBuiltin(entry.getKey(), entry.getValue());
-            }
+            registerCommands(is, null);
         } catch (Exception e) {
             log.error("Failed to load built-in commands", e);
         }
     }
 
-    private void parseAndRegisterBuiltin(String cmdName, Object value) {
-        if (!(value instanceof Map<?, ?> props)) return;
-
-        String desc = Objects.toString(props.get("description"), "");
-        String usage = Objects.toString(props.get("usage"), "");
-        String executorClass = Objects.toString(props.get("executor"), "");
-
-        if (executorClass.isEmpty()) return;
-
-        List<String> aliases = new ArrayList<>();
-        Object aliasObj = props.get("aliases");
-
-        if (aliasObj instanceof List<?> list) {
-            for (Object a : list) {
-                aliases.add(String.valueOf(a));
-            }
-        } else if (aliasObj instanceof String s) {
-            aliases.add(s);
-        }
-
+    public void registerCommands(InputStream is, Plugin plugin) {
+        if (is == null) return;
         try {
-            Class<?> clazz = Class.forName(executorClass);
-            if (CommandExecutor.class.isAssignableFrom(clazz)) {
-                CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
-                registerBuiltinCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor);
-            } else {
-                log.error("Class {} does not implement CommandExecutor", executorClass);
+            Map<String, Object> map = new Yaml().load(is);
+            if (map == null) return;
+
+            ClassLoader classLoader = plugin == null ? CommandManager.class.getClassLoader() : plugin.getClass().getClassLoader();
+
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String cmdName = entry.getKey();
+                Object value = entry.getValue();
+                if (!(value instanceof Map<?, ?> props)) continue;
+
+                String desc = Objects.toString(props.get("description"), "");
+                String usage = Objects.toString(props.get("usage"), "");
+                String executorClass = Objects.toString(props.get("executor"), "");
+
+                if (executorClass.isEmpty()) continue;
+
+                List<String> aliases = new ArrayList<>();
+                Object aliasObj = props.get("aliases");
+
+                if (aliasObj instanceof List<?> list) {
+                    for (Object a : list) {
+                        aliases.add(String.valueOf(a));
+                    }
+                } else if (aliasObj instanceof String s) {
+                    aliases.add(s);
+                }
+
+                try {
+                    Class<?> clazz = Class.forName(executorClass, true, classLoader);
+                    if (CommandExecutor.class.isAssignableFrom(clazz)) {
+                        CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
+                        registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
+                    } else {
+                        log.error("Class {} does not implement CommandExecutor", executorClass);
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to instantiate command executor: {} for plugin {}", executorClass, plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
+                }
             }
         } catch (Exception e) {
-            log.error("Failed to instantiate built-in command executor: {}", executorClass, e);
+            log.error("Failed to load commands for plugin {}", plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
         }
-    }
-
-    public void registerBuiltinCommand(Command command, CommandExecutor executor) {
-        RegisteredCommand registeredCommand = new RegisteredCommand(null, command, executor);
-        byPlugin.computeIfAbsent(null, k -> new ArrayList<>()).add(registeredCommand);
     }
 
     public static List<String> tokenize(String commandLine) {

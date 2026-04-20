@@ -2,41 +2,41 @@ say:
   description: "xinbot.command.say.description"
   usage: "xinbot.command.say.usage"
   aliases: ["chat"]
-  executor: "xin.bbtt.mcbot.commands.executor.SayCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.SayCommandExecutor"
 command:
   description: "xinbot.command.command.description"
   usage: "xinbot.command.command.usage"
   aliases: ["cmd"]
-  executor: "xin.bbtt.mcbot.commands.executor.CommandCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.CommandCommandExecutor"
 stop:
   description: "xinbot.command.stop.description"
   usage: "xinbot.command.stop.usage"
-  executor: "xin.bbtt.mcbot.commands.executor.StopCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.StopCommandExecutor"
 help:
   description: "xinbot.command.help.cmd.description"
   usage: "xinbot.command.help.cmd.usage"
   aliases: ["?"]
-  executor: "xin.bbtt.mcbot.commands.executor.HelpCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.HelpCommandExecutor"
 disconnect:
   description: "xinbot.command.disconnect.description"
   usage: "xinbot.command.disconnect.usage"
   aliases: ["dc"]
-  executor: "xin.bbtt.mcbot.commands.executor.DisconnectExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.DisconnectExecutor"
 list:
   description: "xinbot.command.list.description"
   usage: "xinbot.command.list.usage"
-  executor: "xin.bbtt.mcbot.commands.executor.ListCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.ListCommandExecutor"
 pluginmanager:
   description: "xinbot.command.pluginmanager.description"
   usage: "xinbot.command.pluginmanager.usage"
   aliases: ["pm"]
-  executor: "xin.bbtt.mcbot.commands.executor.PluginManagerCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.PluginManagerCommandExecutor"
 plugins:
   description: "xinbot.command.plugins.description"
   usage: "xinbot.command.plugins.usage"
   aliases: ["pl"]
-  executor: "xin.bbtt.mcbot.commands.executor.PluginsCommandExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.PluginsCommandExecutor"
 license:
   description: "xinbot.command.license.description"
   usage: "xinbot.command.license.usage"
-  executor: "xin.bbtt.mcbot.commands.executor.LicenseExecutor"
+  executor: "xin.bbtt.mcbot.commandExecutors.LicenseExecutor"

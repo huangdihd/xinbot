@@ -23,10 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import xin.bbtt.mcbot.command.Command;
-import java.util.Map;
-import java.util.HashMap;
-
 @Getter
 public class RegisteredPlugin {
     private final String name;
@@ -37,9 +33,8 @@ public class RegisteredPlugin {
     private final URL url;
     private final PluginType type;
     private final Plugin plugin;
-    private final Map<String, Command> commands;
 
-    public RegisteredPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, Plugin plugin, PluginType type, Map<String, Command> commands) {
+    public RegisteredPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, Plugin plugin, PluginType type) {
         this.name = name;
         this.version = version != null ? version : "1.0.0";
         this.mainClass = mainClass;
@@ -48,6 +43,5 @@ public class RegisteredPlugin {
         this.url = url;
         this.type = type;
         this.plugin = plugin;
-        this.commands = commands != null ? commands : new HashMap<>();
     }
 }

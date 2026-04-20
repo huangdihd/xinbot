@@ -18,19 +18,19 @@
 package xin.bbtt.mcbot.plugin;
 
 import lombok.Getter;
-import xin.bbtt.mcbot.command.Command;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import xin.bbtt.mcbot.Server;
 
 import java.io.File;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 public class RegisteredMetaPlugin extends RegisteredPlugin {
 
-    public RegisteredMetaPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, MetaPlugin plugin, Map<String, Command> commands) {
-        super(name, version, mainClass, depends, file, url, plugin, PluginType.META_PLUGIN, commands);
+    public RegisteredMetaPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, MetaPlugin plugin) {
+        super(name, version, mainClass, depends, file, url, plugin, PluginType.META_PLUGIN);
     }
 
     @Override
@@ -41,4 +41,6 @@ public class RegisteredMetaPlugin extends RegisteredPlugin {
     public SocketAddress getServerSocketAddress() {
         return getPlugin().getServerSocketAddress();
     }
+
+    public Server getServer(ClientboundLoginPacket loginPacket) {return getPlugin().getServer(loginPacket);}
 }

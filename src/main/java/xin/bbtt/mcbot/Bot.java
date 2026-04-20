@@ -75,13 +75,14 @@ public class Bot {
     @Getter
     @Setter
     private Server server = null;
-    public boolean login = false;
     public final Map<UUID, GameProfile> players = new HashMap<>();
     private final PacketListener packetListener = new PacketListener();
     private final ServerRecorder serverRecorder = new ServerRecorder();
     private final ChatMessagePrinter chatMessagePrinter = new ChatMessagePrinter();
     private final MessageSender messageSender = new MessageSender();
     private final BlockChangedAckRecorder blockChangedAckRecorder = new BlockChangedAckRecorder();
+    private final ServerMembersChangedMessagePrinter serverMembersChangedMessagePrinter = new ServerMembersChangedMessagePrinter();
+    private final CommandsRecorder commandsRecorder = new CommandsRecorder();
     @Getter
     private final AtomicInteger sequence = new AtomicInteger(0);
 
@@ -91,7 +92,6 @@ public class Bot {
 
     public void init(BotConfig config) {
         this.config = config;
-        this.pluginManager.loadPlugin(new XinbotPlugin());
         this.pluginManager.loadPlugins(this.config.getConfigData().getPlugin().getDirectory());
     }
 
@@ -110,7 +110,6 @@ public class Bot {
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
-        login = false;
         log.info(LangManager.get("xinbot.bot.starting", protocol.getProfile().getName()));
         connect();
         getInput();
@@ -149,6 +148,34 @@ public class Bot {
         }
     }
 
+    private void connect(){
+        session = new ClientNetworkSession( pluginManager.getMetaPlugin().getServerSocketAddress(), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
+        session.addListener(new SessionAdapter() {
+            @Override
+            public void disconnected(DisconnectedEvent event) {
+                onDisconnect(event.getReason());
+            }
+        });
+        session.addListener(packetListener);
+        session.addListener(serverRecorder);
+        session.addListener(chatMessagePrinter);
+        session.addListener(messageSender);
+        session.addListener(blockChangedAckRecorder);
+        session.addListener(serverMembersChangedMessagePrinter);
+        session.addListener(commandsRecorder);
+        pluginManager.enableAll();
+        log.info(LangManager.get("xinbot.bot.connecting"));
+        session.connect();
+        long start_time = System.currentTimeMillis();
+        while (server == null && running){
+            if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
+                disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
+                break;
+            }
+        }
+        log.info(LangManager.get("xinbot.bot.connection.completed"));
+    }
+
     private void onDisconnect(Component reason) {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
@@ -160,6 +187,8 @@ public class Bot {
         session.removeListener(serverRecorder);
         session.removeListener(chatMessagePrinter);
         session.removeListener(messageSender);
+        session.removeListener(serverMembersChangedMessagePrinter);
+        session.removeListener(commandsRecorder);
         server = null;
         if (!running) return;
 
@@ -174,32 +203,6 @@ public class Bot {
         } else {
             connect();
         }
-    }
-
-    private void connect(){
-        session = new ClientNetworkSession( pluginManager.getMetaPlugin().getServerSocketAddress(), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
-        session.addListener(new SessionAdapter() {
-            @Override
-            public void disconnected(DisconnectedEvent event) {
-                onDisconnect(event.getReason());
-            }
-        });
-        session.addListener(packetListener);
-        session.addListener(serverRecorder);
-        session.addListener(chatMessagePrinter);
-        session.addListener(messageSender);
-        session.addListener(blockChangedAckRecorder);
-        pluginManager.enableAll();
-        log.info(LangManager.get("xinbot.bot.connecting"));
-        session.connect();
-        long start_time = System.currentTimeMillis();
-        while (server == null && running){
-            if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
-                disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
-                break;
-            }
-        }
-        log.info(LangManager.get("xinbot.bot.connection.completed"));
     }
 
     public void disconnect(String reason){

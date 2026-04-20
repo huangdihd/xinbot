@@ -15,17 +15,16 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.executor;
+package xin.bbtt.mcbot.commandExecutors;
 
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 
-import xin.bbtt.mcbot.LangManager;
+public class StopCommandExecutor extends CommandExecutor {
 
-public class DisconnectExecutor extends CommandExecutor {
     @Override
     public void onCommand(Command command, String label, String[] args) {
-        Bot.Instance.disconnect(LangManager.get("xinbot.bot.disconnect.command"));
+        Bot.Instance.stop();
     }
 }

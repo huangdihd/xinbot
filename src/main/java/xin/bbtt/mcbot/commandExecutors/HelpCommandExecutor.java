@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.executor;
+package xin.bbtt.mcbot.commandExecutors;
 
 
 import org.jline.utils.AttributedStyle;

@@ -17,10 +17,14 @@
 
 package xin.bbtt.mcbot.plugin;
 
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import xin.bbtt.mcbot.Server;
+
 import java.net.SocketAddress;
 
 public interface MetaPlugin extends Plugin {
 
     SocketAddress getServerSocketAddress();
+    Server getServer(ClientboundLoginPacket loginPacket);
 
 }

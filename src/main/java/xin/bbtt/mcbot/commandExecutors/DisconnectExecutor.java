@@ -15,17 +15,17 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.commands.executor;
+package xin.bbtt.mcbot.commandExecutors;
 
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.command.Command;
 import xin.bbtt.mcbot.command.CommandExecutor;
 
-public class SayCommandExecutor extends CommandExecutor {
+import xin.bbtt.mcbot.LangManager;
+
+public class DisconnectExecutor extends CommandExecutor {
     @Override
     public void onCommand(Command command, String label, String[] args) {
-        if (args == null || args.length == 0) return;
-        String message = String.join(" ", args);
-        Bot.Instance.sendChatMessage(message);
+        Bot.Instance.disconnect(LangManager.get("xinbot.bot.disconnect.command"));
     }
 }
