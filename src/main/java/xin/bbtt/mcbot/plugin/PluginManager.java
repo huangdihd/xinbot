@@ -105,13 +105,13 @@ public class PluginManager {
     }
 
     public void loadPlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
             log.error(LangManager.get("xinbot.metaplugin.error.load_runtime"));
             return;
         }
         plugins.put(rp.getName(), rp);
         rp.getPlugin().onLoad();
-        if (Bot.Instance.getSession() != null) {
+        if (Bot.INSTANCE.getSession() != null) {
             enablePlugin(rp);
         }
         String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.loaded" : "xinbot.plugin.loaded";
@@ -319,7 +319,7 @@ public class PluginManager {
     }
 
     public void enablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
             log.error(LangManager.get("xinbot.metaplugin.error.enable_runtime"));
             return;
         }
@@ -342,7 +342,7 @@ public class PluginManager {
     }
 
     public void disablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
             log.error(LangManager.get("xinbot.metaplugin.error.disable_runtime"));
             return;
         }
@@ -353,7 +353,7 @@ public class PluginManager {
         eventManager.unregisterAll(rp.getPlugin());
         commandManager.unregisterAll(rp.getPlugin());
         for (SessionListener sessionListener : sessionListeners.getOrDefault(rp.getName(), Collections.emptyList())) {
-            Bot.Instance.getSession().removeListener(sessionListener);
+            Bot.INSTANCE.getSession().removeListener(sessionListener);
         }
         sessionListeners.remove(rp.getName());
         try {
@@ -372,7 +372,7 @@ public class PluginManager {
     }
 
     public void unloadPlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.Instance.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
             log.error(LangManager.get("xinbot.metaplugin.error.unload_runtime"));
             return;
         }
@@ -476,11 +476,11 @@ public class PluginManager {
 
     public void addListener(SessionListener sessionListener, Plugin plugin) {
         sessionListeners.get(getPluginName(plugin)).add(sessionListener);
-        Bot.Instance.getSession().addListener(sessionListener);
+        Bot.INSTANCE.getSession().addListener(sessionListener);
     }
 
     public void removeListener(SessionListener sessionListener, Plugin plugin) {
         sessionListeners.get(getPluginName(plugin)).remove(sessionListener);
-        Bot.Instance.getSession().removeListener(sessionListener);
+        Bot.INSTANCE.getSession().removeListener(sessionListener);
     }
 }

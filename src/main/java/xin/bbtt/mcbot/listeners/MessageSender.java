@@ -36,24 +36,24 @@ public class MessageSender extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (System.currentTimeMillis() - last_send_time < 3000 && Bot.Instance.getServer() == Server.Game) return;
-        if (Bot.Instance.getProtocol().getOutboundState() != ProtocolState.GAME) return;
-        if (Bot.Instance.getProtocol().getInboundState() != ProtocolState.GAME) return;
-        if (Bot.Instance.to_be_sent_messages.isEmpty()) return;
-        if (Bot.Instance.to_be_sent_messages.get(0).startsWith("/")) {
-            String command = Bot.Instance.to_be_sent_messages.get(0).replaceFirst("/", "");
+        if (System.currentTimeMillis() - last_send_time < 3000 && Bot.INSTANCE.getServer() == Server.Game) return;
+        if (Bot.INSTANCE.getProtocol().getOutboundState() != ProtocolState.GAME) return;
+        if (Bot.INSTANCE.getProtocol().getInboundState() != ProtocolState.GAME) return;
+        if (Bot.INSTANCE.getToBeSentMessages().isEmpty()) return;
+        if (Bot.INSTANCE.getToBeSentMessages().get(0).startsWith("/")) {
+            String command = Bot.INSTANCE.getToBeSentMessages().get(0).replaceFirst("/", "");
             SendCommandEvent sendCommandEvent = new SendCommandEvent(command);
-            Bot.Instance.getPluginManager().events().callEvent(sendCommandEvent);
+            Bot.INSTANCE.getPluginManager().events().callEvent(sendCommandEvent);
             if (!sendCommandEvent.isDefaultActionCancelled())
                 session.send(new ServerboundChatCommandPacket(sendCommandEvent.getCommand()));
         }
         else {
-            String message = Bot.Instance.to_be_sent_messages.get(0);
+            String message = Bot.INSTANCE.getToBeSentMessages().get(0);
             if (message.startsWith("\\/")) {
                 message = message.substring(1);
             }
             SendChatMessageEvent sendChatMessageEvent = new SendChatMessageEvent(message);
-            Bot.Instance.getPluginManager().events().callEvent(sendChatMessageEvent);
+            Bot.INSTANCE.getPluginManager().events().callEvent(sendChatMessageEvent);
             if (!sendChatMessageEvent.isDefaultActionCancelled())
                 session.send(
                         new ServerboundChatPacket(
@@ -68,6 +68,6 @@ public class MessageSender extends SessionAdapter {
                 );
         }
         last_send_time = System.currentTimeMillis();
-        Bot.Instance.to_be_sent_messages.remove(0);
+        Bot.INSTANCE.getToBeSentMessages().remove(0);
     }
 }

@@ -26,6 +26,6 @@ public class SayCommandExecutor extends CommandExecutor {
     public void onCommand(Command command, String label, String[] args) {
         if (args == null || args.length == 0) return;
         String message = String.join(" ", args);
-        Bot.Instance.sendChatMessage(message);
+        Bot.INSTANCE.sendChatMessage(message);
     }
 }

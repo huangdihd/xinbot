@@ -27,6 +27,6 @@ public class BlockChangedAckRecorder extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundBlockChangedAckPacket blockChangedAckPacket)) return;
-        Bot.Instance.getSequence().set(Math.max(blockChangedAckPacket.getSequence(), 0));
+        Bot.INSTANCE.getSequence().set(Math.max(blockChangedAckPacket.getSequence(), 0));
     }
 }

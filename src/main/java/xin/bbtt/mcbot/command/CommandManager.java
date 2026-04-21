@@ -59,7 +59,7 @@ public class CommandManager {
 
     public void registerCommands(InputStream is, Plugin plugin) {
         if (is == null) return;
-        try {
+        try (is) {
             Map<String, Object> map = new Yaml().load(is);
             if (map == null) return;
 
@@ -153,7 +153,7 @@ public class CommandManager {
             String pluginName = parts[0];
             commandName = parts[1];
             
-            RegisteredPlugin rp = Bot.Instance.getPluginManager().getPlugin(pluginName);
+            RegisteredPlugin rp = Bot.INSTANCE.getPluginManager().getPlugin(pluginName);
             if (rp != null) {
                 searchList = byPlugin.getOrDefault(rp.getPlugin(), new ArrayList<>());
             } else if ("Core".equalsIgnoreCase(pluginName)) {
@@ -223,7 +223,7 @@ public class CommandManager {
         
         for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
             Plugin plugin = entry.getKey();
-            String pluginName = plugin == null ? null : Bot.Instance.getPluginManager().getPluginName(plugin);
+            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
             
             for (RegisteredCommand regCmd : entry.getValue()) {
                 for (String alias : regCmd.command().getAliases()) {

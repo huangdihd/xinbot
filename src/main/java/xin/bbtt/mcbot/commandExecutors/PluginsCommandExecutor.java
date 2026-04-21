@@ -32,8 +32,8 @@ public class PluginsCommandExecutor extends CommandExecutor {
     @Override
     public void onCommand(Command command, String label, String[] args) {
         log.info(LangManager.get("xinbot.plugin.loaded.count",
-                Bot.Instance.getPluginManager().getPlugins().size(),
-                Bot.Instance.getPluginManager().getPlugins().parallelStream().map(
+                Bot.INSTANCE.getPluginManager().getPlugins().size(),
+                Bot.INSTANCE.getPluginManager().getPlugins().parallelStream().map(
                         (plugin -> plugin.getName() + "(" + plugin.getVersion() + ")")
                 ).collect(Collectors.joining(", "))
         ));

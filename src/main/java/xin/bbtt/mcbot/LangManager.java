@@ -178,12 +178,15 @@ public class LangManager {
 
     /**
      * Loads translations from a .lang format input stream.
+     * The stream is closed after reading.
      * @param is Input stream to parse
      * @throws IOException If reading fails
      */
     public static void loadFromStream(InputStream is) throws IOException {
         if (is == null) return;
-        currentLang.putAll(parseLangStream(is));
+        try (is) {
+            currentLang.putAll(parseLangStream(is));
+        }
     }
 
     /**
@@ -193,9 +196,7 @@ public class LangManager {
      */
     public static void loadFromFile(File file) throws IOException {
         if (file == null || !file.exists()) return;
-        try (InputStream is = Files.newInputStream(file.toPath())) {
-            loadFromStream(is);
-        }
+        loadFromStream(Files.newInputStream(file.toPath()));
     }
 
     /**

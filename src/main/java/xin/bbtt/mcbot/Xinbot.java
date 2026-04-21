@@ -171,10 +171,10 @@ public class Xinbot {
         }
 
         // Initialize the bot
-        Bot.Instance.init(config);
+        Bot.INSTANCE.init(config);
 
         // Start the bot
-        Bot.Instance.start();
+        Bot.INSTANCE.start();
 
         // After the bot stopped
         log.info(LangManager.get("xinbot.bot.stopped"));

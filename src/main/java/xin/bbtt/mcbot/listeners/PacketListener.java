@@ -33,6 +33,6 @@ public class PacketListener extends SessionAdapter {
             minecraftPacket,
             minecraftPacket.getClass()
         );
-        Bot.Instance.getPluginManager().events().callEvent(event);
+        Bot.INSTANCE.getPluginManager().events().callEvent(event);
     }
 }

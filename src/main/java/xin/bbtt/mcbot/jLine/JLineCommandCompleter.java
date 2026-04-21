@@ -31,7 +31,7 @@ public class JLineCommandCompleter implements Completer {
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
         String buffer = line.line();
 
-        List<String> results = Bot.Instance.getPluginManager().commands().callComplete(buffer);
+        List<String> results = Bot.INSTANCE.getPluginManager().commands().callComplete(buffer);
 
         for (String result : results) {
             candidates.add(new Candidate(result));

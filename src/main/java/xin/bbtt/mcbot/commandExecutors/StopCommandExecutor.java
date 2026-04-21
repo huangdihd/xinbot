@@ -25,6 +25,6 @@ public class StopCommandExecutor extends CommandExecutor {
 
     @Override
     public void onCommand(Command command, String label, String[] args) {
-        Bot.Instance.stop();
+        Bot.INSTANCE.stop();
     }
 }

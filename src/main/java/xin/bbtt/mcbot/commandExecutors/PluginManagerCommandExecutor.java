@@ -60,7 +60,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
     @Nullable
     private static RegisteredPlugin findPlugin(String pluginName) {
-        RegisteredPlugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
+        RegisteredPlugin plugin = Bot.INSTANCE.getPluginManager().getPlugin(pluginName);
         if (plugin == null) {
             log.error(LangManager.get("xinbot.plugin.not.found.name", pluginName));
         }
@@ -71,11 +71,11 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             log.info(LangManager.get("xinbot.plugin.tree.header"));
-            java.util.Map<String, java.util.List<String>> deps = Bot.Instance.getPluginManager().getPluginDependencies();
+            java.util.Map<String, java.util.List<String>> deps = Bot.INSTANCE.getPluginManager().getPluginDependencies();
             
             // Build dependents map (who depends on me)
             java.util.Map<String, java.util.List<String>> dependents = new java.util.HashMap<>();
-            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.INSTANCE.getPluginManager().getPlugins()) {
                 dependents.putIfAbsent(plugin.getName(), new java.util.ArrayList<>());
             }
             
@@ -87,11 +87,11 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
             }
             
             // Find plugins with inDegree == 0 (no loaded dependencies)
-            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.INSTANCE.getPluginManager().getPlugins()) {
                 java.util.List<String> myDeps = deps.getOrDefault(plugin.getName(), java.util.Collections.emptyList());
                 boolean hasLoadedDeps = false;
                 for (String dep : myDeps) {
-                    if (Bot.Instance.getPluginManager().isPluginLoaded(dep)) {
+                    if (Bot.INSTANCE.getPluginManager().isPluginLoaded(dep)) {
                         hasLoadedDeps = true;
                         break;
                     }
@@ -121,7 +121,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
         @Override
         public void onCommand(Command command, String label, String[] args) {
             log.info(LangManager.get("xinbot.plugin.list.header"));
-            for (RegisteredPlugin plugin : Bot.Instance.getPluginManager().getPlugins()) {
+            for (RegisteredPlugin plugin : Bot.INSTANCE.getPluginManager().getPlugins()) {
                 log.info(LangManager.get("xinbot.plugin.list.item", plugin.getName(), plugin.getVersion()));
             }
         }
@@ -134,7 +134,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 log.error(LangManager.get("xinbot.plugin.command.load.usage"));
                 return;
             }
-            File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
+            File dir = new File(Bot.INSTANCE.getConfig().getConfigData().getPlugin().getDirectory());
             if (!dir.exists() || !dir.isDirectory()) {
                 log.error(LangManager.get("xinbot.plugin.dir.not.found"));
                 return;
@@ -145,7 +145,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 return;
             }
             try {
-                Bot.Instance.getPluginManager().loadPlugin(file);
+                Bot.INSTANCE.getPluginManager().loadPlugin(file);
             } catch (Exception e) {
                 log.error(LangManager.get("xinbot.plugin.load.failed", file.getName()), e);
             }
@@ -153,7 +153,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
+            File dir = new File(Bot.INSTANCE.getConfig().getConfigData().getPlugin().getDirectory());
             if (!dir.exists() || !dir.isDirectory()) {
                 return List.of();
             }
@@ -169,7 +169,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            File dir = new File(Bot.Instance.getConfig().getConfigData().getPlugin().getDirectory());
+            File dir = new File(Bot.INSTANCE.getConfig().getConfigData().getPlugin().getDirectory());
             File[] filesArray = dir.listFiles((dir1, name) -> name.endsWith(".jar"));
             if (filesArray == null) {
                 return parseContainHighlight(args, List.of());
@@ -194,7 +194,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
-                    Bot.Instance.getPluginManager().unloadPlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().unloadPlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.unload.failed", plugin.getName()), e);
                 }
@@ -203,7 +203,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.INSTANCE.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             result.remove("XinbotPlugin");
             return result;
@@ -211,7 +211,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+            Predicate<String> isPluginLoaded = Bot.INSTANCE.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded.and(plugin -> !plugin.equals("XinbotPlugin")));
         }
     }
@@ -227,13 +227,13 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
-                    Bot.Instance.getPluginManager().unloadPlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().unloadPlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.unload.failed", plugin.getName()), e);
                     continue;
                 }
                 try {
-                    Bot.Instance.getPluginManager().loadPlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().loadPlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.load.failed", plugin.getName()), e);
                 }
@@ -242,14 +242,14 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.INSTANCE.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+            Predicate<String> isPluginLoaded = Bot.INSTANCE.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }
     }
@@ -264,7 +264,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
-                    Bot.Instance.getPluginManager().enablePlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().enablePlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
                 }
@@ -273,14 +273,14 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.INSTANCE.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+            Predicate<String> isPluginLoaded = Bot.INSTANCE.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }
     }
@@ -299,7 +299,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
-                    Bot.Instance.getPluginManager().disablePlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().disablePlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
                 }
@@ -308,7 +308,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.INSTANCE.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             result.remove("XinbotPlugin");
             return result;
@@ -316,7 +316,7 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+            Predicate<String> isPluginLoaded = Bot.INSTANCE.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded.and(plugin -> !plugin.equals("XinbotPlugin")));
         }
     }
@@ -331,13 +331,13 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
                 RegisteredPlugin plugin = findPlugin(pluginName);
                 if (plugin == null) continue;
                 try {
-                    Bot.Instance.getPluginManager().disablePlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().disablePlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.disable.failed", plugin.getName()), e);
                     continue;
                 }
                 try {
-                    Bot.Instance.getPluginManager().enablePlugin(plugin);
+                    Bot.INSTANCE.getPluginManager().enablePlugin(plugin);
                 } catch (Exception e) {
                     log.error(LangManager.get("xinbot.plugin.enable.failed", plugin.getName()), e);
                 }
@@ -346,14 +346,14 @@ public class PluginManagerCommandExecutor extends SubCommandExecutor {
 
         @Override
         public List<String> onTabComplete(Command cmd, String label, String[] args) {
-            List<String> result = new ArrayList<>(Bot.Instance.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
+            List<String> result = new ArrayList<>(Bot.INSTANCE.getPluginManager().getPlugins().stream().map(RegisteredPlugin::getName).toList());
             result.removeAll(List.of(args));
             return result;
         }
 
         @Override
         public AttributedStyle[] onHighlight(Command cmd, String label, String[] args) {
-            Predicate<String> isPluginLoaded = Bot.Instance.getPluginManager()::isPluginLoaded;
+            Predicate<String> isPluginLoaded = Bot.INSTANCE.getPluginManager()::isPluginLoaded;
             return parseConditionalHighlight(args, isPluginLoaded);
         }
     }

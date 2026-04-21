@@ -64,14 +64,14 @@ public class Bot {
     private final PluginManager pluginManager;
     @Getter
     private ProxyInfo proxyInfo;
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread t = new Thread(r, "Bot-Scheduler");
-        t.setDaemon(true);
-        return t;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "Bot-Scheduler");
+        thread.setDaemon(true);
+        return thread;
     });
-
-    public final ArrayList<String> to_be_sent_messages = new ArrayList<>();
-    public final static Bot Instance = new Bot();
+    @Getter
+    private final ArrayList<String> toBeSentMessages = new ArrayList<>();
+    public static final Bot INSTANCE = new Bot();
     @Getter
     @Setter
     private Server server = null;
@@ -119,16 +119,21 @@ public class Bot {
         try {
             running = false;
             scheduler.shutdownNow();
-            disconnect(LangManager.get("xinbot.bot.stopped"));
+            if (session != null) {
+                disconnect(LangManager.get("xinbot.bot.stopped"));
+            }
             pluginManager.unloadPlugins();
         }
         catch (Exception e) {
             log.error(LangManager.get("xinbot.bot.error.stopping"), e);
         }
         finally {
-            mainThread.interrupt();
+            if (mainThread != null) {
+                mainThread.interrupt();
+            }
         }
     }
+
 
     private void getInput() {
         while (!Thread.currentThread().isInterrupted() && running && CLI.getLineReader() != null) {
@@ -228,14 +233,14 @@ public class Bot {
     }
 
     public void sendCommand(String command) {
-        to_be_sent_messages.add("/" + command);
+        toBeSentMessages.add("/" + command);
     }
 
     public void sendChatMessage(String message) {
         if (message.startsWith("/")) {
             message = "\\" + message;
         }
-        to_be_sent_messages.add(message);
+        toBeSentMessages.add(message);
     }
 
     public int getAndIncreaseSequence() {

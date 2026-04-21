@@ -41,7 +41,7 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
     @Override
     public void onCommand(Command command, String label, String[] args) {
         String cmd = String.join(" ", args);
-        Bot.Instance.sendCommand(cmd);
+        Bot.INSTANCE.sendCommand(cmd);
     }
 
     @Override
@@ -51,8 +51,8 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
         }
         String cmd = String.join(" ", args);
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bot.Instance.getSession().addListener(new CommandSuggestionsListener(future, transactionId));
-        Bot.Instance.getSession().send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
+        Bot.INSTANCE.getSession().addListener(new CommandSuggestionsListener(future, transactionId));
+        Bot.INSTANCE.getSession().send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
         List<String> results;
         try {
             results = future.get(200, TimeUnit.MILLISECONDS);
