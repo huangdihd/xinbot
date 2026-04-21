@@ -27,63 +27,57 @@
 
 ---
 
-> 一个为 2b2t.xin 打造的轻量、可扩展的 Minecraft 机器人客户端——稳定、可读、易扩展。
+> 一个轻量、高度模块化的 Minecraft 机器人框架。
 
 [English](README.md) / 简体中文
 
-## 演示
-[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
-## 为什么选择 Xinbot？
-- 高可读日志：像官方客户端一样渲染颜色与格式。
-- 正版登录更安心：可选的正版账号登录流程。
-- 插件优先的架构：类 Bukkit 事件系统，快速扩展能力。
-- 上手简单：单 JAR、清晰配置、开箱即用。
+## ⚠️ 重要提示
+自 2.0.0 起，Xinbot 必须安装元插件才能启动并与服务器交互。元插件的作用是处理与特定服务器相关的交互逻辑（如登录握手、自动重连等），使核心框架保持通用性。
+
+您可以从这里获取官方提供的元插件示例：[xinMetaPlugin](https://github.com/huangdihd/xinMetaPlugin)。
 
 ## 功能特性
-- 彩色日志渲染 —— 丰富的颜色与样式，轻松看懂服务器消息。
-- 支持正版账号 —— 可选在线模式，控制台引导登录。
-- 可扩展插件系统 —— 内置插件生命周期与事件总线。
-- 稳定性可调 —— 可在稳定性与资源占用间自由取舍。
-- 多语言支持 —— 可选加载语言文件，提升使用体验。
+- 高可读日志：像官方客户端一样渲染颜色与格式。
+- 正版登录：可选的正版账号登录流程。
+- 元插件架构：核心交互逻辑完全剥离，通过元插件适配不同的服务器需求。
+- 插件架构：类 Bukkit 事件系统，支持快速功能扩展。
+- 完善的国际化：支持多国语言动态切换及引导报错。
 
 ---
 
 ## 快速开始
 
 1) 下载
-   前往 Releases 获取最新版：
-   xinbot-[版本号].jar
+   获取最新版 [Xinbot Core](https://github.com/huangdihd/xinbot/releases) 及适配您目标服务器的 [元插件](https://github.com/huangdihd/xinMetaPlugin)。
 
-2) 安装 Java
-   需要 Java 17 或更高版本。
+2) 安装
+   将元插件放入 plugin 目录。需要 Java 17 或更高版本。
 
 3) 配置
-   在 JAR 同目录创建 config.conf（示例）：
-
-   > 💡 **提示：** 你可以使用官方网站上的[配置文件生成器](https://xinbot.shouldbe.top/zh/guide/config-generator)轻松创建你的配置文件。
+   创建 config.conf，示例配置如下：
 
     ```hocon
        {
         "account" : {
-            "fullSession" : null,           // 由 Xinbot 自动生成；保持为空
-            "name" : "[Bot name]",          // 机器人用户名
-            "onlineMode" : false,           // true = 使用正版账号登录
-            "password" : ""                 // 2b2t.xin 密码
+            "fullSession" : null,
+            "name" : "[Bot name]",
+            "onlineMode" : false,
+            "password" : ""                 // 机器人登录服务器的密码
         },
-        "enableTranslation" : true,         // 加载语言文件(更高内存占用)
-        "reconnectTimeout" : 5000,          // 重连超时时间(毫秒)
-        "reconnectDelay" : 3000,            // 重连延迟(毫秒)
-        "owner" : "[Owner name]",           // 机器人的主人名称
+        "enableTranslation" : true,
+        "reconnectTimeout" : 5000,
+        "reconnectDelay" : 3000,
+        "owner" : "[Owner name]",
         "plugin" : {
-            "directory" : "plugin"          // 插件目录
+            "directory" : "plugin"
         },
         "proxy" : {
-            "enable" : false,               // 是否启用代理链接服务器
+            "enable" : false,
             "info" : {
-                "address" : "",             // 代理服务器的地址
-                "type" : "",                // 代理的类型(HTTP, SOCKS4, SOCKS5)
-                "password" : "",            // 代理的密码
-                "username" : ""             // 代理的用户名
+                "address" : "",
+                "type" : "SOCKS5",
+                "password" : "",
+                "username" : ""
             }
         }
     }
@@ -91,52 +85,13 @@
 
 4) 运行
     ```bash
-    # 默认配置路径：./config.conf
-    java -jar xinbot-[版本号].jar [配置文件路径]
+    java -jar xinbot-[版本号].jar
     ```
-
-5) 正版登录（可选）
-   当 onlineMode=true 且 fullSession 为空时，控制台会提示打开登录链接完成授权。
-
-6) 掌握命令
-   学习内置命令与核心概念，详见[使用指南](https://xinbot.shouldbe.top/zh/guide/usage)。
-
-7) 开发插件
-   通过插件扩展功能，详见[插件开发指南](https://xinbot.shouldbe.top/zh/reference/)。
-
----
-
-## 常见问题
-- 一定需要正版账号吗？  
-  非必须；开启 onlineMode 可使用正版账号以提升兼容性与可信度。
-
-- 我能写自己的插件吗？  
-  可以。Xinbot 提供类 Bukkit 的事件系统，方便扩展。详细参考[插件开发指南](https://xinbot.shouldbe.top/zh/reference/)。
-
-- 如何管理多个机器人？  
-  Xinbot 支持使用 [xinManager](https://github.com/huangdihd/xinManager) 管理多个机器人。
-
-- 如何管理移动和地形?
-  我们开发了一个叫做 [MovementSync](https://github.com/huangdihd/movementsync) 的插件来管理移动和地形。
-
-- 如何反馈问题或提建议？  
-  请在 GitHub Issues 提交，附上复现步骤更佳。亦可加入官方插件开发qq交流群:434173700
-
----
-
-## 社区与支持
-- 反馈问题：[GitHub Issues](https://github.com/huangdihd/xinbot/issues)
-- 交流想法：[GitHub Discussions](https://github.com/huangdihd/xinbot/discussions)
-- LINUX DO 社区：[linux.do](https://linux.do/)
-- QQ 交流群：434173700
 
 ---
 
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。
-- 允许使用、修改与分发。
-- 若分发修改版，需开源完整源码并沿用同一许可证。
-- 分发时需保留版权与许可证声明。
 
 如果你喜欢 Xinbot，欢迎点亮一个 Star！
 
