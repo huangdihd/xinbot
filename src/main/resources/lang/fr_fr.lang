@@ -5,22 +5,13 @@
 xinbot.bot.connecting=Connexion en cours...
 xinbot.bot.connection.completed=Connexion établie.
 xinbot.bot.connection.timed.out=Délai de connexion dépassé.
-xinbot.bot.end.of.stream=Fin du flux
-xinbot.bot.disconnect.reason=Déconnecté: %s
 xinbot.bot.starting=Démarrage du bot avec le nom d'utilisateur: %s
 xinbot.bot.stopped=Bot arrêté.
 xinbot.bot.error.stopping=Une erreur s'est produite lors de l'arrêt du bot
 
 # Disconnect reasons (Minecraft protocol translation keys)
-xinbot.disconnect.genericReason=Déconnecté
-xinbot.disconnect.endOfStream=Fin du flux
-xinbot.disconnect.timeout=Délai dépassé
-xinbot.disconnect.loginFailed=Échec de la connexion
 
 # Reconnection messages
-xinbot.bot.waiting.reconnect=Attente de 3 secondes avant la reconnexion...
-xinbot.bot.reconnect.interrupted=Reconnexion interrompue
-xinbot.bot.cleanup.session=Nettoyage de la session avant reconnexion
 
 # Plugin manager messages
 xinbot.plugin.loaded=Plugin chargé: %s
@@ -36,7 +27,6 @@ xinbot.plugin.load.smoothly.failed=Échec du chargement du plugin en douceur : %
 xinbot.plugin.unload.dependent=Déchargement du plugin %s car il dépend de %s
 
 xinbot.metaplugin.loaded=MetaPlugin chargé : %s
-xinbot.metaplugin.loading=Tentative de chargement du MetaPlugin : %s
 xinbot.metaplugin.enabled=MetaPlugin activé : %s
 xinbot.metaplugin.disabled=MetaPlugin désactivé : %s
 xinbot.metaplugin.unloaded=MetaPlugin déchargé : %s
@@ -48,12 +38,9 @@ xinbot.metaplugin.error.unload_runtime=Impossible de décharger le MetaPlugin pe
 xinbot.metaplugin.error.count=Le bot doit avoir exactement un MetaPlugin pour démarrer ! (Trouvé : %d)
 
 # LangManager messages
-xinbot.langmanager.loaded=Langue chargée: %s
-xinbot.langmanager.error=Erreur lors du chargement du fichier de langue
 
 # Config messages
 xinbot.config.loading=Chargement du fichier de configuration: %s
-xinbot.config.error=Erreur lors du chargement du fichier de configuration
 
 xinbot.jline.init.failed=Échec de l'initialisation de JLine : %s
 xinbot.args.invalid=Vous ne pouvez exécuter ce programme qu'avec un seul argument !
@@ -64,13 +51,6 @@ xinbot.auth.session.not.found=Aucune session trouvée pour le compte en ligne
 xinbot.auth.device.code.start=Démarrage de la connexion par code d'appareil...
 xinbot.auth.device.code.prompt=Allez sur %s pour vous connecter à votre compte Minecraft avec le code : %s
 
-xinbot.match.login.success=登陆成功
-xinbot.match.register=注册
-xinbot.match.join.game1=Game
-xinbot.match.join.game2=戏
-xinbot.match.join.game3=队
-xinbot.match.join.game4=入
-xinbot.match.ms.auth.failed=§c微软认证失败
 
 xinbot.command.not.found.error=Aucune commande trouvée pour %s
 xinbot.command.execute.error=Erreur lors de l'exécution de la commande %s
@@ -78,8 +58,6 @@ xinbot.command.complete.error=Erreur lors de l'achèvement de la commande %s
 
 xinbot.chat.system.received=Message reçu : %s
 
-xinbot.autojoin.container.recorded=ID de conteneur enregistré %s
-xinbot.login.successful=Connexion réussie
 
 xinbot.command.command.description=Une commande pour envoyer des commandes.
 xinbot.command.command.usage=command command
@@ -113,3 +91,11 @@ xinbot.level.trace=TRACE
 xinbot.marker.chat=CHAT
 xinbot.marker.overlay=OVER
 xinbot.command.help.subcommands=\tSous-commandes :
+
+# Restored keys
+xinbot.metaplugin.loading=Tentative de chargement du MetaPlugin : %s
+xinbot.config.error=Erreur lors du chargement du fichier de configuration
+xinbot.disconnect.timeout=Délai dépassé
+xinbot.disconnect.endOfStream=Fin du flux
+xinbot.bot.disconnect.reason=Déconnecté: %s
+

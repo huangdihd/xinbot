@@ -186,7 +186,8 @@ public class PluginManager {
         List<PluginInfo> sortedInfos = sortPluginInfosTopologically(infoMap);
 
         for (PluginInfo info : sortedInfos) {
-            log.info(LangManager.get("xinbot.plugin.loading", info.name));
+            String loadingKey = info.type == PluginType.META_PLUGIN ? "xinbot.metaplugin.loading" : "xinbot.plugin.loading";
+            log.info(LangManager.get(loadingKey, info.name));
             try {
                 instantiateAndLoad(info);
             } catch (Exception e) {

@@ -137,7 +137,7 @@ public class Xinbot {
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
-            log.error(LangManager.get("xinbot.config.load.failed", configPath), e);
+            log.error(LangManager.get("xinbot.config.error", configPath), e);
             System.exit(1);
         }
 

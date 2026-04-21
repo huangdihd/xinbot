@@ -179,7 +179,16 @@ public class Bot {
     private void onDisconnect(Component reason) {
         DisconnectEvent event = new DisconnectEvent(reason);
         getPluginManager().events().callEvent(event);
-        log.info(parseColors(Utils.toString(reason)));
+
+        String reasonStr = Utils.toString(reason);
+        String translatedReason = reasonStr;
+        if (reasonStr.toLowerCase().contains("timed out")) {
+            translatedReason = LangManager.get("xinbot.disconnect.timeout");
+        } else if (reasonStr.toLowerCase().contains("end of stream")) {
+            translatedReason = LangManager.get("xinbot.disconnect.endOfStream");
+        }
+
+        log.info(LangManager.get("xinbot.bot.disconnect.reason", parseColors(translatedReason)));
 
         players.clear();
         pluginManager.disableAll();

@@ -121,9 +121,9 @@ public class LangManager {
             .filter(s -> !s.isBlank())
             .orElse("en_us");
 
-        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang.json")) {
+        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang/lang.json")) {
             if (is == null) {
-                log.debug("lang.json not found, skipping JSON load.");
+                log.debug("lang/lang.json not found, skipping JSON load.");
                 return;
             }
 
@@ -163,7 +163,7 @@ public class LangManager {
             currentLang.putAll(parseLangStream(is));
             log.info("Loaded custom language {} from external {}", langCode, langFile);
         } catch (Exception e) {
-            log.error("Error loading external language file {}: {}", langFile, e.getMessage(), e);
+            log.error(get("xinbot.config.error") + " " + langFile + ": " + e.getMessage(), e);
         }
     }
 
@@ -203,7 +203,7 @@ public class LangManager {
      */
     public static void loadFromClassLoader(ClassLoader classLoader, String langCode) {
         if (classLoader == null || langCode == null || langCode.isBlank()) return;
-        String fileName = langCode + ".lang";
+        String fileName = "lang/" + langCode + ".lang";
         try (InputStream is = classLoader.getResourceAsStream(fileName)) {
             if (is == null) return;
             loadFromStream(is);

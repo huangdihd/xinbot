@@ -5,22 +5,13 @@
 xinbot.bot.connecting=Verbindung wird hergestellt...
 xinbot.bot.connection.completed=Verbindung hergestellt.
 xinbot.bot.connection.timed.out=Verbindungszeitüberschreitung.
-xinbot.bot.end.of.stream=Ende des Datenstroms
-xinbot.bot.disconnect.reason=Getrennt: %s
 xinbot.bot.starting=Starte Bot mit Benutzernamen: %s
 xinbot.bot.stopped=Bot gestoppt.
 xinbot.bot.error.stopping=Beim Stoppen des Bots ist ein Fehler aufgetreten
 
 # Disconnect reasons (Minecraft protocol translation keys)
-xinbot.disconnect.genericReason=Getrennt
-xinbot.disconnect.endOfStream=Ende des Datenstroms
-xinbot.disconnect.timeout=Zeitüberschreitung
-xinbot.disconnect.loginFailed=Anmeldung fehlgeschlagen
 
 # Reconnection messages
-xinbot.bot.waiting.reconnect=Warte 3 Sekunden vor der erneuten Verbindung...
-xinbot.bot.reconnect.interrupted=Erneute Verbindung unterbrochen
-xinbot.bot.cleanup.session=Bereinige Sitzung vor erneuter Verbindung
 
 # Plugin manager messages
 xinbot.plugin.loaded=Plugin geladen: %s
@@ -36,7 +27,6 @@ xinbot.plugin.load.smoothly.failed=Plugin konnte nicht reibungslos geladen werde
 xinbot.plugin.unload.dependent=Entlade Plugin %s, da es von %s abhängt
 
 xinbot.metaplugin.loaded=MetaPlugin geladen: %s
-xinbot.metaplugin.loading=Versuche MetaPlugin zu laden: %s
 xinbot.metaplugin.enabled=MetaPlugin aktiviert: %s
 xinbot.metaplugin.disabled=MetaPlugin deaktiviert: %s
 xinbot.metaplugin.unloaded=MetaPlugin entladen: %s
@@ -48,12 +38,9 @@ xinbot.metaplugin.error.unload_runtime=MetaPlugin kann während der Laufzeit nic
 xinbot.metaplugin.error.count=Der Bot muss genau ein MetaPlugin zum Starten haben! (Gefunden: %d)
 
 # LangManager messages
-xinbot.langmanager.loaded=Sprache geladen: %s
-xinbot.langmanager.error=Fehler beim Laden der Sprachdatei
 
 # Config messages
 xinbot.config.loading=Lade Konfigurationsdatei: %s
-xinbot.config.error=Fehler beim Laden der Konfigurationsdatei
 
 xinbot.jline.init.failed=Fehler beim Initialisieren von JLine: %s
 xinbot.args.invalid=Sie können dieses Programm nur mit einem Argument ausführen!
@@ -64,13 +51,6 @@ xinbot.auth.session.not.found=Keine Sitzung für das Online-Konto gefunden
 xinbot.auth.device.code.start=Gerätecode-Anmeldung wird gestartet...
 xinbot.auth.device.code.prompt=Gehen Sie zu %s, um sich mit dem Code %s in Ihrem Minecraft-Konto anzumelden
 
-xinbot.match.login.success=登陆成功
-xinbot.match.register=注册
-xinbot.match.join.game1=Game
-xinbot.match.join.game2=戏
-xinbot.match.join.game3=队
-xinbot.match.join.game4=入
-xinbot.match.ms.auth.failed=§c微软认证失败
 
 xinbot.command.not.found.error=Kein Befehl für %s gefunden
 xinbot.command.execute.error=Fehler beim Ausführen des Befehls %s
@@ -78,8 +58,6 @@ xinbot.command.complete.error=Kehler beim Abschließen des Befehls %s
 
 xinbot.chat.system.received=Nachricht erhalten: %s
 
-xinbot.autojoin.container.recorded=Aufgezeichnete Container-ID %s
-xinbot.login.successful=Anmeldung erfolgreich
 
 xinbot.command.command.description=Ein Befehl zum Senden von Befehlen.
 xinbot.command.command.usage=command command
@@ -113,3 +91,11 @@ xinbot.level.trace=TRACE
 xinbot.marker.chat=CHAT
 xinbot.marker.overlay=OVER
 xinbot.command.help.subcommands=\tUnterbefehle:
+
+# Restored keys
+xinbot.metaplugin.loading=Versuche MetaPlugin zu laden: %s
+xinbot.config.error=Fehler beim Laden der Konfigurationsdatei
+xinbot.disconnect.timeout=Zeitüberschreitung
+xinbot.disconnect.endOfStream=Ende des Datenstroms
+xinbot.bot.disconnect.reason=Getrennt: %s
+
