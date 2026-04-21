@@ -40,7 +40,7 @@ public class ServerMembersChangedMessagePrinter extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (packet instanceof ClientboundLoginPacket) Bot.Instance.players.clear();
+        if (packet instanceof ClientboundLoginPacket) Bot.INSTANCE.players.clear();
         if (packet instanceof ClientboundPlayerInfoUpdatePacket playerInfoUpdatePacket)
             playerInfoUpdatePacketProcessor(playerInfoUpdatePacket);
         if (packet instanceof ClientboundPlayerInfoRemovePacket playerInfoRemovePacket)
@@ -51,24 +51,24 @@ public class ServerMembersChangedMessagePrinter extends SessionAdapter {
     private void playerInfoUpdatePacketProcessor(ClientboundPlayerInfoUpdatePacket playerInfoUpdatePacket) {
         Arrays.stream(playerInfoUpdatePacket.getEntries()).forEach((playerEntry) -> {
             if (playerEntry.getProfile() == null) return;
-            Bot.Instance.players.put(playerEntry.getProfileId(), playerEntry.getProfile());
+            Bot.INSTANCE.players.put(playerEntry.getProfileId(), playerEntry.getProfile());
         });
         if (playerInfoUpdatePacket.getEntries().length != 1) return;
         if (playerInfoUpdatePacket.getEntries()[0].getProfile() == null) return;
-        if (playerInfoUpdatePacket.getEntries()[0].getProfile().getName().equals(Bot.Instance.getConfig().getConfigData().getAccount().getName())) return;
+        if (playerInfoUpdatePacket.getEntries()[0].getProfile().getName().equals(Bot.INSTANCE.getConfig().getConfigData().getAccount().getName())) return;
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(playerInfoUpdatePacket.getEntries()[0].getProfile());
-        Bot.Instance.getPluginManager().events().callEvent(playerJoinEvent);
+        Bot.INSTANCE.getPluginManager().events().callEvent(playerJoinEvent);
         log.info(parseColors("§8[§2+§8]§7{}"), playerInfoUpdatePacket.getEntries()[0].getProfile().getName());
     }
 
     private void playerInfoRemovePacketProcessor(ClientboundPlayerInfoRemovePacket playerInfoRemovePacket) {
         if (playerInfoRemovePacket.getProfileIds().size() != 1) return;
-        if (Bot.Instance.players.get(playerInfoRemovePacket.getProfileIds().get(0)) == null) return;
-        GameProfile gameProfile = Bot.Instance.players.get(playerInfoRemovePacket.getProfileIds().get(0));
-        Bot.Instance.players.remove(playerInfoRemovePacket.getProfileIds().get(0));
-        if (gameProfile.getName().equals(Bot.Instance.getConfig().getConfigData().getAccount().getName())) return;
+        if (Bot.INSTANCE.players.get(playerInfoRemovePacket.getProfileIds().get(0)) == null) return;
+        GameProfile gameProfile = Bot.INSTANCE.players.get(playerInfoRemovePacket.getProfileIds().get(0));
+        Bot.INSTANCE.players.remove(playerInfoRemovePacket.getProfileIds().get(0));
+        if (gameProfile.getName().equals(Bot.INSTANCE.getConfig().getConfigData().getAccount().getName())) return;
         PlayerLeaveEvent playerLeaveEvent = new PlayerLeaveEvent(gameProfile);
-        Bot.Instance.getPluginManager().events().callEvent(playerLeaveEvent);
+        Bot.INSTANCE.getPluginManager().events().callEvent(playerLeaveEvent);
         log.info(parseColors("§8[§c-§8]§7{}"), gameProfile.getName());
 
     }

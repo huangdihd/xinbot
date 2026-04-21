@@ -1,0 +1,173 @@
+# Xinbot Language File - English (US)
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=Connecting.
+xinbot.bot.connection.completed=Connection completed.
+xinbot.bot.connection.timed.out=Connection timed out.
+xinbot.bot.starting=Starting bot with username: %s
+xinbot.bot.stopped=Bot stopped.
+xinbot.bot.error.stopping=An error occurred while stopping bot
+
+# Disconnect reasons (Minecraft protocol translation keys)
+
+# Reconnection messages
+
+# Plugin manager messages
+xinbot.plugin.loaded=Loaded plugin: %s
+xinbot.plugin.loading=Trying to load plugin: %s
+xinbot.plugin.enabled=Enabled plugin: %s
+xinbot.plugin.disabled=Disabled plugin: %s
+xinbot.plugin.unloaded=Unloaded plugin: %s
+xinbot.plugin.tree.header=Plugin Dependency Tree:
+xinbot.plugin.dependency.missing=Missing dependency '%s' required by plugin '%s'
+xinbot.plugin.load.all.failed=Failed to load all plugins. Circular dependency or missing dependencies detected.
+xinbot.plugin.not.loaded=- Plugin '%s' was not loaded (Missing dependency or circular loop)
+xinbot.plugin.load.smoothly.failed=Failed to load plugin smoothly: %s
+xinbot.plugin.unload.dependent=Unloading plugin %s because it depends on %s
+
+xinbot.metaplugin.loaded=Loaded MetaPlugin: %s
+xinbot.metaplugin.enabled=Enabled MetaPlugin: %s
+xinbot.metaplugin.disabled=Disabled MetaPlugin: %s
+xinbot.metaplugin.unloaded=Unloaded MetaPlugin: %s
+
+xinbot.metaplugin.error.load_runtime=Cannot load MetaPlugin during runtime!
+xinbot.metaplugin.error.enable_runtime=Cannot enable MetaPlugin during runtime!
+xinbot.metaplugin.error.disable_runtime=Cannot disable MetaPlugin during runtime!
+xinbot.metaplugin.error.unload_runtime=Cannot unload MetaPlugin during runtime!
+xinbot.metaplugin.error.count=Bot must have exactly one MetaPlugin to start! (Found: %d)
+
+# LangManager messages
+
+# Config messages
+xinbot.config.loading=Loading config file: %s
+
+# Xinbot initialization messages
+xinbot.plugin.dir.not.dir=Plugin directory is not a directory!
+xinbot.plugin.dir.not.exists=Plugin directory is not exists, trying to create it.
+xinbot.plugin.dir.create.failed=Failed to create plugins directory: %s
+xinbot.plugin.dir.created=Created plugins directory: %s
+
+xinbot.config.default.not.found=Default config file not found in resources!
+xinbot.config.default.copied=Default config file copied to: %s
+xinbot.config.default.copy.failed=Failed to copy default config file: %s
+xinbot.config.modify.prompt=Please modify the config file: %s
+xinbot.config.load.failed=Failed to load configuration file: %s
+xinbot.config.save.failed=Failed to save the configuration file.
+
+xinbot.account.load.failed=Failed to load your account.
+
+xinbot.bot.bye=Bye!
+xinbot.bot.reconnecting=Reconnecting in %sms.
+
+xinbot.jline.init.failed=Failed to initialize JLine: %s
+xinbot.args.invalid=You can only run this program with one argument!
+xinbot.version=version: %s
+
+# Authentication
+xinbot.auth.session.not.found=No session found for the online account
+xinbot.auth.device.code.start=Starting device code login...
+xinbot.auth.device.code.prompt=Go to %s to login your minecraft account with code: %s
+
+
+xinbot.plugin.dir.invalid=The plugins directory does not exist or is invalid: %s
+xinbot.plugin.not.found=No plugins found.
+xinbot.plugin.load.failed=Failed to load plugin: %s
+xinbot.plugin.enable.failed=Failed to enable plugin: %s
+xinbot.plugin.not.enabled=Plugin %s is not enabled.
+xinbot.plugin.disable.failed=Failed to disable plugin: %s
+xinbot.plugin.unload.failed=Failed to unload plugin: %s
+xinbot.plugin.command.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.plugin.not.found.name=Plugin %s not found.
+xinbot.plugin.list.header=Plugins:
+xinbot.plugin.list.item=%s(%s)
+xinbot.plugin.command.load.usage=PluginManager load <plugin file name1> <plugin file name2> ...
+xinbot.plugin.dir.not.found=Plugin directory not found.
+xinbot.plugin.file.not.found=Plugin file not found.
+xinbot.plugin.command.unload.usage=PluginManager unload <plugin name1> <plugin name2> ...
+xinbot.plugin.unload.xinbot.denied=Failed to unload plugin: XinbotPlugin because unloading the XinbotPlugin by commands is not allowed.
+xinbot.plugin.command.reload.usage=PluginManager reload <plugin name1> <plugin name2> ...
+xinbot.plugin.command.enable.usage=PluginManager enable <plugin name1> <plugin name2> ...
+xinbot.plugin.command.disable.usage=PluginManager disable <plugin name1> <plugin name2> ...
+xinbot.plugin.disable.xinbot.denied=Failed to disable plugin: XinbotPlugin because disabling the XinbotPlugin by commands is not allowed.
+xinbot.plugin.command.reenable.usage=PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.help.name=Command: %s
+xinbot.command.help.plugin=\tPlugin: %s
+xinbot.command.help.aliases=\tAliases: [ %s ]
+xinbot.command.help.description=\tDescription: %s
+xinbot.command.help.usage=\tUsage: %s
+xinbot.command.help.subcommands=\tSubcommands:
+xinbot.command.not.found=no such command: %s
+
+xinbot.command.sub.missing=Missing sub-command. Available sub-commands: %s
+xinbot.command.sub.unknown=Unknown sub-command: %s. Available sub-commands: %s
+xinbot.plugin.loaded.count=There are %d plugins loaded: %s
+xinbot.player.online.count=There are %d players online: %s
+
+
+
+xinbot.command.not.found.error=No command found for command %s
+xinbot.command.execute.error=Error while executing command %s
+xinbot.command.complete.error=Error while Complete command %s
+
+xinbot.chat.system.received=Received message: %s
+
+
+xinbot.command.command.description=A command to send commands.
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=A command to disconnect with server.
+xinbot.command.disconnect.usage=disconnect
+# command usages
+xinbot.command.help.cmd.description=Shows the list of available commands
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=Show the license of Xinbot
+xinbot.command.license.usage=license
+xinbot.command.list.description=Shows the list of players
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=A command to manage plugins.
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=A command to show all plugins
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=A command to say a chat.
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=stops the bot
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=Disconnected by command
+
+# Log levels
+xinbot.level.info=INFO
+xinbot.level.warn=WARN
+xinbot.level.error=ERROR
+xinbot.level.debug=DEBUG
+xinbot.level.trace=TRACE
+
+# Markers
+xinbot.marker.chat=Chat
+xinbot.marker.overlay=Over
+
+# Restored keys
+xinbot.metaplugin.loading=Trying to load MetaPlugin: %s
+xinbot.config.error=Error loading config file
+xinbot.disconnect.timeout=Connection timed out
+xinbot.disconnect.endOfStream=End of stream
+xinbot.bot.disconnect.reason=Disconnected: %s
+
+xinbot.command.load.failed=Failed to load commands for plugin %s
+xinbot.command.executor.not.implement=Class %s does not implement CommandExecutor
+xinbot.command.executor.instantiate.failed=Failed to instantiate command executor: %s for plugin %s
+xinbot.plugin.load.yml.error=Failed to load plugin from %s: Missing or invalid plugin.yml
+
+# Technical logs and errors
+xinbot.langmanager.json.not_found=lang/lang.json not found, skipping JSON load.
+xinbot.langmanager.json.lang_not_found=Language %s not found in lang.json
+xinbot.langmanager.json.loaded=Loaded language %s from lang.json
+xinbot.langmanager.json.error=Error loading lang.json for %s: %s
+xinbot.langmanager.external.loaded=Loaded custom language %s from external %s
+xinbot.langmanager.classloader.error=Error loading language %s from classloader: %s
+xinbot.langmanager.format.error=Error formatting lang key %s: %s
+xinbot.command.load_yml.failed=Failed to load commands.yml for plugin %s
+xinbot.command.load_yml.not_found=commands.yml not found in resources
+xinbot.command.builtin.load_failed=Failed to load built-in commands
+xinbot.config.file.not_found=Config file not found: %s
+xinbot.auth.no_session=No session found
+

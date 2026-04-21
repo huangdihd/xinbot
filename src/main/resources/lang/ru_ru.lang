@@ -1,0 +1,122 @@
+# Xinbot Language File - Russian
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=Подключение...
+xinbot.bot.connection.completed=Подключение завершено.
+xinbot.bot.connection.timed.out=Время подключения истекло.
+xinbot.bot.starting=Запуск бота с именем пользователя: %s
+xinbot.bot.stopped=Бот остановлен.
+xinbot.bot.error.stopping=Произошла ошибка при остановке бота
+
+# Disconnect reasons (Minecraft protocol translation keys)
+
+# Reconnection messages
+
+# Plugin manager messages
+xinbot.plugin.loaded=Загружен плагин: %s
+xinbot.plugin.loading=Попытка загрузить плагин: %s
+xinbot.plugin.enabled=Включен плагин: %s
+xinbot.plugin.disabled=Отключен плагин: %s
+xinbot.plugin.unloaded=Выгружен плагин: %s
+xinbot.plugin.tree.header=Дерево зависимостей плагина:
+xinbot.plugin.dependency.missing=Отсутствует зависимость '%s', необходимая для плагина '%s'
+xinbot.plugin.load.all.failed=Не удалось загрузить все плагины. Обнаружена циклическая зависимость или отсутствие зависимостей.
+xinbot.plugin.not.loaded=- Плагин '%s' не был загружен (отсутствующая зависимость или циклический цикл)
+xinbot.plugin.load.smoothly.failed=Не удалось плавно загрузить плагин: %s
+xinbot.plugin.unload.dependent=Выгрузка плагина %s, так как он зависит от %s
+
+xinbot.metaplugin.loaded=Загружен MetaPlugin: %s
+xinbot.metaplugin.enabled=Включен MetaPlugin: %s
+xinbot.metaplugin.disabled=Отключен MetaPlugin: %s
+xinbot.metaplugin.unloaded=Выгружен MetaPlugin: %s
+
+xinbot.metaplugin.error.load_runtime=Невозможно загрузить MetaPlugin во время работы!
+xinbot.metaplugin.error.enable_runtime=Невозможно включить MetaPlugin во время работы!
+xinbot.metaplugin.error.disable_runtime=Невозможно отключить MetaPlugin во время работы!
+xinbot.metaplugin.error.unload_runtime=Невозможно выгрузить MetaPlugin во время работы!
+xinbot.metaplugin.error.count=Для запуска бота должен быть ровно один MetaPlugin! (Найдено: %d)
+
+# LangManager messages
+
+# Config messages
+xinbot.config.loading=Загрузка файла конфигурации: %s
+
+xinbot.jline.init.failed=Не удалось инициализировать JLine: %s
+xinbot.args.invalid=Вы можете запустить эту программу только с одним аргументом!
+xinbot.version=версия: %s
+
+# Authentication
+xinbot.auth.session.not.found=Сессия для лицензионного аккаунта не найдена
+xinbot.auth.device.code.start=Запуск входа по коду устройства...
+xinbot.auth.device.code.prompt=Перейдите на %s для входа в свой аккаунт Minecraft с кодом: %s
+
+
+xinbot.command.not.found.error=Команда не найдена для команды %s
+xinbot.command.execute.error=Ошибка при выполнении команды %s
+xinbot.command.complete.error=Ошибка при завершении команды %s
+
+xinbot.chat.system.received=Получено сообщение: %s
+
+
+xinbot.command.command.description=Команда для отправки команд.
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=Команда для отключения от сервера.
+xinbot.command.disconnect.usage=disconnect
+# command usages
+xinbot.command.help.cmd.description=Показывает список доступных команд
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=Показать лицензию Xinbot
+xinbot.command.license.usage=license
+xinbot.command.list.description=Показывает список игроков
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=Команда для управления плагинами.
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=Команда для показа всех плагинов
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=Команда для отправки сообщения в чат.
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=останавливает бота
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=Отключено командой
+
+# Log levels
+xinbot.level.info=ИНФО
+xinbot.level.warn=ПРЕДУПР
+xinbot.level.error=ОШИБКА
+xinbot.level.debug=ОТЛАДКА
+xinbot.level.trace=ТРАССИР
+
+# Markers
+xinbot.marker.chat=ЧАТ
+xinbot.marker.overlay=ОВЕР
+xinbot.command.help.subcommands=\tПодменю:
+
+# Restored keys
+xinbot.metaplugin.loading=Попытка загрузки MetaPlugin: %s
+xinbot.config.error=Ошибка загрузки файла конфигурации
+xinbot.disconnect.timeout=Время ожидания истекло
+xinbot.disconnect.endOfStream=Конец потока
+xinbot.bot.disconnect.reason=Отключено: %s
+
+xinbot.command.load.failed=Не удалось загрузить команды для плагина %s
+xinbot.command.executor.not.implement=Класс %s не реализует CommandExecutor
+xinbot.command.executor.instantiate.failed=Не удалось создать экземпляр исполнителя команд %s для плагина %s
+xinbot.plugin.load.yml.error=Не удалось загрузить плагин из %s: отсутствует или неверный plugin.yml
+
+# Technical logs and errors
+
+# Localized technical logs
+xinbot.langmanager.json.not_found=lang/lang.json не найден, пропуск загрузки JSON.
+xinbot.langmanager.json.lang_not_found=Язык %s не найден в lang.json
+xinbot.langmanager.json.loaded=Язык %s загружен из lang.json
+xinbot.langmanager.json.error=Ошибка при загрузке lang.json для %s: %s
+xinbot.langmanager.external.loaded=Загружен пользовательский язык %s из внешнего файла %s
+xinbot.langmanager.classloader.error=Ошибка при загрузке языка %s из classloader: %s
+xinbot.langmanager.format.error=Ошибка при форматировании языкового ключа %s: %s
+xinbot.command.load_yml.failed=Не удалось загрузить commands.yml для плагина %s
+xinbot.command.load_yml.not_found=commands.yml не найден в ресурсах
+xinbot.command.builtin.load_failed=Не удалось загрузить встроенные команды
+xinbot.config.file.not_found=Файл конфигурации не найден: %s
+xinbot.auth.no_session=Сессия не найдена
+

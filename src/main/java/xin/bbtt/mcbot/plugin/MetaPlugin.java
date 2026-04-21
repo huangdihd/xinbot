@@ -15,27 +15,16 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.jLine;
+package xin.bbtt.mcbot.plugin;
 
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
-import xin.bbtt.mcbot.Bot;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import xin.bbtt.mcbot.Server;
 
-import java.util.List;
+import java.net.SocketAddress;
 
-public class JLineCommandCompleter implements Completer {
+public interface MetaPlugin extends Plugin {
 
-    @Override
-    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-        String buffer = line.line();
+    SocketAddress getServerSocketAddress();
+    Server getServer(ClientboundLoginPacket loginPacket);
 
-        List<String> results = Bot.INSTANCE.getPluginManager().commands().callComplete(buffer);
-
-        for (String result : results) {
-            candidates.add(new Candidate(result));
-        }
-    }
 }
-

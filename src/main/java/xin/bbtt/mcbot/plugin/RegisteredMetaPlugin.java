@@ -15,24 +15,32 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.listeners;
+package xin.bbtt.mcbot.plugin;
 
-import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.packet.Packet;
+import lombok.Getter;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.Server;
-import xin.bbtt.mcbot.events.ServerChangeEvent;
 
-public class ServerRecorder extends SessionAdapter {
+import java.io.File;
+import java.net.SocketAddress;
+import java.net.URL;
+import java.util.List;
+
+@Getter
+public class RegisteredMetaPlugin extends RegisteredPlugin {
+
+    public RegisteredMetaPlugin(String name, String version, String mainClass, List<String> depends, File file, URL url, MetaPlugin plugin) {
+        super(name, version, mainClass, depends, file, url, plugin, PluginType.META_PLUGIN);
+    }
 
     @Override
-    public void packetReceived(Session session, Packet packet) {
-        if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;
-        Server newServer = Bot.INSTANCE.getPluginManager().getMetaPlugin().getServer(loginPacket);
-        ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.INSTANCE.getServer());
-        if (newServer != null) Bot.INSTANCE.setServer(newServer);
-        Bot.INSTANCE.getPluginManager().events().callEvent(event);
+    public MetaPlugin getPlugin() {
+        return (MetaPlugin) super.getPlugin();
     }
+
+    public SocketAddress getServerSocketAddress() {
+        return getPlugin().getServerSocketAddress();
+    }
+
+    public Server getServer(ClientboundLoginPacket loginPacket) {return getPlugin().getServer(loginPacket);}
 }

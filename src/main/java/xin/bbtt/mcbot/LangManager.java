@@ -36,10 +36,53 @@ import java.util.Map;
 import java.util.Optional;
 
 public class LangManager {
+    public static final String DEFAULT_LANGUAGE = "en_us";
+    
     // Use HashMap to support key-value merging and overriding across multiple loads
     private static final Map<String, String> currentLang = new HashMap<>();
+
+    // Bootstrap translations for LangManager itself to use if loading fails
+    private static final Map<String, Map<String, String>> bootstrap = Map.of(
+            "zh", Map.of(
+                    "xinbot.langmanager.json.not_found", "未找到 lang/lang.json，跳过 JSON 加载。",
+                    "xinbot.langmanager.json.error", "加载语言 %s 的 lang.json 时出错：%s",
+                    "xinbot.langmanager.classloader.error", "通过 ClassLoader 加载语言 %s 时出错：%s",
+                    "xinbot.config.error", "加载配置文件时出错"
+            ),
+            "en", Map.of(
+                    "xinbot.langmanager.json.not_found", "lang/lang.json not found, skipping JSON load.",
+                    "xinbot.langmanager.json.error", "Error loading lang.json for %s: %s",
+                    "xinbot.langmanager.classloader.error", "Error loading language %s from classloader: %s",
+                    "xinbot.config.error", "Error loading config file"
+            ),
+            "de", Map.of(
+                    "xinbot.langmanager.json.not_found", "lang/lang.json nicht gefunden, JSON-Ladevorgang wird übersprungen.",
+                    "xinbot.langmanager.json.error", "Fehler beim Laden von lang.json für %s: %s",
+                    "xinbot.langmanager.classloader.error", "Fehler beim Laden der Sprache %s über ClassLoader: %s",
+                    "xinbot.config.error", "Fehler beim Laden der Konfigurationsdatei"
+            ),
+            "fr", Map.of(
+                    "xinbot.langmanager.json.not_found", "lang/lang.json non trouvé, saut du chargement JSON.",
+                    "xinbot.langmanager.json.error", "Erreur lors du chargement de lang.json pour %s : %s",
+                    "xinbot.langmanager.classloader.error", "Erreur lors du chargement de la langue %s depuis le classloader : %s",
+                    "xinbot.config.error", "Erreur lors du chargement du fichier de configuration"
+            ),
+            "ja", Map.of(
+                    "xinbot.langmanager.json.not_found", "lang/lang.json が见つかりません。JSON の読み込みをスキップします。",
+                    "xinbot.langmanager.json.error", "%s の lang.json 読み込み中にエラーが発生しました: %s",
+                    "xinbot.langmanager.classloader.error", "ClassLoader から言语 %s を読み込み中にエラーが発生しました: %s",
+                    "xinbot.config.error", "設定ファイルの読み込み中にエラーが発生しました"
+            ),
+            "ru", Map.of(
+                    "xinbot.langmanager.json.not_found", "lang/lang.json не найден, пропуск загрузки JSON.",
+                    "xinbot.langmanager.json.error", "Ошибка при загрузке lang.json для %s: %s",
+                    "xinbot.langmanager.classloader.error", "Ошибка при загрузке языка %s из classloader: %s",
+                    "xinbot.config.error", "Ошибка загрузки файла конфигурации"
+            )
+    );
+
     private static final Logger log = LoggerFactory.getLogger(LangManager.class.getSimpleName());
-    private static String currentLanguageCode = "en_us";
+    private static String currentLanguageCode = DEFAULT_LANGUAGE;
 
     public static void clear() {
         currentLang.clear();
@@ -50,6 +93,9 @@ public class LangManager {
      */
     public static void init() {
         currentLanguageCode = getSystemLangCode();
+        // Load bootstrap for detected language
+        String shortLang = currentLanguageCode.split("_")[0];
+        currentLang.putAll(bootstrap.getOrDefault(shortLang, bootstrap.get("en")));
     }
 
     /**
@@ -57,9 +103,9 @@ public class LangManager {
      */
     public static void loadMinecraft() {
         String targetLangCode = getCurrentLanguage();
-        // Load en_us as base fallback
-        loadFromJson("en_us");
-        if (!"en_us".equals(targetLangCode)) {
+        // Load default as base fallback
+        loadFromJson(DEFAULT_LANGUAGE);
+        if (!DEFAULT_LANGUAGE.equals(targetLangCode)) {
             loadFromJson(targetLangCode);
         }
         System.gc();
@@ -70,10 +116,10 @@ public class LangManager {
      */
     public static void loadExternal() {
         String targetLangCode = getCurrentLanguage();
-        // 1. Load en_us as base fallback
-        loadFromExternalLangFile("en_us");
+        // 1. Load default as base fallback
+        loadFromExternalLangFile(DEFAULT_LANGUAGE);
         // 2. Override with target language
-        if (!"en_us".equals(targetLangCode)) {
+        if (!DEFAULT_LANGUAGE.equals(targetLangCode)) {
             loadFromExternalLangFile(targetLangCode);
         }
     }
@@ -86,11 +132,11 @@ public class LangManager {
         if (classLoader == null) return;
         String targetLangCode = getCurrentLanguage();
 
-        // 1. Load en_us as base fallback from resources
-        loadFromClassLoader(classLoader, "en_us");
+        // 1. Load default as base fallback from resources
+        loadFromClassLoader(classLoader, DEFAULT_LANGUAGE);
 
-        // 2. Override with target language if not en_us
-        if (!"en_us".equals(targetLangCode)) {
+        // 2. Override with target language if not default
+        if (!DEFAULT_LANGUAGE.equals(targetLangCode)) {
             loadFromClassLoader(classLoader, targetLangCode);
         }
     }
@@ -110,7 +156,7 @@ public class LangManager {
         }
 
         String tag = locale.toLanguageTag().toLowerCase().replace("-", "_");
-        return tag.isBlank() ? "en_us" : tag;
+        return tag.isBlank() ? DEFAULT_LANGUAGE : tag;
     }
 
     /**
@@ -119,18 +165,18 @@ public class LangManager {
     public static void loadFromJson(@Nullable String langCode) {
         final String targetLang = Optional.ofNullable(langCode)
             .filter(s -> !s.isBlank())
-            .orElse("en_us");
+            .orElse(DEFAULT_LANGUAGE);
 
-        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang.json")) {
+        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang/lang.json")) {
             if (is == null) {
-                log.debug("lang.json not found, skipping JSON load.");
+                log.debug(get("xinbot.langmanager.json.not_found"));
                 return;
             }
 
             JsonObject root = JsonParser.parseReader(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
 
             if (!root.has(targetLang)) {
-                log.debug("Language {} not found in lang.json", targetLang);
+                log.debug(get("xinbot.langmanager.json.lang_not_found", targetLang));
                 return;
             }
 
@@ -141,11 +187,11 @@ public class LangManager {
             Map<String, String> jsonMap = new Gson().fromJson(langObj, type);
             if (jsonMap != null) {
                 currentLang.putAll(jsonMap);
-                log.debug("Loaded language {} from lang.json", targetLang);
+                log.debug(get("xinbot.langmanager.json.loaded", targetLang));
             }
 
         } catch (Exception e) {
-            log.error("Error loading lang.json for {}: {}", targetLang, e.getMessage(), e);
+            log.error(get("xinbot.langmanager.json.error", targetLang, e.getMessage()), e);
         }
     }
 
@@ -161,9 +207,9 @@ public class LangManager {
 
         try (InputStream is = Files.newInputStream(langFile)) {
             currentLang.putAll(parseLangStream(is));
-            log.info("Loaded custom language {} from external {}", langCode, langFile);
+            log.info(get("xinbot.langmanager.external.loaded", langCode, langFile));
         } catch (Exception e) {
-            log.error("Error loading external language file {}: {}", langFile, e.getMessage(), e);
+            log.error(get("xinbot.config.error") + " " + langFile + ": " + e.getMessage(), e);
         }
     }
 
@@ -178,12 +224,15 @@ public class LangManager {
 
     /**
      * Loads translations from a .lang format input stream.
+     * The stream is closed after reading.
      * @param is Input stream to parse
      * @throws IOException If reading fails
      */
     public static void loadFromStream(InputStream is) throws IOException {
         if (is == null) return;
-        currentLang.putAll(parseLangStream(is));
+        try (is) {
+            currentLang.putAll(parseLangStream(is));
+        }
     }
 
     /**
@@ -193,9 +242,7 @@ public class LangManager {
      */
     public static void loadFromFile(File file) throws IOException {
         if (file == null || !file.exists()) return;
-        try (InputStream is = Files.newInputStream(file.toPath())) {
-            loadFromStream(is);
-        }
+        loadFromStream(Files.newInputStream(file.toPath()));
     }
 
     /**
@@ -203,12 +250,12 @@ public class LangManager {
      */
     public static void loadFromClassLoader(ClassLoader classLoader, String langCode) {
         if (classLoader == null || langCode == null || langCode.isBlank()) return;
-        String fileName = langCode + ".lang";
+        String fileName = "lang/" + langCode + ".lang";
         try (InputStream is = classLoader.getResourceAsStream(fileName)) {
             if (is == null) return;
             loadFromStream(is);
         } catch (Exception e) {
-            log.error("Error loading language {} from classloader: {}", langCode, e.getMessage());
+            log.error(get("xinbot.langmanager.classloader.error", langCode, e.getMessage()));
         }
     }
 
@@ -263,7 +310,7 @@ public class LangManager {
         try {
             return String.format(template, args);
         } catch (Exception e) {
-            log.warn("Error formatting lang key {}: {}", key, e.getMessage());
+            log.warn(get("xinbot.langmanager.format.error", key, e.getMessage()));
             return template;
         }
     }

@@ -15,27 +15,17 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.jLine;
+package xin.bbtt.mcbot.commandExecutors;
 
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.command.Command;
+import xin.bbtt.mcbot.command.CommandExecutor;
 
-import java.util.List;
+import xin.bbtt.mcbot.LangManager;
 
-public class JLineCommandCompleter implements Completer {
-
+public class DisconnectExecutor extends CommandExecutor {
     @Override
-    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-        String buffer = line.line();
-
-        List<String> results = Bot.INSTANCE.getPluginManager().commands().callComplete(buffer);
-
-        for (String result : results) {
-            candidates.add(new Candidate(result));
-        }
+    public void onCommand(Command command, String label, String[] args) {
+        Bot.INSTANCE.disconnect(LangManager.get("xinbot.bot.disconnect.command"));
     }
 }
-

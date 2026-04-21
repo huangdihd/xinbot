@@ -24,12 +24,63 @@ import java.net.URLClassLoader;
 import java.util.Enumeration;
 
 public class PluginClassLoader extends URLClassLoader {
+    private final java.util.List<PluginClassLoader> extraDependencies = new java.util.ArrayList<>();
+
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
+    public void addDependency(PluginClassLoader loader) {
+        if (loader != null && !extraDependencies.contains(loader)) {
+            extraDependencies.add(loader);
+        }
+    }
+
     public void addURLFile(URL url) {
         super.addURL(url);
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> loadedClass = findLoadedClass(name);
+            if (loadedClass != null) {
+                return resolveIfNeeded(loadedClass, resolve);
+            }
+
+            try {
+                return resolveIfNeeded(getParent().loadClass(name), resolve);
+            } catch (ClassNotFoundException ignored) {
+            }
+
+            try {
+                return resolveIfNeeded(findClass(name), resolve);
+            } catch (ClassNotFoundException ignored) {
+            }
+
+            loadedClass = findClassInDependencies(name, resolve);
+            if (loadedClass != null) return loadedClass;
+
+            throw new ClassNotFoundException(name);
+        }
+    }
+
+    private Class<?> resolveIfNeeded(Class<?> clazz, boolean resolve) {
+        if (clazz != null && resolve) {
+            resolveClass(clazz);
+        }
+        return clazz;
+    }
+
+    private Class<?> findClassInDependencies(String name, boolean resolve) {
+        for (PluginClassLoader depLoader : extraDependencies) {
+            try {
+                Class<?> clazz = depLoader.loadClass(name, resolve);
+                if (clazz != null) return clazz;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        return null;
     }
 
     @Override

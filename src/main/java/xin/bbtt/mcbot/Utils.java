@@ -81,13 +81,13 @@ public class Utils {
             "\u001B[91m", "\u001B[95m", "\u001B[93m", "\u001B[97m"
     };
 
-    public static String getStyleAnsi(TextComponent text) {
+    public static String getStyleAnsi(Component component) {
         StringBuilder sb = new StringBuilder();
-        if (text.style().hasDecoration(TextDecoration.BOLD)) sb.append("§l");
-        if (text.style().hasDecoration(TextDecoration.ITALIC)) sb.append("§o");
-        if (text.style().hasDecoration(TextDecoration.UNDERLINED)) sb.append("§n");
-        if (text.style().hasDecoration(TextDecoration.STRIKETHROUGH)) sb.append("§m");
-        if (text.style().hasDecoration(TextDecoration.OBFUSCATED)) sb.append("░");
+        if (component.hasDecoration(TextDecoration.BOLD)) sb.append("§l");
+        if (component.hasDecoration(TextDecoration.ITALIC)) sb.append("§o");
+        if (component.hasDecoration(TextDecoration.UNDERLINED)) sb.append("§n");
+        if (component.hasDecoration(TextDecoration.STRIKETHROUGH)) sb.append("§m");
+        if (component.hasDecoration(TextDecoration.OBFUSCATED)) sb.append("░");
         return sb.toString();
     }
 
@@ -108,7 +108,17 @@ public class Utils {
                     .toArray();
             String text = LangManager.get(translatable.key(), args);
             if (!text.isEmpty()) {
-                result.add(text);
+                StringBuilder colorCode = new StringBuilder();
+                TextColor textColor = translatable.color();
+                if (textColor instanceof NamedTextColor namedTextColor) {
+                    colorCode.append(colorCodeMap.getOrDefault(namedTextColor, ""));
+                    defaultColor = namedTextColor;
+                } else {
+                    colorCode.append(colorCodeMap.getOrDefault(defaultColor, ""));
+                }
+                colorCode.append(getStyleAnsi(translatable));
+                colorCode.append(text);
+                result.add(colorCode.toString());
             }
         }
         else if (component instanceof TextComponent textComponent) {
@@ -153,7 +163,7 @@ public class Utils {
             if (FORMAT_CODES.containsKey(code)) {
                 result.append(FORMAT_CODES.get(code));
             } else {
-                int index = Integer.parseInt(String.valueOf(code), 16);
+                int index = Character.digit(code, 16);
                 if (index >= 0 && index < ANSI_COLORS.length) {
                     result.append(ANSI_COLORS[index]);
                 }
@@ -209,7 +219,7 @@ public class Utils {
 
         DataComponents patch = itemStack.getDataComponentsPatch();
 
-        if (patch == null) {
+        if (patch == null || patch.getDataComponents() == null) {
             return new HashedStack(id, count, addedComponents, removedComponents);
         }
 

@@ -1,0 +1,116 @@
+# Xinbot Language File - Traditional Chinese
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=正在連接...
+xinbot.bot.connection.completed=連接完成。
+xinbot.bot.connection.timed.out=連接超時。
+xinbot.bot.starting=正在啟動機器人，使用者名稱：%s
+xinbot.bot.stopped=機器人已停止。
+xinbot.bot.error.stopping=停止機器人時發生錯誤
+
+# Disconnect reasons (Minecraft protocol translation keys)
+
+# Reconnection messages
+
+# Plugin manager messages
+xinbot.plugin.unloaded=已載入外掛程式：%s
+xinbot.plugin.tree.header=外掛程式相依樹：
+xinbot.plugin.dependency.missing=外掛程式「%2$s」缺少相依項目「%1$s」
+xinbot.plugin.load.all.failed=無法載入所有外掛程式。偵測到循環相依或缺少相依項目。
+xinbot.plugin.not.loaded=- 外掛程式「%s」未載入（缺少相依項目或循環相依）
+xinbot.plugin.load.smoothly.failed=無法順利載入外掛程式：%s
+xinbot.plugin.unload.dependent=正在卸載外掛程式 %s，因為它依賴於 %s
+xinbot.metaplugin.loaded=已載入元外掛程式：%s
+xinbot.metaplugin.enabled=已啟用元外掛程式：%s
+xinbot.metaplugin.disabled=已停用元外掛程式：%s
+xinbot.metaplugin.unloaded=已卸載元外掛程式：%s
+
+xinbot.metaplugin.error.load_runtime=不允許在運行過程中載入元外掛程式！
+xinbot.metaplugin.error.enable_runtime=不允許在運行過程中啟用元外掛程式！
+xinbot.metaplugin.error.disable_runtime=不允許在運行過程中停用元外掛程式！
+xinbot.metaplugin.error.unload_runtime=不允許在運行過程中卸載元外掛程式！
+xinbot.metaplugin.error.count=機器人啟動必須有且僅有一個元外掛程式！（當前找到：%d 個）
+xinbot.plugin.enabled=已啟用外掛程式：%s
+xinbot.plugin.disabled=已停用外掛程式：%s
+
+# LangManager messages
+
+# Config messages
+xinbot.config.loading=正在載入設定檔案：%s
+
+xinbot.jline.init.failed=初始化 JLine 失敗: %s
+xinbot.args.invalid=你只能使用一個參數運行此程式！
+xinbot.version=版本: %s
+
+# Authentication
+xinbot.auth.session.not.found=未找到正版帳號的會話
+xinbot.auth.device.code.start=開始設備代碼登入...
+xinbot.auth.device.code.prompt=請前往 %s 並輸入代碼 %s 以登入你的 Minecraft 帳號
+
+
+xinbot.command.not.found.error=未找到命令 %s
+xinbot.command.execute.error=執行命令 %s 時出錯
+xinbot.command.complete.error=完成命令 %s 時出錯
+
+xinbot.chat.system.received=收到訊息: %s
+
+
+xinbot.command.command.description=發送命令的命令。
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=斷開與伺服器連接的命令。
+xinbot.command.disconnect.usage=disconnect
+xinbot.command.help.cmd.description=顯示可用命令列表
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=顯示 Xinbot 的授權條款
+xinbot.command.license.usage=license
+xinbot.command.list.description=顯示玩家列表
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=管理插件的命令。
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=顯示所有插件的命令
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=發送聊天訊息的命令。
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=停止機器人
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=由命令斷開連接
+
+# Log levels
+xinbot.level.info=資訊
+xinbot.level.warn=警告
+xinbot.level.error=錯誤
+xinbot.level.debug=偵錯
+xinbot.level.trace=追蹤
+
+# Markers
+xinbot.marker.chat=聊天
+xinbot.marker.overlay=懸浮
+xinbot.command.help.subcommands=\t子命令：
+
+# Restored keys
+xinbot.metaplugin.loading=嘗試載入元外掛程式：%s
+xinbot.config.error=載入設定檔案時出錯
+xinbot.disconnect.timeout=連接超時
+xinbot.disconnect.endOfStream=資料流結束
+xinbot.bot.disconnect.reason=斷開連接：%s
+
+xinbot.command.load.failed=載入外掛程式 %s 的指令失敗
+xinbot.command.executor.not.implement=類別 %s 未實作 CommandExecutor
+xinbot.command.executor.instantiate.failed=無法實例化外掛程式 %s 的指令執行器：%s
+xinbot.plugin.load.yml.error=載入來自 %s 的外掛程式失敗：缺少或無效的 plugin.yml
+
+# Technical logs and errors
+xinbot.langmanager.json.not_found=未找到 lang/lang.json，跳過 JSON 載入。
+xinbot.langmanager.json.lang_not_found=在 lang.json 中未找到語言：%s
+xinbot.langmanager.json.loaded=已從 lang.json 載入語言：%s
+xinbot.langmanager.json.error=載入語言 %s 的 lang.json 時出錯：%s
+xinbot.langmanager.external.loaded=已從外部檔案 %s 載入自定義語言 %s
+xinbot.langmanager.classloader.error=透過 ClassLoader 載入語言 %s 時出錯：%s
+xinbot.langmanager.format.error=格式化語言鍵 %s 時出錯：%s
+xinbot.command.load_yml.failed=載入外掛程式 %s 的 commands.yml 失敗
+xinbot.command.load_yml.not_found=資源中未找到 commands.yml
+xinbot.command.builtin.load_failed=載入內建指令失敗
+xinbot.config.file.not_found=未找到設定檔案：%s
+xinbot.auth.no_session=未找到工作階段
+

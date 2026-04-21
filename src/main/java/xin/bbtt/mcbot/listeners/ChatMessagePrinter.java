@@ -46,7 +46,7 @@ public class ChatMessagePrinter extends SessionAdapter {
         if (!(packet instanceof ClientboundSystemChatPacket systemChatPacket)) return;
         boolean overlay = systemChatPacket.isOverlay();
         SystemChatMessageEvent event = new SystemChatMessageEvent(systemChatPacket.getContent(), systemChatPacket.isOverlay());
-        Bot.Instance.getPluginManager().events().callEvent(event);
+        Bot.INSTANCE.getPluginManager().events().callEvent(event);
 
         String markerName = overlay ? LangManager.get("xinbot.marker.overlay") : LangManager.get("xinbot.marker.chat");
         Marker marker = MarkerFactory.getMarker("[" + markerName + "]");
@@ -55,7 +55,7 @@ public class ChatMessagePrinter extends SessionAdapter {
             if (Utils.toString(systemChatPacket.getContent()).equals(overlayMessage)) return;
             overlayMessage = Utils.toString(systemChatPacket.getContent());
             OverlayUpdateEvent overlayUpdateEvent = new OverlayUpdateEvent(systemChatPacket.getContent());
-            Bot.Instance.getPluginManager().events().callEvent(overlayUpdateEvent);
+            Bot.INSTANCE.getPluginManager().events().callEvent(overlayUpdateEvent);
         }
         Arrays.stream(event.getText().split("\n"))
                 .forEach((line) -> log.info(marker, parseColors(line)));

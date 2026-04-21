@@ -26,7 +26,10 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.plugin.Plugin;
+import xin.bbtt.mcbot.plugin.RegisteredPlugin;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.InputStream;
 import java.util.*;
 
 import static xin.bbtt.mcbot.Utils.parseHighlight;
@@ -37,6 +40,86 @@ public class CommandManager {
     final Marker commandErrorMarker = MarkerFactory.getMarker("[CommandError]");
 
     private final Map<Plugin, List<RegisteredCommand>> byPlugin = new HashMap<>();
+
+    public CommandManager() {
+        loadBuiltinCommands();
+    }
+
+    private void loadBuiltinCommands() {
+        try (InputStream is = CommandManager.class.getClassLoader().getResourceAsStream("commands.yml")) {
+            if (is == null) {
+                log.warn(xin.bbtt.mcbot.LangManager.get("xinbot.command.load_yml.not_found"));
+                return;
+            }
+            registerCommands(is, null);
+        } catch (Exception e) {
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.builtin.load_failed"), e);
+        }
+    }
+
+    public void registerCommands(InputStream is, Plugin plugin) {
+        if (is == null) return;
+        try (is) {
+            Map<String, Object> map = new Yaml().load(is);
+            if (map == null) return;
+
+            ClassLoader classLoader = getClassLoader(plugin);
+            iterateCommandEntries(map, classLoader, plugin);
+        } catch (Exception e) {
+            String name = getPluginName(plugin);
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.load.failed", name), e);
+        }
+    }
+
+    private ClassLoader getClassLoader(Plugin plugin) {
+        return plugin == null ? CommandManager.class.getClassLoader() : plugin.getClass().getClassLoader();
+    }
+
+    private String getPluginName(Plugin plugin) {
+        return plugin == null ? "Core" : plugin.getClass().getSimpleName();
+    }
+
+    private void iterateCommandEntries(Map<String, Object> map, ClassLoader classLoader, Plugin plugin) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map<?, ?> props) {
+                registerSingleCommand(entry.getKey(), props, classLoader, plugin);
+            }
+        }
+    }
+
+    private void registerSingleCommand(String cmdName, Map<?, ?> props, ClassLoader classLoader, Plugin plugin) {
+        String executorClass = Objects.toString(props.get("executor"), "");
+        if (executorClass.isEmpty()) return;
+
+        List<String> aliases = parseAliases(props.get("aliases"));
+        String desc = Objects.toString(props.get("description"), "");
+        String usage = Objects.toString(props.get("usage"), "");
+
+        try {
+            Class<?> clazz = Class.forName(executorClass, true, classLoader);
+            if (!CommandExecutor.class.isAssignableFrom(clazz)) {
+                log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.executor.not.implement", executorClass));
+                return;
+            }
+            CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
+            registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
+        } catch (Exception e) {
+            String name = getPluginName(plugin);
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.executor.instantiate.failed", name, executorClass), e);
+        }
+    }
+
+    private List<String> parseAliases(Object aliasObj) {
+        List<String> aliases = new ArrayList<>();
+        if (aliasObj instanceof List<?> list) {
+            for (Object a : list) {
+                aliases.add(String.valueOf(a));
+            }
+        } else if (aliasObj instanceof String s) {
+            aliases.add(s);
+        }
+        return aliases;
+    }
 
     public static List<String> tokenize(String commandLine) {
         List<String> tokens = new ArrayList<>();
@@ -79,27 +162,31 @@ public class CommandManager {
     }
 
     public RegisteredCommand getCommandByLabel(String label) {
-        List<RegisteredCommand> commandList = new ArrayList<>(List.of());
-        for (List<RegisteredCommand> commands : byPlugin.values()) {
-            commandList.addAll(commands);
-        }
         String commandName = label;
+        List<RegisteredCommand> searchList = new ArrayList<>();
 
         if (label.contains(":")) {
-            String[] parts = label.split(":");
-            if (parts.length == 2) {
-                String pluginName = parts[0];
-                commandName = parts[1];
-                Plugin plugin = Bot.Instance.getPluginManager().getPlugin(pluginName);
-                if (plugin != null) {
-                    commandList = byPlugin.get(plugin);
-                }
+            String[] parts = label.split(":", 2);
+            String pluginName = parts[0];
+            commandName = parts[1];
+            
+            RegisteredPlugin rp = Bot.INSTANCE.getPluginManager().getPlugin(pluginName);
+            if (rp != null) {
+                searchList = byPlugin.getOrDefault(rp.getPlugin(), new ArrayList<>());
+            } else if ("Core".equalsIgnoreCase(pluginName)) {
+                searchList = byPlugin.getOrDefault(null, new ArrayList<>());
+            }
+        } else {
+            for (List<RegisteredCommand> commands : byPlugin.values()) {
+                searchList.addAll(commands);
             }
         }
 
-        for (RegisteredCommand registeredCommand : commandList) {
-            if (Arrays.asList(registeredCommand.command().getAliases()).contains(commandName)) {
-                return registeredCommand;
+        for (RegisteredCommand registeredCommand : searchList) {
+            for (String alias : registeredCommand.command().getAliases()) {
+                if (alias.equalsIgnoreCase(commandName)) {
+                    return registeredCommand;
+                }
             }
         }
 
@@ -148,31 +235,38 @@ public class CommandManager {
     }
 
     public List<String> getCommandNames(String prefix) {
-        List<String> names = new ArrayList<>();
-        List<RegisteredCommand> commandList = new ArrayList<>(List.of());
-        for (List<RegisteredCommand> commands : byPlugin.values()) {
-            commandList.addAll(commands);
-        }
-        prefix = prefix.toLowerCase();
-        for (RegisteredCommand registeredCommand : commandList) {
-            for (String commandName : registeredCommand.command().getAliases()) {
-                if (registeredCommand.plugin().getName().toLowerCase().startsWith(prefix)) {
-                    names.add(registeredCommand.plugin().getName() + ":" + commandName);
-                }
-                if (commandName.toLowerCase().startsWith(prefix)) {
-                    names.add(commandName);
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        String prefixLower = prefix.toLowerCase();
+        
+        for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
+            Plugin plugin = entry.getKey();
+            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
+            
+            for (RegisteredCommand regCmd : entry.getValue()) {
+                for (String alias : regCmd.command().getAliases()) {
+                    if (alias.toLowerCase().startsWith(prefixLower)) {
+                        names.add(alias);
+                    }
+                    if (pluginName != null) {
+                        String ns = pluginName + ":" + alias;
+                        if (ns.toLowerCase().startsWith(prefixLower)) {
+                            names.add(ns);
+                        }
+                    }
                 }
             }
         }
-        return names;
+        return new ArrayList<>(names);
     }
 
     public List<String> callComplete(String command) {
         List<String> tokens = tokenize(command);
 
         if (tokens.isEmpty()) return getCommandNames("");
+        
+        String lastToken = tokens.get(tokens.size() - 1);
         if (tokens.size() == 1) {
-            return getCommandNames(tokens.get(0));
+            return getCommandNames(lastToken);
         }
 
         String label = tokens.get(0);
@@ -193,16 +287,7 @@ public class CommandManager {
         return List.of();
     }
 
-    private static class Token {
-        final String value;
-        final int start;
-        final int end;
-
-        Token(String value, int start, int end) {
-            this.value = value;
-            this.start = start;
-            this.end = end;
-        }
+    private record Token(String value, int start, int end) {
     }
 
     private static List<Token> tokenizeDetailed(String commandLine) {

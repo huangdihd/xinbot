@@ -137,7 +137,7 @@ public class Xinbot {
             config = new BotConfig(configPath);
         }
         catch (Exception e) {
-            log.error(LangManager.get("xinbot.config.load.failed", configPath), e);
+            log.error(LangManager.get("xinbot.config.error", configPath), e);
             System.exit(1);
         }
 
@@ -171,10 +171,10 @@ public class Xinbot {
         }
 
         // Initialize the bot
-        Bot.Instance.init(config);
+        Bot.INSTANCE.init(config);
 
         // Start the bot
-        Bot.Instance.start();
+        Bot.INSTANCE.start();
 
         // After the bot stopped
         log.info(LangManager.get("xinbot.bot.stopped"));

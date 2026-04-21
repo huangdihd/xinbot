@@ -15,27 +15,9 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.jLine;
+package xin.bbtt.mcbot.plugin;
 
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
-import xin.bbtt.mcbot.Bot;
-
-import java.util.List;
-
-public class JLineCommandCompleter implements Completer {
-
-    @Override
-    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-        String buffer = line.line();
-
-        List<String> results = Bot.INSTANCE.getPluginManager().commands().callComplete(buffer);
-
-        for (String result : results) {
-            candidates.add(new Candidate(result));
-        }
-    }
+public enum PluginType {
+    PLUGIN,
+    META_PLUGIN
 }
-

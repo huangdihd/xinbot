@@ -15,27 +15,20 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.jLine;
+package xin.bbtt.mcbot.commandExecutors;
 
-import org.jline.reader.Candidate;
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.ParsedLine;
-import xin.bbtt.mcbot.Bot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import xin.bbtt.mcbot.Xinbot;
+import xin.bbtt.mcbot.command.Command;
+import xin.bbtt.mcbot.command.CommandExecutor;
 
-import java.util.List;
+import java.util.Arrays;
 
-public class JLineCommandCompleter implements Completer {
-
+public class LicenseExecutor extends CommandExecutor {
+    private static final Logger log = LoggerFactory.getLogger(LicenseExecutor.class.getSimpleName());
     @Override
-    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-        String buffer = line.line();
-
-        List<String> results = Bot.INSTANCE.getPluginManager().commands().callComplete(buffer);
-
-        for (String result : results) {
-            candidates.add(new Candidate(result));
-        }
+    public void onCommand(Command command, String label, String[] args) {
+        Arrays.stream(Xinbot.license.split("\n")).forEach(log::info);
     }
 }
-

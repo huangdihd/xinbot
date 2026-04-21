@@ -29,7 +29,7 @@ public class JLineHighlighter implements Highlighter {
 
     @Override
     public AttributedString highlight(final @NonNull LineReader reader, final @NonNull String buffer) {
-        return Bot.Instance.getPluginManager().commands().callHighlight(buffer);
+        return Bot.INSTANCE.getPluginManager().commands().callHighlight(buffer);
     }
 
     @Override

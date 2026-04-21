@@ -1,0 +1,122 @@
+# Xinbot Language File - French
+# Format: key=value
+
+# Bot connection messages
+xinbot.bot.connecting=Connexion en cours...
+xinbot.bot.connection.completed=Connexion établie.
+xinbot.bot.connection.timed.out=Délai de connexion dépassé.
+xinbot.bot.starting=Démarrage du bot avec le nom d'utilisateur: %s
+xinbot.bot.stopped=Bot arrêté.
+xinbot.bot.error.stopping=Une erreur s'est produite lors de l'arrêt du bot
+
+# Disconnect reasons (Minecraft protocol translation keys)
+
+# Reconnection messages
+
+# Plugin manager messages
+xinbot.plugin.loaded=Plugin chargé: %s
+xinbot.plugin.loading=Tentative de chargement du plugin: %s
+xinbot.plugin.enabled=Plugin activé: %s
+xinbot.plugin.disabled=Plugin désactivé: %s
+xinbot.plugin.unloaded=Plugin déchargé: %s
+xinbot.plugin.tree.header=Arbre des dépendances du plugin :
+xinbot.plugin.dependency.missing=Dépendance manquante '%s' requise par le plugin '%s'
+xinbot.plugin.load.all.failed=Échec du chargement de tous les plugins. Dépendance circulaire ou dépendances manquantes détectées.
+xinbot.plugin.not.loaded=- Le plugin '%s' n'a pas été chargé (dépendance manquante ou boucle circulaire)
+xinbot.plugin.load.smoothly.failed=Échec du chargement du plugin en douceur : %s
+xinbot.plugin.unload.dependent=Déchargement du plugin %s car il dépend de %s
+
+xinbot.metaplugin.loaded=MetaPlugin chargé : %s
+xinbot.metaplugin.enabled=MetaPlugin activé : %s
+xinbot.metaplugin.disabled=MetaPlugin désactivé : %s
+xinbot.metaplugin.unloaded=MetaPlugin déchargé : %s
+
+xinbot.metaplugin.error.load_runtime=Impossible de charger le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.enable_runtime=Impossible d'activer le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.disable_runtime=Impossible de désactiver le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.unload_runtime=Impossible de décharger le MetaPlugin pendant l'exécution !
+xinbot.metaplugin.error.count=Le bot doit avoir exactement un MetaPlugin pour démarrer ! (Trouvé : %d)
+
+# LangManager messages
+
+# Config messages
+xinbot.config.loading=Chargement du fichier de configuration: %s
+
+xinbot.jline.init.failed=Échec de l'initialisation de JLine : %s
+xinbot.args.invalid=Vous ne pouvez exécuter ce programme qu'avec un seul argument !
+xinbot.version=version : %s
+
+# Authentication
+xinbot.auth.session.not.found=Aucune session trouvée pour le compte en ligne
+xinbot.auth.device.code.start=Démarrage de la connexion par code d'appareil...
+xinbot.auth.device.code.prompt=Allez sur %s pour vous connecter à votre compte Minecraft avec le code : %s
+
+
+xinbot.command.not.found.error=Aucune commande trouvée pour %s
+xinbot.command.execute.error=Erreur lors de l'exécution de la commande %s
+xinbot.command.complete.error=Erreur lors de l'achèvement de la commande %s
+
+xinbot.chat.system.received=Message reçu : %s
+
+
+xinbot.command.command.description=Une commande pour envoyer des commandes.
+xinbot.command.command.usage=command command
+xinbot.command.disconnect.description=Une commande pour se déconnecter du serveur.
+xinbot.command.disconnect.usage=disconnect
+# command usages
+xinbot.command.help.cmd.description=Affiche la liste des commandes disponibles
+xinbot.command.help.cmd.usage=help / help <command>
+xinbot.command.license.description=Afficher la licence de Xinbot
+xinbot.command.license.usage=license
+xinbot.command.list.description=Affiche la liste des joueurs
+xinbot.command.list.usage=list / list uuid
+xinbot.command.pluginmanager.description=Une commande pour gérer les plugins.
+xinbot.command.pluginmanager.usage=PluginManager list / PluginManager load <plugin file name1> <plugin file name2> ... / PluginManager unload <plugin name1> <plugin name2> ... / PluginManager reload <plugin name1> <plugin name2> ... / PluginManager enable <plugin name1> <plugin name2> ... / PluginManager disable <plugin name1> <plugin name2> ... / PluginManager re-enable <plugin name1> <plugin name2> ...
+xinbot.command.plugins.description=Une commande pour afficher tous les plugins
+xinbot.command.plugins.usage=plugins
+xinbot.command.say.description=Une commande pour envoyer un message dans le chat.
+xinbot.command.say.usage=say <message>
+xinbot.command.stop.description=arrête le bot
+xinbot.command.stop.usage=stop
+xinbot.bot.disconnect.command=Déconnecté par commande
+
+# Log levels
+xinbot.level.info=INFO
+xinbot.level.warn=AVERT
+xinbot.level.error=ERREUR
+xinbot.level.debug=DEBUG
+xinbot.level.trace=TRACE
+
+# Markers
+xinbot.marker.chat=CHAT
+xinbot.marker.overlay=OVER
+xinbot.command.help.subcommands=\tSous-commandes :
+
+# Restored keys
+xinbot.metaplugin.loading=Tentative de chargement du MetaPlugin : %s
+xinbot.config.error=Erreur lors du chargement du fichier de configuration
+xinbot.disconnect.timeout=Délai dépassé
+xinbot.disconnect.endOfStream=Fin du flux
+xinbot.bot.disconnect.reason=Déconnecté: %s
+
+xinbot.command.load.failed=Échec du chargement des commandes pour le plugin %s
+xinbot.command.executor.not.implement=La classe %s n'implémente pas CommandExecutor
+xinbot.command.executor.instantiate.failed=Échec de l'instanciation de l'exécuteur de commande %s pour le plugin %s
+xinbot.plugin.load.yml.error=Échec du chargement du plugin depuis %s : plugin.yml manquant ou invalide
+
+# Technical logs and errors
+
+# Localized technical logs
+xinbot.langmanager.json.not_found=lang/lang.json non trouvé, saut du chargement JSON.
+xinbot.langmanager.json.lang_not_found=Langue %s non trouvée dans lang.json
+xinbot.langmanager.json.loaded=Langue %s chargée depuis lang.json
+xinbot.langmanager.json.error=Erreur lors du chargement de lang.json pour %s : %s
+xinbot.langmanager.external.loaded=Langue personnalisée %s chargée depuis le fichier externe %s
+xinbot.langmanager.classloader.error=Erreur lors du chargement de la langue %s depuis le classloader : %s
+xinbot.langmanager.format.error=Erreur lors du formatage de la clé de langue %s : %s
+xinbot.command.load_yml.failed=Échec du chargement du fichier commands.yml pour le plugin %s
+xinbot.command.load_yml.not_found=commands.yml non trouvé dans les ressources
+xinbot.command.builtin.load_failed=Échec du chargement des commandes intégrées
+xinbot.config.file.not_found=Fichier de configuration non trouvé : %s
+xinbot.auth.no_session=Aucune session trouvée
+
