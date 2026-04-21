@@ -68,8 +68,9 @@ public class AccountLoader {
 
     public static BotConfigData.Account refresh() throws Exception {
         if (javaSession == null) {
-            throw new Exception("No session found");
+            throw new Exception(xin.bbtt.mcbot.LangManager.get("xinbot.auth.no_session"));
         }
+
         javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.refresh(httpClient, javaSession);
         GameProfile gameProfile = new GameProfile(javaSession.getMcProfile().getId(), javaSession.getMcProfile().getName());
         String accessToken = javaSession.getMcProfile().getMcToken().getAccessToken();

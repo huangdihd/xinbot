@@ -99,3 +99,24 @@ xinbot.disconnect.timeout=Время ожидания истекло
 xinbot.disconnect.endOfStream=Конец потока
 xinbot.bot.disconnect.reason=Отключено: %s
 
+xinbot.command.load.failed=Не удалось загрузить команды для плагина %s
+xinbot.command.executor.not.implement=Класс %s не реализует CommandExecutor
+xinbot.command.executor.instantiate.failed=Не удалось создать экземпляр исполнителя команд %s для плагина %s
+xinbot.plugin.load.yml.error=Не удалось загрузить плагин из %s: отсутствует или неверный plugin.yml
+
+# Technical logs and errors
+
+# Localized technical logs
+xinbot.langmanager.json.not_found=lang/lang.json не найден, пропуск загрузки JSON.
+xinbot.langmanager.json.lang_not_found=Язык %s не найден в lang.json
+xinbot.langmanager.json.loaded=Язык %s загружен из lang.json
+xinbot.langmanager.json.error=Ошибка при загрузке lang.json для %s: %s
+xinbot.langmanager.external.loaded=Загружен пользовательский язык %s из внешнего файла %s
+xinbot.langmanager.classloader.error=Ошибка при загрузке языка %s из classloader: %s
+xinbot.langmanager.format.error=Ошибка при форматировании языкового ключа %s: %s
+xinbot.command.load_yml.failed=Не удалось загрузить commands.yml для плагина %s
+xinbot.command.load_yml.not_found=commands.yml не найден в ресурсах
+xinbot.command.builtin.load_failed=Не удалось загрузить встроенные команды
+xinbot.config.file.not_found=Файл конфигурации не найден: %s
+xinbot.auth.no_session=Сессия не найдена
+

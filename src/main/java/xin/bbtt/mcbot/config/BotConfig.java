@@ -43,9 +43,10 @@ public class BotConfig {
 
     public void loadFromFile(String configPath) throws FileNotFoundException, JsonProcessingException {
         File configFile = new File(configPath);
-        if (!configFile.isFile()) {
-            throw new FileNotFoundException("Config file not found: " + configPath);
+        if (!configFile.exists()) {
+            throw new FileNotFoundException(xin.bbtt.mcbot.LangManager.get("xinbot.config.file.not_found", configPath));
         }
+
         this.configPath = configPath;
         Config config = ConfigFactory.parseFile(configFile).resolve();
         ObjectMapper mapper = new ObjectMapper(new HoconFactory());

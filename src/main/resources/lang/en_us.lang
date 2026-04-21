@@ -152,3 +152,22 @@ xinbot.disconnect.timeout=Connection timed out
 xinbot.disconnect.endOfStream=End of stream
 xinbot.bot.disconnect.reason=Disconnected: %s
 
+xinbot.command.load.failed=Failed to load commands for plugin %s
+xinbot.command.executor.not.implement=Class %s does not implement CommandExecutor
+xinbot.command.executor.instantiate.failed=Failed to instantiate command executor: %s for plugin %s
+xinbot.plugin.load.yml.error=Failed to load plugin from %s: Missing or invalid plugin.yml
+
+# Technical logs and errors
+xinbot.langmanager.json.not_found=lang/lang.json not found, skipping JSON load.
+xinbot.langmanager.json.lang_not_found=Language %s not found in lang.json
+xinbot.langmanager.json.loaded=Loaded language %s from lang.json
+xinbot.langmanager.json.error=Error loading lang.json for %s: %s
+xinbot.langmanager.external.loaded=Loaded custom language %s from external %s
+xinbot.langmanager.classloader.error=Error loading language %s from classloader: %s
+xinbot.langmanager.format.error=Error formatting lang key %s: %s
+xinbot.command.load_yml.failed=Failed to load commands.yml for plugin %s
+xinbot.command.load_yml.not_found=commands.yml not found in resources
+xinbot.command.builtin.load_failed=Failed to load built-in commands
+xinbot.config.file.not_found=Config file not found: %s
+xinbot.auth.no_session=No session found
+

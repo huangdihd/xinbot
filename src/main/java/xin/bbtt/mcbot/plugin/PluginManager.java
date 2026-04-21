@@ -132,7 +132,7 @@ public class PluginManager {
         URL url = pluginFile.toURI().toURL();
         PluginInfo info = loadPluginYaml(pluginFile);
         if (info == null) {
-            throw new IllegalArgumentException("Missing or invalid plugin.yml in " + pluginFile.getName());
+            throw new IllegalArgumentException(LangManager.get("xinbot.plugin.load.yml.error", pluginFile.getName()));
         }
         
         if (plugins.containsKey(info.name)) return;
@@ -172,7 +172,7 @@ public class PluginManager {
             try {
                 PluginInfo info = loadPluginYaml(file);
                 if (info == null) {
-                    log.error("Failed to load plugin from {}: Missing or invalid plugin.yml", file.getName());
+                    log.error(LangManager.get("xinbot.plugin.load.yml.error", file.getName()));
                     continue;
                 }
                 info.file = file;
@@ -330,7 +330,7 @@ public class PluginManager {
     }
 
     public void enablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.getSession().isConnected()) {
             log.error(LangManager.get("xinbot.metaplugin.error.enable_runtime"));
             return;
         }
@@ -340,7 +340,7 @@ public class PluginManager {
                     commandManager.registerCommands(is, rp.getPlugin());
                 }
             } catch (Exception e) {
-                log.error("Failed to load commands.yml for plugin " + rp.getName(), e);
+                log.error(LangManager.get("xinbot.command.load_yml.failed", rp.getName()), e);
             }
             sessionListeners.put(rp.getName(), new ArrayList<>());
             rp.getPlugin().onEnable();
@@ -454,10 +454,7 @@ public class PluginManager {
     public void enableAll() {
         RegisteredMetaPlugin meta = getMetaPlugin();
         if (meta != null) {
-            sessionListeners.put(meta.getName(), new ArrayList<>());
-            meta.getPlugin().onEnable();
-            enabledPlugins.put(meta.getName(), meta);
-            log.info(LangManager.get("xinbot.metaplugin.enabled", meta.getName()));
+            enablePlugin(meta);
         }
         for (RegisteredPlugin rp : plugins.values()) {
             try {

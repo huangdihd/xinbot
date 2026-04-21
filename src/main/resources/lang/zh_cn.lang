@@ -150,3 +150,22 @@ xinbot.config.error=加载配置文件时出错
 xinbot.disconnect.timeout=连接超时
 xinbot.disconnect.endOfStream=数据流结束
 xinbot.bot.disconnect.reason=断开连接：%s
+xinbot.command.load.failed=加载插件 %s 的命令失败
+xinbot.command.executor.not.implement=类 %s 未实现 CommandExecutor
+xinbot.command.executor.instantiate.failed=无法实例化插件 %s 的命令执行器：%s
+xinbot.plugin.load.yml.error=加载来自 %s 的插件失败：缺少或无效的 plugin.yml
+
+# Technical logs and errors
+xinbot.langmanager.json.not_found=未找到 lang/lang.json，跳过 JSON 加载。
+xinbot.langmanager.json.lang_not_found=在 lang.json 中未找到语言：%s
+xinbot.langmanager.json.loaded=已从 lang.json 加载语言：%s
+xinbot.langmanager.json.error=加载语言 %s 的 lang.json 时出错：%s
+xinbot.langmanager.external.loaded=已从外部文件 %s 加载自定义语言 %s
+xinbot.langmanager.classloader.error=通过 ClassLoader 加载语言 %s 时出错：%s
+xinbot.langmanager.format.error=格式化语言键 %s 时出错：%s
+xinbot.command.load_yml.failed=加载插件 %s 的 commands.yml 失败
+xinbot.command.load_yml.not_found=资源中未找到 commands.yml
+xinbot.command.builtin.load_failed=加载内置命令失败
+xinbot.config.file.not_found=未找到配置文件：%s
+xinbot.auth.no_session=未找到会话
+

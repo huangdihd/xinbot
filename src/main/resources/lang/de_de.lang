@@ -99,3 +99,24 @@ xinbot.disconnect.timeout=Zeitüberschreitung
 xinbot.disconnect.endOfStream=Ende des Datenstroms
 xinbot.bot.disconnect.reason=Getrennt: %s
 
+xinbot.command.load.failed=Laden der Befehle für Plugin %s fehlgeschlagen
+xinbot.command.executor.not.implement=Klasse %s implementiert CommandExecutor nicht
+xinbot.command.executor.instantiate.failed=Instanziierung des Befehlsausführers %s für Plugin %s fehlgeschlagen
+xinbot.plugin.load.yml.error=Laden des Plugins von %s fehlgeschlagen: Fehlende oder ungültige plugin.yml
+
+# Technical logs and errors
+
+# Localized technical logs
+xinbot.langmanager.json.not_found=lang/lang.json nicht gefunden, JSON-Ladevorgang wird übersprungen.
+xinbot.langmanager.json.lang_not_found=Sprache %s in lang.json nicht gefunden
+xinbot.langmanager.json.loaded=Sprache %s aus lang.json geladen
+xinbot.langmanager.json.error=Fehler beim Laden von lang.json für %s: %s
+xinbot.langmanager.external.loaded=Benutzerdefinierte Sprache %s aus externer Datei %s geladen
+xinbot.langmanager.classloader.error=Fehler beim Laden der Sprache %s über ClassLoader: %s
+xinbot.langmanager.format.error=Fehler beim Formatieren des Sprachschlüssels %s: %s
+xinbot.command.load_yml.failed=Laden der commands.yml für Plugin %s fehlgeschlagen
+xinbot.command.load_yml.not_found=commands.yml in den Ressourcen nicht gefunden
+xinbot.command.builtin.load_failed=Laden der eingebauten Befehle fehlgeschlagen
+xinbot.config.file.not_found=Konfigurationsdatei nicht gefunden: %s
+xinbot.auth.no_session=Keine Sitzung gefunden
+

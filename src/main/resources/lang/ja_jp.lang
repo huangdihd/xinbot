@@ -99,3 +99,24 @@ xinbot.disconnect.timeout=タイムアウトしました
 xinbot.disconnect.endOfStream=ストリーム終了
 xinbot.bot.disconnect.reason=切断されました: %s
 
+xinbot.command.load.failed=プラグイン %s のコマンドの読み込みに失敗しました
+xinbot.command.executor.not.implement=クラス %s は CommandExecutor を実装していません
+xinbot.command.executor.instantiate.failed=プラグイン %s のコマンドエグゼキュータ %s のインスタンス化に失敗しました
+xinbot.plugin.load.yml.error=%s からのプラグインの読み込みに失敗しました：plugin.yml が見つからないか無効です
+
+# Technical logs and errors
+
+# Localized technical logs
+xinbot.langmanager.json.not_found=lang/lang.json が見つかりません。JSON の読み込みをスキップします。
+xinbot.langmanager.json.lang_not_found=lang.json に言語 %s が見つかりません
+xinbot.langmanager.json.loaded=lang.json から言語 %s を読み込みました
+xinbot.langmanager.json.error=%s の lang.json 読み込み中にエラーが発生しました: %s
+xinbot.langmanager.external.loaded=外部ファイル %s からカスタム言語 %s を読み込みました
+xinbot.langmanager.classloader.error=ClassLoader から言語 %s を読み込み中にエラーが発生しました: %s
+xinbot.langmanager.format.error=言語キー %s のフォーマット中にエラーが発生しました: %s
+xinbot.command.load_yml.failed=プラグイン %s の commands.yml の読み込みに失敗しました
+xinbot.command.load_yml.not_found=リソース内に commands.yml が見つかりません
+xinbot.command.builtin.load_failed=組み込みコマンドの読み込みに失敗しました
+xinbot.config.file.not_found=設定ファイルが見つかりません: %s
+xinbot.auth.no_session=セッションが見つかりません
+

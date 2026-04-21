@@ -48,12 +48,12 @@ public class CommandManager {
     private void loadBuiltinCommands() {
         try (InputStream is = CommandManager.class.getClassLoader().getResourceAsStream("commands.yml")) {
             if (is == null) {
-                log.warn("commands.yml not found in resources");
+                log.warn(xin.bbtt.mcbot.LangManager.get("xinbot.command.load_yml.not_found"));
                 return;
             }
             registerCommands(is, null);
         } catch (Exception e) {
-            log.error("Failed to load built-in commands", e);
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.builtin.load_failed"), e);
         }
     }
 
@@ -63,36 +63,49 @@ public class CommandManager {
             Map<String, Object> map = new Yaml().load(is);
             if (map == null) return;
 
-            ClassLoader classLoader = plugin == null ? CommandManager.class.getClassLoader() : plugin.getClass().getClassLoader();
+            ClassLoader classLoader = getClassLoader(plugin);
+            iterateCommandEntries(map, classLoader, plugin);
+        } catch (Exception e) {
+            String name = getPluginName(plugin);
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.load.failed", name), e);
+        }
+    }
 
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                if (!(entry.getValue() instanceof Map<?, ?> props)) continue;
+    private ClassLoader getClassLoader(Plugin plugin) {
+        return plugin == null ? CommandManager.class.getClassLoader() : plugin.getClass().getClassLoader();
+    }
+
+    private String getPluginName(Plugin plugin) {
+        return plugin == null ? "Core" : plugin.getClass().getSimpleName();
+    }
+
+    private void iterateCommandEntries(Map<String, Object> map, ClassLoader classLoader, Plugin plugin) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map<?, ?> props) {
                 registerSingleCommand(entry.getKey(), props, classLoader, plugin);
             }
-        } catch (Exception e) {
-            log.error("Failed to load commands for plugin {}", plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
         }
     }
 
     private void registerSingleCommand(String cmdName, Map<?, ?> props, ClassLoader classLoader, Plugin plugin) {
-        String desc = Objects.toString(props.get("description"), "");
-        String usage = Objects.toString(props.get("usage"), "");
         String executorClass = Objects.toString(props.get("executor"), "");
-
         if (executorClass.isEmpty()) return;
 
         List<String> aliases = parseAliases(props.get("aliases"));
+        String desc = Objects.toString(props.get("description"), "");
+        String usage = Objects.toString(props.get("usage"), "");
 
         try {
             Class<?> clazz = Class.forName(executorClass, true, classLoader);
-            if (CommandExecutor.class.isAssignableFrom(clazz)) {
-                CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
-                registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
-            } else {
-                log.error("Class {} does not implement CommandExecutor", executorClass);
+            if (!CommandExecutor.class.isAssignableFrom(clazz)) {
+                log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.executor.not.implement", executorClass));
+                return;
             }
+            CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
+            registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
         } catch (Exception e) {
-            log.error("Failed to instantiate command executor: {} for plugin {}", executorClass, plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
+            String name = getPluginName(plugin);
+            log.error(xin.bbtt.mcbot.LangManager.get("xinbot.command.executor.instantiate.failed", name, executorClass), e);
         }
     }
 

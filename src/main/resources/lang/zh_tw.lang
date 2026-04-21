@@ -95,3 +95,22 @@ xinbot.disconnect.timeout=連接超時
 xinbot.disconnect.endOfStream=資料流結束
 xinbot.bot.disconnect.reason=斷開連接：%s
 
+xinbot.command.load.failed=載入外掛程式 %s 的指令失敗
+xinbot.command.executor.not.implement=類別 %s 未實作 CommandExecutor
+xinbot.command.executor.instantiate.failed=無法實例化外掛程式 %s 的指令執行器：%s
+xinbot.plugin.load.yml.error=載入來自 %s 的外掛程式失敗：缺少或無效的 plugin.yml
+
+# Technical logs and errors
+xinbot.langmanager.json.not_found=未找到 lang/lang.json，跳過 JSON 載入。
+xinbot.langmanager.json.lang_not_found=在 lang.json 中未找到語言：%s
+xinbot.langmanager.json.loaded=已從 lang.json 載入語言：%s
+xinbot.langmanager.json.error=載入語言 %s 的 lang.json 時出錯：%s
+xinbot.langmanager.external.loaded=已從外部檔案 %s 載入自定義語言 %s
+xinbot.langmanager.classloader.error=透過 ClassLoader 載入語言 %s 時出錯：%s
+xinbot.langmanager.format.error=格式化語言鍵 %s 時出錯：%s
+xinbot.command.load_yml.failed=載入外掛程式 %s 的 commands.yml 失敗
+xinbot.command.load_yml.not_found=資源中未找到 commands.yml
+xinbot.command.builtin.load_failed=載入內建指令失敗
+xinbot.config.file.not_found=未找到設定檔案：%s
+xinbot.auth.no_session=未找到工作階段
+
