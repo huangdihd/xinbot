@@ -34,7 +34,7 @@ English / [简体中文](README_CN.md)
 ## ⚠️ Important Note
 Starting from 2.0.0, Xinbot must have a MetaPlugin installed to start and interact with the server. The purpose of a MetaPlugin is to handle server-specific interaction logic (such as login handshakes, auto-reconnect, etc.), allowing the core framework to remain generic.
 
-You can find the official MetaPlugin implementation here: [xinMetaPlugin](https://github.com/huangdihd/xinMetaPlugin).
+You can find the official MetaPlugin implementation for 2b2t.xin here: [xinMetaPlugin](https://github.com/huangdihd/xinMetaPlugin).
 
 ## Features
 - Vibrant logs: parse and render messages just like the official client.

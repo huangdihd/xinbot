@@ -34,7 +34,7 @@
 ## ⚠️ 重要提示
 自 2.0.0 起，Xinbot 必须安装元插件才能启动并与服务器交互。元插件的作用是处理与特定服务器相关的交互逻辑（如登录握手、自动重连等），使核心框架保持通用性。
 
-您可以从这里获取官方提供的元插件示例：[xinMetaPlugin](https://github.com/huangdihd/xinMetaPlugin)。
+您可以从这里获取官方提供的2b2t.xin元插件示例：[xinMetaPlugin](https://github.com/huangdihd/xinMetaPlugin)。
 
 ## 功能特性
 - 高可读日志：像官方客户端一样渲染颜色与格式。
