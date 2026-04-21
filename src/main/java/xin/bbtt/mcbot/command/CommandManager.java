@@ -66,42 +66,46 @@ public class CommandManager {
             ClassLoader classLoader = plugin == null ? CommandManager.class.getClassLoader() : plugin.getClass().getClassLoader();
 
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String cmdName = entry.getKey();
-                Object value = entry.getValue();
-                if (!(value instanceof Map<?, ?> props)) continue;
-
-                String desc = Objects.toString(props.get("description"), "");
-                String usage = Objects.toString(props.get("usage"), "");
-                String executorClass = Objects.toString(props.get("executor"), "");
-
-                if (executorClass.isEmpty()) continue;
-
-                List<String> aliases = new ArrayList<>();
-                Object aliasObj = props.get("aliases");
-
-                if (aliasObj instanceof List<?> list) {
-                    for (Object a : list) {
-                        aliases.add(String.valueOf(a));
-                    }
-                } else if (aliasObj instanceof String s) {
-                    aliases.add(s);
-                }
-
-                try {
-                    Class<?> clazz = Class.forName(executorClass, true, classLoader);
-                    if (CommandExecutor.class.isAssignableFrom(clazz)) {
-                        CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
-                        registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
-                    } else {
-                        log.error("Class {} does not implement CommandExecutor", executorClass);
-                    }
-                } catch (Exception e) {
-                    log.error("Failed to instantiate command executor: {} for plugin {}", executorClass, plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
-                }
+                if (!(entry.getValue() instanceof Map<?, ?> props)) continue;
+                registerSingleCommand(entry.getKey(), props, classLoader, plugin);
             }
         } catch (Exception e) {
             log.error("Failed to load commands for plugin {}", plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
         }
+    }
+
+    private void registerSingleCommand(String cmdName, Map<?, ?> props, ClassLoader classLoader, Plugin plugin) {
+        String desc = Objects.toString(props.get("description"), "");
+        String usage = Objects.toString(props.get("usage"), "");
+        String executorClass = Objects.toString(props.get("executor"), "");
+
+        if (executorClass.isEmpty()) return;
+
+        List<String> aliases = parseAliases(props.get("aliases"));
+
+        try {
+            Class<?> clazz = Class.forName(executorClass, true, classLoader);
+            if (CommandExecutor.class.isAssignableFrom(clazz)) {
+                CommandExecutor executor = (CommandExecutor) clazz.getDeclaredConstructor().newInstance();
+                registerCommand(new Command(cmdName, aliases.toArray(String[]::new), desc, usage), executor, plugin);
+            } else {
+                log.error("Class {} does not implement CommandExecutor", executorClass);
+            }
+        } catch (Exception e) {
+            log.error("Failed to instantiate command executor: {} for plugin {}", executorClass, plugin == null ? "Core" : plugin.getClass().getSimpleName(), e);
+        }
+    }
+
+    private List<String> parseAliases(Object aliasObj) {
+        List<String> aliases = new ArrayList<>();
+        if (aliasObj instanceof List<?> list) {
+            for (Object a : list) {
+                aliases.add(String.valueOf(a));
+            }
+        } else if (aliasObj instanceof String s) {
+            aliases.add(s);
+        }
+        return aliases;
     }
 
     public static List<String> tokenize(String commandLine) {

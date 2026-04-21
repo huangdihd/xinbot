@@ -132,7 +132,7 @@ public class PluginManager {
         URL url = pluginFile.toURI().toURL();
         PluginInfo info = loadPluginYaml(pluginFile);
         if (info == null) {
-            throw new Exception("Missing or invalid plugin.yml in " + pluginFile.getName());
+            throw new IllegalArgumentException("Missing or invalid plugin.yml in " + pluginFile.getName());
         }
         
         if (plugins.containsKey(info.name)) return;
@@ -268,11 +268,28 @@ public class PluginManager {
         Map<String, Integer> inDegree = new HashMap<>();
         Map<String, List<String>> dependents = new HashMap<>();
 
+        initializeGraph(infoMap, inDegree, dependents);
+        checkDependencies(infoMap, inDegree, dependents);
+
+        Queue<String> queue = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
+            if (entry.getValue() == 0) queue.offer(entry.getKey());
+        }
+
+        List<PluginInfo> sortedList = performTopologicalSort(infoMap, inDegree, dependents, queue);
+        reportUnsortedPlugins(infoMap, inDegree, sortedList);
+
+        return sortedList;
+    }
+
+    private void initializeGraph(Map<String, PluginInfo> infoMap, Map<String, Integer> inDegree, Map<String, List<String>> dependents) {
         for (String name : infoMap.keySet()) {
             inDegree.put(name, 0);
             dependents.put(name, new ArrayList<>());
         }
+    }
 
+    private void checkDependencies(Map<String, PluginInfo> infoMap, Map<String, Integer> inDegree, Map<String, List<String>> dependents) {
         for (PluginInfo info : infoMap.values()) {
             for (String dep : info.depends) {
                 if (!infoMap.containsKey(dep) && !plugins.containsKey(dep)) {
@@ -284,14 +301,9 @@ public class PluginManager {
                 }
             }
         }
+    }
 
-        Queue<String> queue = new LinkedList<>();
-        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
-            if (entry.getValue() == 0) {
-                queue.offer(entry.getKey());
-            }
-        }
-
+    private List<PluginInfo> performTopologicalSort(Map<String, PluginInfo> infoMap, Map<String, Integer> inDegree, Map<String, List<String>> dependents, Queue<String> queue) {
         List<PluginInfo> sortedList = new ArrayList<>();
         while (!queue.isEmpty()) {
             String current = queue.poll();
@@ -300,12 +312,13 @@ public class PluginManager {
             for (String dependent : dependents.getOrDefault(current, Collections.emptyList())) {
                 int newInDegree = inDegree.get(dependent) - 1;
                 inDegree.put(dependent, newInDegree);
-                if (newInDegree == 0) {
-                    queue.offer(dependent);
-                }
+                if (newInDegree == 0) queue.offer(dependent);
             }
         }
+        return sortedList;
+    }
 
+    private void reportUnsortedPlugins(Map<String, PluginInfo> infoMap, Map<String, Integer> inDegree, List<PluginInfo> sortedList) {
         if (sortedList.size() != infoMap.size()) {
             log.error(LangManager.get("xinbot.plugin.load.all.failed"));
             for (String name : infoMap.keySet()) {
@@ -314,8 +327,6 @@ public class PluginManager {
                 }
             }
         }
-
-        return sortedList;
     }
 
     public void enablePlugin(RegisteredPlugin rp) {
@@ -342,7 +353,7 @@ public class PluginManager {
     }
 
     public void disablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.isRunning()) {
+        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.getSession().isConnected()) {
             log.error(LangManager.get("xinbot.metaplugin.error.disable_runtime"));
             return;
         }
@@ -379,22 +390,7 @@ public class PluginManager {
         if (!plugins.containsKey(rp.getName())) return;
 
         String pluginName = rp.getName();
-
-        List<RegisteredPlugin> dependents = new ArrayList<>();
-        for (RegisteredPlugin p : plugins.values()) {
-            if (p.getName().equals(pluginName)) continue;
-            List<String> deps = pluginDependencies.get(p.getName());
-            if (deps != null && deps.contains(pluginName)) {
-                dependents.add(p);
-            }
-        }
-
-        for (RegisteredPlugin dependent : dependents) {
-            if (plugins.containsKey(dependent.getName())) {
-                log.info(LangManager.get("xinbot.plugin.unload.dependent", dependent.getName(), pluginName));
-                unloadPlugin(dependent);
-            }
-        }
+        unloadDependents(pluginName);
 
         try {
             if (enabledPlugins.containsKey(pluginName)) {
@@ -403,19 +399,45 @@ public class PluginManager {
             rp.getPlugin().onUnload();
         } catch (Exception e) {
             log.error(LangManager.get("xinbot.plugin.unload.failed", pluginName), e);
+        } finally {
+            performUnloadCleanup(rp);
         }
-        finally {
-            plugins.remove(pluginName);
-            pluginDependencies.remove(pluginName);
-            PluginClassLoader loader = pluginLoaders.remove(pluginName);
-            if (loader != null) {
-                try {
-                    loader.close();
-                } catch (IOException ignored) {}
+    }
+
+    private void unloadDependents(String pluginName) {
+        List<RegisteredPlugin> dependents = getDependents(pluginName);
+        for (RegisteredPlugin dependent : dependents) {
+            if (plugins.containsKey(dependent.getName())) {
+                log.info(LangManager.get("xinbot.plugin.unload.dependent", dependent.getName(), pluginName));
+                unloadPlugin(dependent);
             }
-            String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.unloaded" : "xinbot.plugin.unloaded";
-            log.info(LangManager.get(key, rp.getPlugin().getClass().getName()));
         }
+    }
+
+    private List<RegisteredPlugin> getDependents(String pluginName) {
+        List<RegisteredPlugin> dependents = new ArrayList<>();
+        for (RegisteredPlugin p : plugins.values()) {
+            if (p.getName().equals(pluginName)) continue;
+            List<String> deps = pluginDependencies.get(p.getName());
+            if (deps != null && deps.contains(pluginName)) {
+                dependents.add(p);
+            }
+        }
+        return dependents;
+    }
+
+    private void performUnloadCleanup(RegisteredPlugin rp) {
+        String pluginName = rp.getName();
+        plugins.remove(pluginName);
+        pluginDependencies.remove(pluginName);
+        PluginClassLoader loader = pluginLoaders.remove(pluginName);
+        if (loader != null) {
+            try {
+                loader.close();
+            } catch (IOException ignored) {}
+        }
+        String key = rp instanceof RegisteredMetaPlugin ? "xinbot.metaplugin.unloaded" : "xinbot.plugin.unloaded";
+        log.info(LangManager.get(key, rp.getPlugin().getClass().getName()));
     }
 
     public void unloadPlugins() {
@@ -430,20 +452,19 @@ public class PluginManager {
     }
 
     public void enableAll() {
-        for (RegisteredPlugin rp : plugins.values()) {
-            try {
-                if (rp.getType() == PluginType.PLUGIN) enablePlugin(rp);
-            } catch (Exception e) {
-                log.error(LangManager.get("xinbot.plugin.enable.failed", rp.getName()), e);
-            }
-        }
-
         RegisteredMetaPlugin meta = getMetaPlugin();
         if (meta != null) {
             sessionListeners.put(meta.getName(), new ArrayList<>());
             meta.getPlugin().onEnable();
             enabledPlugins.put(meta.getName(), meta);
             log.info(LangManager.get("xinbot.metaplugin.enabled", meta.getName()));
+        }
+        for (RegisteredPlugin rp : plugins.values()) {
+            try {
+                if (rp.getType() == PluginType.PLUGIN) enablePlugin(rp);
+            } catch (Exception e) {
+                log.error(LangManager.get("xinbot.plugin.enable.failed", rp.getName()), e);
+            }
         }
     }
 

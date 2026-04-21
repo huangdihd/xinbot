@@ -45,38 +45,42 @@ public class PluginClassLoader extends URLClassLoader {
         synchronized (getClassLoadingLock(name)) {
             Class<?> loadedClass = findLoadedClass(name);
             if (loadedClass != null) {
-                if (resolve) resolveClass(loadedClass);
-                return loadedClass;
+                return resolveIfNeeded(loadedClass, resolve);
             }
 
             try {
-                loadedClass = getParent().loadClass(name);
-                if (loadedClass != null) {
-                    if (resolve) resolveClass(loadedClass);
-                    return loadedClass;
-                }
+                return resolveIfNeeded(getParent().loadClass(name), resolve);
             } catch (ClassNotFoundException ignored) {
             }
 
             try {
-                loadedClass = findClass(name);
-                if (loadedClass != null) {
-                    if (resolve) resolveClass(loadedClass);
-                    return loadedClass;
-                }
+                return resolveIfNeeded(findClass(name), resolve);
             } catch (ClassNotFoundException ignored) {
             }
 
-            for (PluginClassLoader depLoader : extraDependencies) {
-                try {
-                    loadedClass = depLoader.loadClass(name, resolve);
-                    if (loadedClass != null) return loadedClass;
-                } catch (ClassNotFoundException ignored) {
-                }
-            }
+            loadedClass = findClassInDependencies(name, resolve);
+            if (loadedClass != null) return loadedClass;
 
             throw new ClassNotFoundException(name);
         }
+    }
+
+    private Class<?> resolveIfNeeded(Class<?> clazz, boolean resolve) {
+        if (clazz != null && resolve) {
+            resolveClass(clazz);
+        }
+        return clazz;
+    }
+
+    private Class<?> findClassInDependencies(String name, boolean resolve) {
+        for (PluginClassLoader depLoader : extraDependencies) {
+            try {
+                Class<?> clazz = depLoader.loadClass(name, resolve);
+                if (clazz != null) return clazz;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        return null;
     }
 
     @Override
