@@ -31,6 +31,9 @@
 
 English / [简体中文](README_CN.md)
 
+## Demonstration
+[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
+
 ## ⚠️ Important Note
 Starting from 2.0.0, Xinbot must have a MetaPlugin installed to start and interact with the server. The purpose of a MetaPlugin is to handle server-specific interaction logic (such as login handshakes, auto-reconnect, etc.), allowing the core framework to remain generic.
 
@@ -47,46 +50,7 @@ You can find the official MetaPlugin implementation for 2b2t.xin here: [xinMetaP
 
 ## Quick Start
 
-1) Download
-   Get the latest [Xinbot Core](https://github.com/huangdihd/xinbot/releases) and a [MetaPlugin](https://github.com/huangdihd/xinMetaPlugin) for your target server.
-
-2) Install
-   Put the MetaPlugin into the plugin directory. Java 17 or newer is required.
-
-3) Configure
-   Create config.conf, example below:
-
-    ```hocon
-    {
-        "account" : {
-            "fullSession" : null,
-            "name" : "[Bot name]",
-            "onlineMode" : false,
-            "password" : ""                 // Bot's login password for the server
-        }, 
-        "enableTranslation" : true,
-        "reconnectTimeout" : 5000,
-        "reconnectDelay" : 3000,
-        "owner" : "[Owner name]",
-        "plugin" : {
-            "directory" : "plugin"
-        },
-        "proxy" : {
-            "enable" : false,
-            "info" : {
-                "address" : "",
-                "type" : "SOCKS5",
-                "password" : "",
-                "username" : ""
-            }
-        }
-    }
-    ```
-
-4) Run
-    ```bash
-    java -jar xinbot-[version].jar
-    ```
+Please refer to the [documentation site](https://xinbot.shouldbe.top/guide/getting-started.html).
 
 ---
 

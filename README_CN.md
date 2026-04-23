@@ -31,6 +31,9 @@
 
 [English](README.md) / 简体中文
 
+## 演示
+[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
+
 ## ⚠️ 重要提示
 自 2.0.0 起，Xinbot 必须安装元插件才能启动并与服务器交互。元插件的作用是处理与特定服务器相关的交互逻辑（如登录握手、自动重连等），使核心框架保持通用性。
 
@@ -47,48 +50,7 @@
 
 ## 快速开始
 
-1) 下载
-   获取最新版 [Xinbot Core](https://github.com/huangdihd/xinbot/releases) 及适配您目标服务器的 [元插件](https://github.com/huangdihd/xinMetaPlugin)。
-
-2) 安装
-   将元插件放入 plugin 目录。需要 Java 17 或更高版本。
-
-3) 配置
-   创建 config.conf，示例配置如下：
-
-    ```hocon
-       {
-        "account" : {
-            "fullSession" : null,
-            "name" : "[Bot name]",
-            "onlineMode" : false,
-            "password" : ""                 // 机器人登录服务器的密码
-        },
-        "enableTranslation" : true,
-        "reconnectTimeout" : 5000,
-        "reconnectDelay" : 3000,
-        "owner" : "[Owner name]",
-        "plugin" : {
-            "directory" : "plugin"
-        },
-        "proxy" : {
-            "enable" : false,
-            "info" : {
-                "address" : "",
-                "type" : "SOCKS5",
-                "password" : "",
-                "username" : ""
-            }
-        }
-    }
-    ```
-
-4) 运行
-    ```bash
-    java -jar xinbot-[版本号].jar
-    ```
-
----
+请参考[文档站](https://xinbot.shouldbe.top/zh/guide/getting-started.html)
 
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。
