@@ -17,37 +17,37 @@
 
 package xin.bbtt.mcbot.command;
 
-import lombok.Getter;
+import xin.bbtt.mcbot.LangManager;
 
-public class Command {
-    @Getter
-    private final String name;
-    @Getter
-    private final String[] aliases;
-    private final String description;
-    private final String usage;
+import java.util.ArrayList;
+import java.util.List;
 
+public record Command(String name, String[] aliases, String description, String usage) {
     public Command(String name, String[] aliases, String description, String usage) {
         this.name = name;
-        java.util.List<String> aliasList = new java.util.ArrayList<>();
+        this.description = description != null ? description : "";
+        this.usage = usage != null ? usage : "";
+        List<String> aliasList = new ArrayList<>();
         aliasList.add(name);
-        if (aliases != null) {
-            for (String alias : aliases) {
-                if (aliasList.stream().noneMatch(a -> a.equalsIgnoreCase(alias))) {
-                    aliasList.add(alias);
-                }
+        if (aliases == null) {
+            this.aliases = aliasList.toArray(new String[0]);
+            return;
+        }
+        for (String alias : aliases) {
+            if (aliasList.stream().noneMatch(a -> a.equalsIgnoreCase(alias))) {
+                aliasList.add(alias);
             }
         }
         this.aliases = aliasList.toArray(new String[0]);
-        this.description = description != null ? description : "";
-        this.usage = usage != null ? usage : "";
     }
 
-    public String getDescription() {
-        return xin.bbtt.mcbot.LangManager.get(description);
+    @Override
+    public String description() {
+        return LangManager.get(description);
     }
 
-    public String getUsage() {
-        return xin.bbtt.mcbot.LangManager.get(usage);
+    @Override
+    public String usage() {
+        return LangManager.get(usage);
     }
 }

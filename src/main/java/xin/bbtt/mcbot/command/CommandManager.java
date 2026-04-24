@@ -183,7 +183,7 @@ public class CommandManager {
         }
 
         for (RegisteredCommand registeredCommand : searchList) {
-            for (String alias : registeredCommand.command().getAliases()) {
+            for (String alias : registeredCommand.command().aliases()) {
                 if (alias.equalsIgnoreCase(commandName)) {
                     return registeredCommand;
                 }
@@ -243,7 +243,7 @@ public class CommandManager {
             String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
             
             for (RegisteredCommand regCmd : entry.getValue()) {
-                for (String alias : regCmd.command().getAliases()) {
+                for (String alias : regCmd.command().aliases()) {
                     if (alias.toLowerCase().startsWith(prefixLower)) {
                         names.add(alias);
                     }

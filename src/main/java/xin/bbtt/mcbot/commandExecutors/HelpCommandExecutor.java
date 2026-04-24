@@ -40,11 +40,11 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
     private void printCommandHelp(RegisteredCommand cmd) {
         Command command = cmd.command();
         Plugin plugin = cmd.plugin();
-        log.info(LangManager.get("xinbot.command.help.name", command.getName()));
+        log.info(LangManager.get("xinbot.command.help.name", command.name()));
         log.info(LangManager.get("xinbot.command.help.plugin", Bot.INSTANCE.getPluginManager().getPluginName(plugin)));
-        log.info(LangManager.get("xinbot.command.help.aliases", String.join(", ", command.getAliases())));
-        log.info(LangManager.get("xinbot.command.help.description", command.getDescription()));
-        log.info(LangManager.get("xinbot.command.help.usage", command.getUsage()));
+        log.info(LangManager.get("xinbot.command.help.aliases", String.join(", ", command.aliases())));
+        log.info(LangManager.get("xinbot.command.help.description", command.description()));
+        log.info(LangManager.get("xinbot.command.help.usage", command.usage()));
 
         if (cmd.executor() instanceof SubCommandExecutor subExec) {
             printSubCommands(subExec, "\t");
@@ -81,7 +81,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
         else if (args.length == 1) {
             // Search built-in commands
             for (RegisteredCommand cmd : cm.getCommandsByPlugin(null)) {
-                if (cmd.command().getName().equalsIgnoreCase(args[0])) {
+                if (cmd.command().name().equalsIgnoreCase(args[0])) {
                     printCommandHelp(cmd);
                     return;
                 }
@@ -89,7 +89,7 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
             // Search plugin commands
             for (xin.bbtt.mcbot.plugin.RegisteredPlugin rp : Bot.INSTANCE.getPluginManager().getPlugins()) {
                 for (RegisteredCommand cmd : cm.getCommandsByPlugin(rp.getPlugin())) {
-                    if (!cmd.command().getName().equalsIgnoreCase(args[0])) continue;
+                    if (!cmd.command().name().equalsIgnoreCase(args[0])) continue;
                     printCommandHelp(cmd);
                     return;
                 }
@@ -106,12 +106,12 @@ public class HelpCommandExecutor extends TabHighlightExecutor {
         
         // Add built-in commands
         for (RegisteredCommand cmd : cm.getCommandsByPlugin(null)) {
-            list.add(cmd.command().getName());
+            list.add(cmd.command().name());
         }
         // Add plugin commands
         for (xin.bbtt.mcbot.plugin.RegisteredPlugin rp : Bot.INSTANCE.getPluginManager().getPlugins()) {
             for (RegisteredCommand cmd : cm.getCommandsByPlugin(rp.getPlugin())) {
-                list.add(cmd.command().getName());
+                list.add(cmd.command().name());
             }
         }
         return list;
