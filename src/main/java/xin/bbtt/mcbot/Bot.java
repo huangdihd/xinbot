@@ -42,9 +42,7 @@ import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static xin.bbtt.mcbot.Utils.parseColors;
@@ -70,7 +68,7 @@ public class Bot {
         return thread;
     });
     @Getter
-    private final ArrayList<String> toBeSentMessages = new ArrayList<>();
+    private final Queue<String> toBeSentMessages = new ConcurrentLinkedQueue<>();
     public static final Bot INSTANCE = new Bot();
     @Getter
     @Setter

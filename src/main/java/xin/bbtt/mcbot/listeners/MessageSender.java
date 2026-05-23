@@ -29,25 +29,28 @@ import xin.bbtt.mcbot.events.SendCommandEvent;
 
 import java.time.Instant;
 import java.util.BitSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageSender extends SessionAdapter {
-    private static Long last_send_time = System.currentTimeMillis();
+    private static final AtomicLong last_send_time = new AtomicLong(System.currentTimeMillis());
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (System.currentTimeMillis() - last_send_time < 3000) return;
+        if (System.currentTimeMillis() - last_send_time.get() < 3000) return;
         if (Bot.INSTANCE.getProtocol().getOutboundState() != ProtocolState.GAME) return;
         if (Bot.INSTANCE.getProtocol().getInboundState() != ProtocolState.GAME) return;
-        if (Bot.INSTANCE.getToBeSentMessages().isEmpty()) return;
-        if (Bot.INSTANCE.getToBeSentMessages().get(0).startsWith("/")) {
-            String command = Bot.INSTANCE.getToBeSentMessages().get(0).replaceFirst("/", "");
+        
+        String message = Bot.INSTANCE.getToBeSentMessages().poll();
+        if (message == null) return;
+
+        if (message.startsWith("/")) {
+            String command = message.replaceFirst("/", "");
             SendCommandEvent sendCommandEvent = new SendCommandEvent(command);
             Bot.INSTANCE.getPluginManager().events().callEvent(sendCommandEvent);
             if (!sendCommandEvent.isDefaultActionCancelled())
                 session.send(new ServerboundChatCommandPacket(sendCommandEvent.getCommand()));
         }
         else {
-            String message = Bot.INSTANCE.getToBeSentMessages().get(0);
             if (message.startsWith("\\/")) {
                 message = message.substring(1);
             }
@@ -66,7 +69,6 @@ public class MessageSender extends SessionAdapter {
                         )
                 );
         }
-        last_send_time = System.currentTimeMillis();
-        Bot.INSTANCE.getToBeSentMessages().remove(0);
+        last_send_time.set(System.currentTimeMillis());
     }
 }
