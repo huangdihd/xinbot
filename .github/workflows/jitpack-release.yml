@@ -1,0 +1,35 @@
+name: JitPack Build Trigger
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  jitpack-trigger:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Trigger JitPack Build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          echo "Triggering JitPack build for version $TAG..."
+          curl -sL "https://jitpack.io/com/github/${{ github.repository }}/$TAG/build.log" > /dev/null
+          
+          echo "Checking JitPack build status..."
+          # Wait a bit for JitPack to start building
+          sleep 10
+          STATUS=$(curl -s "https://jitpack.io/api/builds/com.github.${{ github.repository }}/$TAG" | jq -r '.status')
+          echo "Status: $STATUS"
+          
+          if [ "$STATUS" != "ok" ] && [ "$STATUS" != "building" ]; then
+            echo "JitPack build failed to start or failed! Status: $STATUS. Creating an issue..."
+            gh issue create \
+              --title "JitPack build failed for release $TAG" \
+              --body "The JitPack build for version \`$TAG\` failed or could not be triggered.
+          
+          View the build log here: https://jitpack.io/com/github/${{ github.repository }}/$TAG/build.log" \
+              --repo "${{ github.repository }}"
+          fi
