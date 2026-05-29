@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.event.EventManager;
 import xin.bbtt.mcbot.events.LoginFlowEvent;
+import xin.bbtt.mcbot.events.LoginSuccessEvent;
+import xin.bbtt.mcbot.events.RegisterSuccessEvent;
 import xin.bbtt.mcbot.events.SendCommandEvent;
 import xin.bbtt.mcbot.events.SendLoginCommandEvent;
 import xin.bbtt.mcbot.events.SendRegisterCommandEvent;
@@ -201,6 +203,14 @@ public class LoginFlow extends SessionAdapter {
         LoginFlowStep<?, ?> step = steps.get(currentStepIndex);
         if (step.onSuccess != null) {
             ((Consumer<Packet>) step.onSuccess).accept(packet);
+        }
+
+        if (eventManager != null) {
+            switch (step.commandType) {
+                case LOGIN -> eventManager.callEvent(new LoginSuccessEvent());
+                case REGISTER -> eventManager.callEvent(new RegisterSuccessEvent());
+                default -> {}
+            }
         }
 
         currentStepIndex++;
