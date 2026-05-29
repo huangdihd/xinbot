@@ -177,6 +177,12 @@ public class Bot {
                 disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
                 break;
             }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
         }
         log.info(LangManager.get("xinbot.bot.connection.completed"));
     }
