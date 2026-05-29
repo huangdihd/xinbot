@@ -136,6 +136,7 @@ public class LoginFlow extends SessionAdapter {
         if (isTriggerPacket && currentStep.shouldSkip(packet)) {
             log.debug("LoginFlow step {} skipped by skipWhen predicate", currentStepIndex);
             advanceStep(packet);
+            processPacket(packet, now);
             return;
         }
 
