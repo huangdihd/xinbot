@@ -1,0 +1,71 @@
+name: Linearize History
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to rebase (leave empty for current branch)'
+        required: false
+        type: string
+
+jobs:
+  linearize:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Determine branch
+        id: branch
+        run: |
+          BRANCH="${{ inputs.branch }}"
+          if [[ -z "$BRANCH" ]]; then
+            BRANCH="${{ github.ref_name }}"
+          fi
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "Target branch: $BRANCH"
+
+      - name: Linearize history
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+
+          # Find merge base with master (or first commit if branch is master)
+          if [[ "$BRANCH" == "master" ]]; then
+            BASE=$(git rev-list --max-parents=0 HEAD)
+          else
+            BASE=$(git merge-base master "$BRANCH" 2>/dev/null || git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "Base commit: $BASE"
+
+          # Count merge commits
+          MERGE_COUNT=$(git log --oneline --merges "$BASE"..HEAD | wc -l)
+          echo "Found $MERGE_COUNT merge commits to remove"
+
+          if [[ "$MERGE_COUNT" -eq 0 ]]; then
+            echo "No merge commits to remove. Skipping."
+            exit 0
+          fi
+
+          # Rebase - standard rebase automatically ignores merge commits
+          if ! git rebase "$BASE"; then
+            echo "::error::Rebase failed due to conflicts. Please resolve manually."
+            git rebase --abort
+            exit 1
+          fi
+
+          # Force push
+          git push --force-with-lease origin "$BRANCH"
+
+          echo "Successfully linearized $BRANCH"
