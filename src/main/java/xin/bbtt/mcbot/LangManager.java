@@ -101,14 +101,20 @@ public class LangManager {
     /**
      * Loads Minecraft protocol translations from internal lang.json.
      */
-    public static void loadMinecraft() throws IOException {
+    public static void loadMinecraft(){
         String targetLangCode = getCurrentLanguage();
-        // Load default as base fallback
-        loadFromJson(DEFAULT_LANGUAGE);
-        if (!DEFAULT_LANGUAGE.equals(targetLangCode)) {
-            loadFromJson(targetLangCode);
+        try {
+            // Load default as base fallback
+            loadFromJson(DEFAULT_LANGUAGE);
+            if (!DEFAULT_LANGUAGE.equals(targetLangCode)) {
+                loadFromJson(targetLangCode);
+            }
+        } catch (IOException e) {
+            log.warn(LangManager.get("xinbot.langmanager.minecraft.load.failed", e.getMessage()));
         }
-        System.gc();
+        finally {
+            System.gc();
+        }
     }
 
     /**

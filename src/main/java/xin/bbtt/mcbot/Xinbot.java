@@ -145,13 +145,7 @@ public class Xinbot {
         CLI.init();
 
         // Initialize minecraft language
-        if (config.getConfigData().isEnableTranslation()) {
-            try {
-                LangManager.loadMinecraft();
-            } catch (Exception e) {
-                log.warn(LangManager.get("xinbot.langmanager.minecraft.load.failed", e.getMessage()));
-            }
-        }
+        if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();
 
         log.info(LangManager.get("xinbot.version", version));
 
