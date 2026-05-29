@@ -127,17 +127,17 @@ public class LoginFlow extends SessionAdapter {
     private void processPacket(Packet packet, long now) {
         LoginFlowStep<?, ?> currentStep = steps.get(currentStepIndex);
 
-        if (currentStep.shouldSkip(packet)) {
-            log.debug("LoginFlow step {} skipped by skipWhen predicate", currentStepIndex);
-            advanceStep(packet);
-            return;
-        }
-
         boolean isTriggerPacket = currentStep.packetClass.isInstance(packet);
         boolean isSuccessPacket = currentStep.successPacketClass != null
                 && currentStep.successPacketClass.isInstance(packet);
 
         if (!isTriggerPacket && !isSuccessPacket) return;
+
+        if (isTriggerPacket && currentStep.shouldSkip(packet)) {
+            log.debug("LoginFlow step {} skipped by skipWhen predicate", currentStepIndex);
+            advanceStep(packet);
+            return;
+        }
 
         if (currentStep.successPredicate == null) {
             handleAutoAdvanceStep(currentStep, packet, isTriggerPacket, now);
