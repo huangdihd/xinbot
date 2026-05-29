@@ -38,6 +38,7 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
     final Consumer<?> onSuccess;
     final String description;
     final CommandType commandType;
+    final Predicate<?> skipPredicate;
 
     enum CommandType {
         LOGIN,
@@ -52,7 +53,8 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
                   Predicate<S> successPredicate,
                   Consumer<?> onSuccess,
                   String description,
-                  CommandType commandType) {
+                  CommandType commandType,
+                  Predicate<?> skipPredicate) {
         this.packetClass = Objects.requireNonNull(packetClass, "packetClass");
         this.predicate = Objects.requireNonNull(predicate, "predicate");
         this.commandTemplate = commandTemplate;
@@ -61,6 +63,7 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
         this.onSuccess = onSuccess;
         this.description = description != null ? description : packetClass.getSimpleName();
         this.commandType = commandType != null ? commandType : CommandType.GENERIC;
+        this.skipPredicate = skipPredicate;
     }
 
     boolean matches(Packet packet) {
@@ -70,5 +73,11 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
     boolean isSuccess(Packet packet) {
         if (successPredicate == null) return false;
         return successPredicate.test(successPacketClass.cast(packet));
+    }
+
+    @SuppressWarnings("unchecked")
+    boolean shouldSkip(Packet packet) {
+        if (skipPredicate == null) return false;
+        return ((Predicate<T>) skipPredicate).test(packetClass.cast(packet));
     }
 }

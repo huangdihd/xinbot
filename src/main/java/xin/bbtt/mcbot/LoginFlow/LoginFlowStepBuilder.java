@@ -39,6 +39,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
     private Consumer<?> onSuccess;
     private String description;
     private LoginFlowStep.CommandType commandType;
+    private Predicate<?> skipPredicate;
 
     LoginFlowStepBuilder(LoginFlowBuilder parent, Class<T> packetClass) {
         this.parent = parent;
@@ -120,6 +121,18 @@ public class LoginFlowStepBuilder<T extends Packet> {
     }
 
     /**
+     * Sets a predicate that determines when this step should be skipped.
+     * If the predicate returns true for a packet, the step is immediately skipped
+     * and the flow advances to the next step without sending any command.
+     *
+     * @param predicate the skip condition
+     */
+    public LoginFlowStepBuilder<T> skipWhen(Predicate<T> predicate) {
+        this.skipPredicate = predicate;
+        return this;
+    }
+
+    /**
      * Adds this step and returns the parent builder for chaining.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -127,7 +140,8 @@ public class LoginFlowStepBuilder<T extends Packet> {
         parent.addStep(new LoginFlowStep<>(
             packetClass, predicate, commandTemplate,
             (Class) successPacketClass, (Predicate) successPredicate,
-            onSuccess, description, commandType
+            onSuccess, description, commandType,
+            (Predicate) skipPredicate
         ));
         return parent;
     }
