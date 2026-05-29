@@ -101,7 +101,7 @@ public class LangManager {
     /**
      * Loads Minecraft protocol translations from internal lang.json.
      */
-    public static void loadMinecraft() {
+    public static void loadMinecraft() throws IOException {
         String targetLangCode = getCurrentLanguage();
         // Load default as base fallback
         loadFromJson(DEFAULT_LANGUAGE);
@@ -162,18 +162,18 @@ public class LangManager {
     /**
      * Loads the aggregated lang.json file from internal resources.
      */
-    public static void loadFromJson(@Nullable String langCode) {
+    public static void loadFromJson(@Nullable String langCode) throws IOException {
         final String targetLang = Optional.ofNullable(langCode)
             .filter(s -> !s.isBlank())
             .orElse(DEFAULT_LANGUAGE);
 
-        try (InputStream is = LangManager.class.getClassLoader().getResourceAsStream("lang/lang.json")) {
-            if (is == null) {
+        try (InputStream raw = LangManager.class.getClassLoader().getResourceAsStream("lang/lang.json")) {
+            if (raw == null) {
                 log.debug(get("xinbot.langmanager.json.not_found"));
                 return;
             }
 
-            JsonObject root = JsonParser.parseReader(new InputStreamReader(is, StandardCharsets.UTF_8)).getAsJsonObject();
+            JsonObject root = JsonParser.parseReader(new InputStreamReader(raw, StandardCharsets.UTF_8)).getAsJsonObject();
 
             if (!root.has(targetLang)) {
                 log.debug(get("xinbot.langmanager.json.lang_not_found", targetLang));
@@ -189,9 +189,6 @@ public class LangManager {
                 currentLang.putAll(jsonMap);
                 log.debug(get("xinbot.langmanager.json.loaded", targetLang));
             }
-
-        } catch (Exception e) {
-            log.error(get("xinbot.langmanager.json.error", targetLang, e.getMessage()), e);
         }
     }
 
