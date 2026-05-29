@@ -113,6 +113,7 @@ xinbot.langmanager.json.not_found=lang/lang.json non trouvé, saut du chargement
 xinbot.langmanager.json.lang_not_found=Langue %s non trouvée dans lang.json
 xinbot.langmanager.json.loaded=Langue %s chargée depuis lang.json
 xinbot.langmanager.json.error=Erreur lors du chargement de lang.json pour %s : %s
+xinbot.langmanager.minecraft.load.failed=Impossible de charger les traductions Minecraft (%s) ; poursuite sans elles. Si cette build utilise Git LFS, exécutez d'abord git lfs pull.
 xinbot.langmanager.external.loaded=Langue personnalisée %s chargée depuis le fichier externe %s
 xinbot.langmanager.classloader.error=Erreur lors du chargement de la langue %s depuis le classloader : %s
 xinbot.langmanager.format.error=Erreur lors du formatage de la clé de langue %s : %s

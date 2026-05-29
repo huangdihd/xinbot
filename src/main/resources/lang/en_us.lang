@@ -164,6 +164,7 @@ xinbot.langmanager.json.not_found=lang/lang.json not found, skipping JSON load.
 xinbot.langmanager.json.lang_not_found=Language %s not found in lang.json
 xinbot.langmanager.json.loaded=Loaded language %s from lang.json
 xinbot.langmanager.json.error=Error loading lang.json for %s: %s
+xinbot.langmanager.minecraft.load.failed=Minecraft translations could not be loaded (%s); continuing without them. If this build uses Git LFS, run git lfs pull first.
 xinbot.langmanager.external.loaded=Loaded custom language %s from external %s
 xinbot.langmanager.classloader.error=Error loading language %s from classloader: %s
 xinbot.langmanager.format.error=Error formatting lang key %s: %s

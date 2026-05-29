@@ -113,6 +113,7 @@ xinbot.langmanager.json.not_found=lang/lang.json не найден, пропус
 xinbot.langmanager.json.lang_not_found=Язык %s не найден в lang.json
 xinbot.langmanager.json.loaded=Язык %s загружен из lang.json
 xinbot.langmanager.json.error=Ошибка при загрузке lang.json для %s: %s
+xinbot.langmanager.minecraft.load.failed=Не удалось загрузить переводы Minecraft (%s); работа продолжается без них. Если эта сборка использует Git LFS, сначала выполните git lfs pull.
 xinbot.langmanager.external.loaded=Загружен пользовательский язык %s из внешнего файла %s
 xinbot.langmanager.classloader.error=Ошибка при загрузке языка %s из classloader: %s
 xinbot.langmanager.format.error=Ошибка при форматировании языкового ключа %s: %s
