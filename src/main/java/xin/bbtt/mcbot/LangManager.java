@@ -212,7 +212,7 @@ public class LangManager {
             currentLang.putAll(parseLangStream(is));
             log.info(get("xinbot.langmanager.external.loaded", langCode, langFile));
         } catch (Exception e) {
-            log.error(get("xinbot.config.error") + " " + langFile + ": " + e.getMessage(), e);
+            log.error("{} {}: {}", get("xinbot.config.error"), langFile, e.getMessage(), e);
         }
     }
 
