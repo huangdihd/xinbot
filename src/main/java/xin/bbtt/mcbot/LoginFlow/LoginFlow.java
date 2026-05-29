@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.event.EventManager;
 import xin.bbtt.mcbot.events.LoginFlowEvent;
+import xin.bbtt.mcbot.events.SendCommandEvent;
+import xin.bbtt.mcbot.events.SendLoginCommandEvent;
+import xin.bbtt.mcbot.events.SendRegisterCommandEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +77,11 @@ public class LoginFlow extends SessionAdapter {
     private final Consumer<LoginFlowContext> stateChangeListener;
     private final EventManager eventManager;
 
+    /**
+     * -- GETTER --
+     *  Returns the current step index (0-based).
+     */
+    @Getter
     private int currentStepIndex = 0;
     private long lastCommandTime = 0;
     private volatile long stepStartTime = 0;
@@ -162,16 +170,37 @@ public class LoginFlow extends SessionAdapter {
         if (step.commandTemplate != null && now - lastCommandTime >= cooldownMs) {
             String command = expandTemplate(step.commandTemplate);
             log.debug("LoginFlow step {}: sending '{}'", currentStepIndex, command);
+
+            if (eventManager != null && step.commandType != LoginFlowStep.CommandType.GENERIC) {
+                SendCommandEvent event = createCommandEvent(step.commandType, command);
+                eventManager.callEvent(event);
+
+                if (event.isDefaultActionCancelled()) {
+                    log.debug("LoginFlow step {}: command cancelled by event", currentStepIndex);
+                    return;
+                }
+
+                command = event.getCommand();
+            }
+
             commandSender.accept(command);
             lastCommandTime = now;
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    private SendCommandEvent createCommandEvent(LoginFlowStep.CommandType commandType, String command) {
+        return switch (commandType) {
+            case LOGIN -> new SendLoginCommandEvent(command);
+            case REGISTER -> new SendRegisterCommandEvent(command);
+            default -> new SendCommandEvent(command);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
     private void advanceStep(Packet packet) {
-        LoginFlowStep step = steps.get(currentStepIndex);
+        LoginFlowStep<?, ?> step = steps.get(currentStepIndex);
         if (step.onSuccess != null) {
-            ((Consumer) step.onSuccess).accept(packet);
+            ((Consumer<Packet>) step.onSuccess).accept(packet);
         }
 
         currentStepIndex++;
@@ -204,13 +233,6 @@ public class LoginFlow extends SessionAdapter {
         state = FlowState.WAITING;
         log.debug("LoginFlow reset");
         fireStateChange();
-    }
-
-    /**
-     * Returns the current step index (0-based).
-     */
-    public int getCurrentStepIndex() {
-        return currentStepIndex;
     }
 
     /**

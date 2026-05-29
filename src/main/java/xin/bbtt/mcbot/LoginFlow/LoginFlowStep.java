@@ -37,6 +37,13 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
     final Class<S> successPacketClass;
     final Consumer<?> onSuccess;
     final String description;
+    final CommandType commandType;
+
+    enum CommandType {
+        LOGIN,
+        REGISTER,
+        GENERIC
+    }
 
     LoginFlowStep(Class<T> packetClass,
                   Predicate<T> predicate,
@@ -44,7 +51,8 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
                   Class<S> successPacketClass,
                   Predicate<S> successPredicate,
                   Consumer<?> onSuccess,
-                  String description) {
+                  String description,
+                  CommandType commandType) {
         this.packetClass = Objects.requireNonNull(packetClass, "packetClass");
         this.predicate = Objects.requireNonNull(predicate, "predicate");
         this.commandTemplate = commandTemplate;
@@ -52,6 +60,7 @@ class LoginFlowStep<T extends Packet, S extends Packet> {
         this.successPredicate = successPredicate;
         this.onSuccess = onSuccess;
         this.description = description != null ? description : packetClass.getSimpleName();
+        this.commandType = commandType != null ? commandType : CommandType.GENERIC;
     }
 
     boolean matches(Packet packet) {

@@ -38,6 +38,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
     private Class<?> successPacketClass;
     private Consumer<?> onSuccess;
     private String description;
+    private LoginFlowStep.CommandType commandType;
 
     LoginFlowStepBuilder(LoginFlowBuilder parent, Class<T> packetClass) {
         this.parent = parent;
@@ -101,14 +102,32 @@ public class LoginFlowStepBuilder<T extends Packet> {
     }
 
     /**
+     * Marks this step as a login command step.
+     * When the command is sent, a {@link xin.bbtt.mcbot.events.SendLoginCommandEvent} will be fired.
+     */
+    public LoginFlowStepBuilder<T> login() {
+        this.commandType = LoginFlowStep.CommandType.LOGIN;
+        return this;
+    }
+
+    /**
+     * Marks this step as a register command step.
+     * When the command is sent, a {@link xin.bbtt.mcbot.events.SendRegisterCommandEvent} will be fired.
+     */
+    public LoginFlowStepBuilder<T> register() {
+        this.commandType = LoginFlowStep.CommandType.REGISTER;
+        return this;
+    }
+
+    /**
      * Adds this step and returns the parent builder for chaining.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public LoginFlowBuilder add() {
         parent.addStep(new LoginFlowStep<>(
             packetClass, predicate, commandTemplate,
             (Class) successPacketClass, (Predicate) successPredicate,
-            onSuccess, description
+            onSuccess, description, commandType
         ));
         return parent;
     }

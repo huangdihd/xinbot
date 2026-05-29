@@ -17,23 +17,16 @@
 
 package xin.bbtt.mcbot.events;
 
-import lombok.Getter;
-import lombok.Setter;
-import xin.bbtt.mcbot.event.Event;
 import xin.bbtt.mcbot.event.HandlerList;
 import xin.bbtt.mcbot.event.HasDefaultAction;
 
-public class SendLoginCommandEvent extends Event implements HasDefaultAction {
+public class SendLoginCommandEvent extends SendCommandEvent implements HasDefaultAction {
     private static final HandlerList HANDLERS = new HandlerList();
-    @Getter
-    @Setter
-    private String command;
-
 
     private boolean cancelDefault;
 
     public SendLoginCommandEvent(String command) {
-        this.command = command;
+        super(command);
     }
 
     @Override public boolean isDefaultActionCancelled() { return cancelDefault; }
