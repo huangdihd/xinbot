@@ -17,9 +17,8 @@
 
 package xin.bbtt.mcbot.listeners;
 
-import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
@@ -29,17 +28,21 @@ import xin.bbtt.mcbot.events.SendCommandEvent;
 
 import java.time.Instant;
 import java.util.BitSet;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MessageSender extends SessionAdapter {
-    private static final AtomicLong last_send_time = new AtomicLong(System.currentTimeMillis());
+    /** Minimum interval between two outbound messages; also used as the scheduler period. */
+    public static final long SEND_INTERVAL_MS = 3000;
 
-    @Override
-    public void packetReceived(Session session, Packet packet) {
-        if (System.currentTimeMillis() - last_send_time.get() < 3000) return;
+    /**
+     * Sends at most one queued message. Driven by the Bot scheduler at a fixed rate so the queue
+     * drains even when the server sends no inbound packets, instead of piggybacking on packetReceived.
+     */
+    public void trySend() {
+        ClientSession session = Bot.INSTANCE.getSession();
+        if (session == null || !session.isConnected()) return;
         if (Bot.INSTANCE.getProtocol().getOutboundState() != ProtocolState.GAME) return;
         if (Bot.INSTANCE.getProtocol().getInboundState() != ProtocolState.GAME) return;
-        
+
         String message = Bot.INSTANCE.getToBeSentMessages().poll();
         if (message == null) return;
 
@@ -69,6 +72,5 @@ public class MessageSender extends SessionAdapter {
                         )
                 );
         }
-        last_send_time.set(System.currentTimeMillis());
     }
 }

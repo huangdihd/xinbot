@@ -109,7 +109,15 @@ public class Bot {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
         }
         log.info(LangManager.get("xinbot.bot.starting", protocol.getProfile().getName()));
-        
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                messageSender.trySend();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        }, MessageSender.SEND_INTERVAL_MS, MessageSender.SEND_INTERVAL_MS, TimeUnit.MILLISECONDS);
+
         java.util.concurrent.CompletableFuture.runAsync(this::connect);
         
         getInput();
