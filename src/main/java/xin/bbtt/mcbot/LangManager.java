@@ -111,6 +111,8 @@ public class LangManager {
             }
         } catch (IOException e) {
             log.warn(LangManager.get("xinbot.langmanager.minecraft.load.failed", e.getMessage()));
+        } catch (Exception e) {
+            log.warn(LangManager.get("xinbot.langmanager.minecraft.load.failed", e.getMessage()));
         }
         finally {
             System.gc();

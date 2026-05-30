@@ -22,15 +22,18 @@ import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.config.BotConfigData;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 
 
 public class Xinbot {
@@ -92,6 +95,52 @@ public class Xinbot {
         }
     }
 
+    private static boolean isDefaultConfig(BotConfigData configData) {
+        if (configData == null) return true;
+        BotConfigData.Account account = configData.getAccount();
+        if (account == null) return true;
+        String name = account.getName();
+        return name == null || name.isEmpty() || "[Bot name]".equals(name);
+    }
+
+    private static void interactiveConfigSetup(BotConfig config) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        log.info(LangManager.get("xinbot.config.interactive.welcome"));
+        log.info(LangManager.get("xinbot.config.interactive.offline.prompt"));
+
+        String playerName = reader.readLine();
+        BotConfigData.Account account = config.getConfigData().getAccount();
+        if (account == null) {
+            account = new BotConfigData.Account();
+            config.getConfigData().setAccount(account);
+        }
+
+        if (playerName == null || playerName.trim().isEmpty()) {
+            account.setOnlineMode(true);
+            log.info(LangManager.get("xinbot.config.interactive.online.selected"));
+            // Perform online account login immediately
+            config.getConfigData().setAccount(AccountLoader.init(account));
+            config.saveToFile();
+            log.info(LangManager.get("xinbot.config.interactive.saved"));
+        } else {
+            account.setOnlineMode(false);
+            account.setName(playerName.trim());
+            log.info(LangManager.get("xinbot.config.interactive.offline.selected", playerName.trim()));
+
+            log.info(LangManager.get("xinbot.config.interactive.password.prompt"));
+            String password = reader.readLine();
+            if (password != null) {
+                account.setPassword(password.trim());
+            }
+
+            config.saveToFile();
+            log.info(LangManager.get("xinbot.config.interactive.saved"));
+        }
+
+        log.info(LangManager.get("xinbot.config.interactive.other.settings"));
+    }
+
 
     public static void main(String[] args){
         BotConfig config = null;
@@ -122,15 +171,18 @@ public class Xinbot {
         LangManager.initLang(Xinbot.class.getClassLoader());
         LangManager.loadExternal();
 
+        // Initialize JLine first to ensure proper console encoding
+        CLI.init();
+
         // Load the configuration file
         configPath = args[0];
         // Check if config file exists, if not copy from resources
         Path configFilePath = Paths.get(configPath);
+        boolean isNewConfig = false;
         if (!Files.exists(configFilePath)) {
             log.info(LangManager.get("xinbot.config.loading", configPath));
             copyDefaultConfig(configPath);
-            log.info(LangManager.get("xinbot.config.modify.prompt", configPath));
-            System.exit(1);
+            isNewConfig = true;
         }
         log.info(LangManager.get("xinbot.config.loading", configPath));
         try {
@@ -141,8 +193,15 @@ public class Xinbot {
             System.exit(1);
         }
 
-        // Initialize JLine
-        CLI.init();
+        // Check if config is still default and prompt user for setup
+        if (isNewConfig || isDefaultConfig(config.getConfigData())) {
+            try {
+                interactiveConfigSetup(config);
+            } catch (Exception e) {
+                log.error(LangManager.get("xinbot.config.interactive.error"), e);
+                System.exit(1);
+            }
+        }
 
         // Initialize minecraft language
         if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();

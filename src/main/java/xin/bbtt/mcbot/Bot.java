@@ -104,6 +104,14 @@ public class Bot {
         }
 
         running = true;
+        try {
+            if (config.getConfigData().getAccount().isOnlineMode()) {
+                config.getConfigData().setAccount(AccountLoader.refresh());
+                config.saveToFile();
+            }
+        } catch (Exception e) {
+            log.error(LangManager.get("xinbot.auth.refresh.failed"), e);
+        }
         protocol = AccountLoader.getProtocol();
         if (config.getConfigData().getProxy().isEnable()) {
             proxyInfo = config.getConfigData().getProxy().getInfo().toMcProtocolLibProxyInfo();
@@ -212,6 +220,14 @@ public class Bot {
         server = null;
         if (!running) return;
 
+        try {
+            if (config.getConfigData().getAccount().isOnlineMode()) {
+                config.getConfigData().setAccount(AccountLoader.refresh());
+                config.saveToFile();
+            }
+        } catch (Exception e) {
+            log.error(LangManager.get("xinbot.auth.refresh.failed"), e);
+        }
         protocol = AccountLoader.getProtocol();
 
         long delay = config.getConfigData().getReconnectDelay();
