@@ -97,6 +97,14 @@ xinbot.command.help.subcommands=\tПодменю:
 # Restored keys
 xinbot.metaplugin.loading=Попытка загрузки MetaPlugin: %s
 xinbot.config.error=Ошибка загрузки файла конфигурации
+xinbot.config.interactive.welcome=Добро пожаловать в Xinbot! Для первого использования требуется базовая настройка.
+xinbot.config.interactive.offline.prompt=Введите имя игрока в автономном режиме (оставьте пустым и нажмите Enter для официального входа):
+xinbot.config.interactive.online.selected=Выбран режим официального входа. Авторизация учетной записи Microsoft будет проведена при первом подключении.
+xinbot.config.interactive.offline.selected=Выбран автономный режим, имя игрока: %s
+xinbot.config.interactive.password.prompt=Введите пароль для входа на сервер (оставьте пустым, если нет):
+xinbot.config.interactive.saved=Конфигурация сохранена.
+xinbot.config.interactive.other.settings=Для других расширенных настроек, пожалуйста, вручную отредактируйте файл конфигурации.
+xinbot.config.interactive.error=Произошла ошибка во время интерактивной настройки
 xinbot.disconnect.timeout=Время ожидания истекло
 xinbot.disconnect.endOfStream=Конец потока
 xinbot.bot.disconnect.reason=Отключено: %s
@@ -122,6 +130,7 @@ xinbot.command.load_yml.not_found=commands.yml не найден в ресурс
 xinbot.command.builtin.load_failed=Не удалось загрузить встроенные команды
 xinbot.config.file.not_found=Файл конфигурации не найден: %s
 xinbot.auth.no_session=Сессия не найдена
+xinbot.auth.refresh.failed=Не удалось обновить сессию лицензионного аккаунта
 
 xinbot.command.status.description=Показывает текущий статус бота
 xinbot.command.status.usage=status

@@ -97,6 +97,14 @@ xinbot.command.help.subcommands=\tサブコマンド:
 # Restored keys
 xinbot.metaplugin.loading=MetaPlugin を読み込んでいます: %s
 xinbot.config.error=設定ファイルの読み込み中にエラーが発生しました
+xinbot.config.interactive.welcome=Xinbot へようこそ！初回使用時は基本設定が必要です。
+xinbot.config.interactive.offline.prompt=オフラインプレイヤー名を入力してください（空のまま Enter を押すと公式ログイン）：
+xinbot.config.interactive.online.selected=公式ログインモードを選択しました。初回接続時に Microsoft アカウントの認証を案内します。
+xinbot.config.interactive.offline.selected=オフラインモードを選択しました、プレイヤー名: %s
+xinbot.config.interactive.password.prompt=サーバーログインパスワードを入力してください（ない場合は空のまま）：
+xinbot.config.interactive.saved=設定を保存しました。
+xinbot.config.interactive.other.settings=その他の詳細設定は設定ファイルを手動で編集してください。
+xinbot.config.interactive.error=インタラクティブ設定中にエラーが発生しました
 xinbot.disconnect.timeout=タイムアウトしました
 xinbot.disconnect.endOfStream=ストリーム終了
 xinbot.bot.disconnect.reason=切断されました: %s
@@ -122,6 +130,7 @@ xinbot.command.load_yml.not_found=リソース内に commands.yml が見つか�
 xinbot.command.builtin.load_failed=組み込みコマンドの読み込みに失敗しました
 xinbot.config.file.not_found=設定ファイルが見つかりません: %s
 xinbot.auth.no_session=セッションが見つかりません
+xinbot.auth.refresh.failed=オンラインアカウントセッションの更新に失敗しました
 
 xinbot.command.status.description=ボットの現在のステータスを表示します
 xinbot.command.status.usage=status

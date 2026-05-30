@@ -97,6 +97,14 @@ xinbot.command.help.subcommands=\tUnterbefehle:
 # Restored keys
 xinbot.metaplugin.loading=Versuche MetaPlugin zu laden: %s
 xinbot.config.error=Fehler beim Laden der Konfigurationsdatei
+xinbot.config.interactive.welcome=Willkommen bei Xinbot! Für die erste Verwendung ist eine Grundkonfiguration erforderlich.
+xinbot.config.interactive.offline.prompt=Geben Sie den Offline-Spielernamen ein (leer lassen und Enter drücken für offizielle Anmeldung):
+xinbot.config.interactive.online.selected=Offizieller Anmeldemodus ausgewählt. Die Microsoft-Konto-Autorisierung wird bei der ersten Verbindung geführt.
+xinbot.config.interactive.offline.selected=Offline-Modus ausgewählt, Spielername: %s
+xinbot.config.interactive.password.prompt=Geben Sie das Server-Anmeldepasswort ein (leer lassen, falls keines):
+xinbot.config.interactive.saved=Konfiguration gespeichert.
+xinbot.config.interactive.other.settings=Für andere erweiterte Einstellungen bearbeiten Sie bitte manuell die Konfigurationsdatei.
+xinbot.config.interactive.error=Ein Fehler ist während der interaktiven Konfiguration aufgetreten
 xinbot.disconnect.timeout=Zeitüberschreitung
 xinbot.disconnect.endOfStream=Ende des Datenstroms
 xinbot.bot.disconnect.reason=Getrennt: %s
@@ -122,6 +130,7 @@ xinbot.command.load_yml.not_found=commands.yml in den Ressourcen nicht gefunden
 xinbot.command.builtin.load_failed=Laden der eingebauten Befehle fehlgeschlagen
 xinbot.config.file.not_found=Konfigurationsdatei nicht gefunden: %s
 xinbot.auth.no_session=Keine Sitzung gefunden
+xinbot.auth.refresh.failed=Fehler beim Aktualisieren der Online-Konto-Sitzung
 
 xinbot.command.status.description=Zeigt den aktuellen Status des Bots an
 xinbot.command.status.usage=status

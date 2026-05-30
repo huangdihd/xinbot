@@ -52,6 +52,14 @@ xinbot.config.default.not.found=Default config file not found in resources!
 xinbot.config.default.copied=Default config file copied to: %s
 xinbot.config.default.copy.failed=Failed to copy default config file: %s
 xinbot.config.modify.prompt=Please modify the config file: %s
+xinbot.config.interactive.welcome=Welcome to Xinbot! Basic configuration is required for first-time use.
+xinbot.config.interactive.offline.prompt=Enter offline player name (leave empty and press Enter for official login):
+xinbot.config.interactive.online.selected=Official login mode selected. Microsoft account authorization will be guided on first connection.
+xinbot.config.interactive.offline.selected=Offline mode selected, player name: %s
+xinbot.config.interactive.password.prompt=Enter server login password (leave empty if none):
+xinbot.config.interactive.saved=Configuration saved.
+xinbot.config.interactive.other.settings=For other advanced settings, please manually edit the configuration file.
+xinbot.config.interactive.error=An error occurred during interactive configuration
 xinbot.config.load.failed=Failed to load configuration file: %s
 xinbot.config.save.failed=Failed to save the configuration file.
 
@@ -173,6 +181,7 @@ xinbot.command.load_yml.not_found=commands.yml not found in resources
 xinbot.command.builtin.load_failed=Failed to load built-in commands
 xinbot.config.file.not_found=Config file not found: %s
 xinbot.auth.no_session=No session found
+xinbot.auth.refresh.failed=Failed to refresh online account session
 
 xinbot.command.status.description=Shows the current status of the bot
 xinbot.command.status.usage=status

@@ -52,6 +52,14 @@ xinbot.config.default.not.found=在资源文件中找不到默认配置文件！
 xinbot.config.default.copied=默认配置文件已复制到：%s
 xinbot.config.default.copy.failed=复制默认配置文件失败：%s
 xinbot.config.modify.prompt=请修改配置文件：%s
+xinbot.config.interactive.welcome=欢迎使用 Xinbot！首次使用需要进行基础配置。
+xinbot.config.interactive.offline.prompt=请输入离线模式玩家名（留空按回车则使用正版登录）：
+xinbot.config.interactive.online.selected=已选择正版登录模式，将在首次连接时引导您完成 Microsoft 账号授权。
+xinbot.config.interactive.offline.selected=已选择离线模式，玩家名：%s
+xinbot.config.interactive.password.prompt=请输入服务器登录密码（如无密码请留空）：
+xinbot.config.interactive.saved=配置已保存。
+xinbot.config.interactive.other.settings=其他高级设置请手动编辑配置文件。
+xinbot.config.interactive.error=交互式配置过程中发生错误
 xinbot.config.load.failed=加载配置文件失败：%s
 xinbot.config.save.failed=保存配置文件失败。
 
@@ -171,6 +179,7 @@ xinbot.command.load_yml.not_found=资源中未找到 commands.yml
 xinbot.command.builtin.load_failed=加载内置命令失败
 xinbot.config.file.not_found=未找到配置文件：%s
 xinbot.auth.no_session=未找到会话
+xinbot.auth.refresh.failed=刷新正版登录会话失败
 
 xinbot.command.status.description=显示机器人的当前运行状态
 xinbot.command.status.usage=status

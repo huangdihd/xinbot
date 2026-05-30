@@ -93,6 +93,14 @@ xinbot.command.help.subcommands=\t子命令：
 # Restored keys
 xinbot.metaplugin.loading=嘗試載入元外掛程式：%s
 xinbot.config.error=載入設定檔案時出錯
+xinbot.config.interactive.welcome=歡迎使用 Xinbot！首次使用需要進行基礎配置。
+xinbot.config.interactive.offline.prompt=請輸入離線模式玩家名（留空按回車則使用正版登入）：
+xinbot.config.interactive.online.selected=已選擇正版登入模式，將在首次連接時引導您完成 Microsoft 帳號授權。
+xinbot.config.interactive.offline.selected=已選擇離線模式，玩家名：%s
+xinbot.config.interactive.password.prompt=請輸入伺服器登入密碼（如無密碼請留空）：
+xinbot.config.interactive.saved=配置已儲存。
+xinbot.config.interactive.other.settings=其他進階設定請手動編輯配置文件。
+xinbot.config.interactive.error=互動式配置過程中發生錯誤
 xinbot.disconnect.timeout=連接超時
 xinbot.disconnect.endOfStream=資料流結束
 xinbot.bot.disconnect.reason=斷開連接：%s
@@ -116,6 +124,7 @@ xinbot.command.load_yml.not_found=資源中未找到 commands.yml
 xinbot.command.builtin.load_failed=載入內建指令失敗
 xinbot.config.file.not_found=未找到設定檔案：%s
 xinbot.auth.no_session=未找到工作階段
+xinbot.auth.refresh.failed=刷新正版登入工作階段失敗
 
 xinbot.command.status.description=顯示機器人的目前運行狀態
 xinbot.command.status.usage=status
