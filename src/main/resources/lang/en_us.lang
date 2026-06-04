@@ -192,3 +192,4 @@ xinbot.command.reload.failed=Failed to reload configuration from: %s
 xinbot.command.reload.disconnect=Reloading config...
 
 xinbot.proxy.error.no_info=Proxy is enabled but no proxy info is configured; proceeding without a proxy.
+xinbot.plugin.yml.invalid_type=Plugin %s has an invalid type '%s', defaulting to PLUGIN.

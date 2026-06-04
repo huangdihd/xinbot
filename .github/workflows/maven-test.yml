@@ -28,7 +28,8 @@ jobs:
           "xin.bbtt.mcbot.plugin.PluginFileLifecycleTest",
           "xin.bbtt.mcbot.listeners.CommandsRecorderTest",
           "xin.bbtt.mcbot.plugin.PluginClassloaderLeakTest",
-          "xin.bbtt.mcbot.config.BotConfigDataTest"
+          "xin.bbtt.mcbot.config.BotConfigDataTest",
+          "xin.bbtt.mcbot.plugin.PluginYmlValidationTest"
         ]
 
     steps:

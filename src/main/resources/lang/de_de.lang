@@ -141,3 +141,4 @@ xinbot.command.reload.failed=Fehler beim Neuladen der Konfiguration aus %s
 xinbot.command.reload.disconnect=Konfiguration wird neu geladen...
 
 xinbot.proxy.error.no_info=Proxy ist aktiviert, aber es sind keine Proxy-Informationen konfiguriert; es wird ohne Proxy fortgefahren.
+xinbot.plugin.yml.invalid_type=Plugin %s hat einen ungültigen Typ '%s', es wird standardmäßig PLUGIN verwendet.

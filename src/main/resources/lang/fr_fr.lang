@@ -141,3 +141,4 @@ xinbot.command.reload.failed=Échec du rechargement de la configuration depuis: 
 xinbot.command.reload.disconnect=Rechargement de la configuration...
 
 xinbot.proxy.error.no_info=Le proxy est activé mais aucune information de proxy n'est configurée ; poursuite sans proxy.
+xinbot.plugin.yml.invalid_type=Le plugin %s a un type '%s' invalide ; utilisation de PLUGIN par défaut.

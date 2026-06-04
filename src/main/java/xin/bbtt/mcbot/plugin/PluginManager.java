@@ -262,9 +262,19 @@ public class PluginManager {
                 PluginInfo info = new PluginInfo();
                 info.name = String.valueOf(map.get("name"));
                 info.mainClass = String.valueOf(map.get("main"));
+                if (info.name == null || info.name.isBlank() || "null".equals(info.name)
+                        || info.mainClass == null || info.mainClass.isBlank() || "null".equals(info.mainClass)) {
+                    return null;
+                }
                 info.version = String.valueOf(map.getOrDefault("version", "1.0.0"));
-                info.type = PluginType.valueOf(String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase());
-                
+                String typeStr = String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase();
+                try {
+                    info.type = PluginType.valueOf(typeStr);
+                } catch (IllegalArgumentException e) {
+                    log.warn(LangManager.get("xinbot.plugin.yml.invalid_type", file.getName(), typeStr));
+                    info.type = PluginType.PLUGIN;
+                }
+
                 parseDepends(map, info.depends);
                 return info;
             }

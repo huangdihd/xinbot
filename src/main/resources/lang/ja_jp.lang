@@ -141,3 +141,4 @@ xinbot.command.reload.failed=%s からの設定の再読み込みに失敗しま
 xinbot.command.reload.disconnect=設定を再読み込みしています...
 
 xinbot.proxy.error.no_info=プロキシは有効ですが、プロキシ情報が設定されていません。プロキシなしで続行します。
+xinbot.plugin.yml.invalid_type=プラグイン %s の type '%s' は無効です。デフォルトの PLUGIN を使用します。

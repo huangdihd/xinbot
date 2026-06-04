@@ -141,3 +141,4 @@ xinbot.command.reload.failed=Не удалось перезагрузить ко
 xinbot.command.reload.disconnect=Перезагрузка конфигурации...
 
 xinbot.proxy.error.no_info=Прокси включён, но информация о прокси не настроена; продолжение без прокси.
+xinbot.plugin.yml.invalid_type=Плагин %s имеет недопустимый тип '%s', используется PLUGIN по умолчанию.

@@ -190,3 +190,4 @@ xinbot.command.reload.failed=从 %s 重新加载配置失败
 xinbot.command.reload.disconnect=正在重载配置...
 
 xinbot.proxy.error.no_info=代理已启用，但未配置 info，将不使用代理。
+xinbot.plugin.yml.invalid_type=插件 %s 的 type '%s' 无效，已回退为 PLUGIN。

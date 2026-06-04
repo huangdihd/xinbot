@@ -135,3 +135,4 @@ xinbot.command.reload.failed=從 %s 重新載入設定失敗
 xinbot.command.reload.disconnect=正在重載設定...
 
 xinbot.proxy.error.no_info=代理已啟用，但未設定 info，將不使用代理。
+xinbot.plugin.yml.invalid_type=外掛程式 %s 的 type '%s' 無效，已回退為 PLUGIN。
