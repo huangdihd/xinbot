@@ -56,21 +56,28 @@ public class BotConfig {
         );
     }
 
-    public void saveToFile() throws IOException {
+    /**
+     * Renders a {@link BotConfigData} into formatted HOCON/JSON text, the same
+     * format written to {@code config.conf}.
+     */
+    public static String render(BotConfigData data) {
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> configMap = mapper.convertValue(configData, new TypeReference<>() {
+        Map<String, Object> configMap = mapper.convertValue(data, new TypeReference<>() {
         });
         Config hocon = ConfigFactory.parseMap(configMap);
-        String text = hocon.root().render(
+        return hocon.root().render(
                 ConfigRenderOptions.defaults()
                         .setJson(true)
                         .setFormatted(true)
                         .setComments(false)
                         .setOriginComments(false)
         );
+    }
+
+    public void saveToFile() throws IOException {
         Files.writeString(
                 Path.of(configPath),
-                text,
+                render(configData),
                 java.nio.charset.StandardCharsets.UTF_8,
                 java.nio.file.StandardOpenOption.CREATE,
                 java.nio.file.StandardOpenOption.TRUNCATE_EXISTING

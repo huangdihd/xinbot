@@ -39,27 +39,28 @@ import java.util.zip.ZipOutputStream;
 public class ModpackExporter {
     private static final Logger log = LoggerFactory.getLogger(ModpackExporter.class.getSimpleName());
 
+    /** Exports a modpack of plugins and language files (without a bundled config). */
+    public static void export(Path outZip, Path pluginDir, Path langDir, ModpackManifest manifest) throws IOException {
+        export(outZip, pluginDir, langDir, manifest, null);
+    }
+
     /**
      * Exports a modpack archive to {@code outZip}.
      *
-     * @param outZip    destination archive path
-     * @param pluginDir directory whose {@code *.jar} files are bundled under {@code plugins/}
-     * @param langDir   directory whose {@code *.lang} files are bundled under {@code lang/}
-     * @param manifest  the manifest written as {@code modpack.yml}; its {@code plugins}
-     *                  list is regenerated from the bundled jars when empty
+     * @param outZip      destination archive path
+     * @param pluginDir   directory whose {@code *.jar} files are bundled under {@code plugins/}
+     * @param langDir     directory whose {@code *.lang} files are bundled under {@code lang/}
+     * @param manifest    the manifest written as {@code modpack.yml}; its {@code plugins}
+     *                    list is regenerated from the bundled jars when empty
+     * @param configHocon a sanitized {@code config.conf} body to bundle under {@code config/},
+     *                    or {@code null} to omit it. Callers must sanitize before passing.
      * @throws IOException if the archive cannot be written
      */
-    public static void export(Path outZip, Path pluginDir, Path langDir, ModpackManifest manifest) throws IOException {
+    public static void export(Path outZip, Path pluginDir, Path langDir, ModpackManifest manifest,
+                              String configHocon) throws IOException {
         List<String> jarNames = listFiles(pluginDir, ".jar");
         List<String> langNames = listFiles(langDir, ".lang");
-
-        ModpackManifest effective = manifest;
-        if (manifest.getPlugins().isEmpty() && !jarNames.isEmpty()) {
-            List<String> derived = new ArrayList<>();
-            for (String jar : jarNames) derived.add(jar.substring(0, jar.length() - ".jar".length()));
-            effective = new ModpackManifest(manifest.getName(), manifest.getVersion(), manifest.getAuthor(),
-                    manifest.getDescription(), manifest.getXinbotVersion(), derived);
-        }
+        ModpackManifest effective = withDerivedPlugins(manifest, jarNames);
 
         if (outZip.getParent() != null) Files.createDirectories(outZip.getParent());
 
@@ -67,9 +68,23 @@ public class ModpackExporter {
             writeEntry(zos, ModpackManifest.FILE_NAME, effective.toYaml().getBytes(StandardCharsets.UTF_8));
             for (String jar : jarNames) copyEntry(zos, "plugins/" + jar, pluginDir.resolve(jar));
             for (String lang : langNames) copyEntry(zos, "lang/" + lang, langDir.resolve(lang));
+            if (configHocon != null) writeEntry(zos, ModpackConfig.ENTRY, configHocon.getBytes(StandardCharsets.UTF_8));
         }
 
         log.info(LangManager.get("xinbot.modpack.export.done", outZip, jarNames.size(), langNames.size()));
+        if (configHocon != null) log.info(LangManager.get("xinbot.modpack.export.config"));
+    }
+
+    /**
+     * Returns a manifest whose {@code plugins} list is derived from the bundled jar
+     * names when the supplied manifest does not already list them.
+     */
+    private static ModpackManifest withDerivedPlugins(ModpackManifest manifest, List<String> jarNames) {
+        if (!manifest.getPlugins().isEmpty() || jarNames.isEmpty()) return manifest;
+        List<String> derived = new ArrayList<>();
+        for (String jar : jarNames) derived.add(jar.substring(0, jar.length() - ".jar".length()));
+        return new ModpackManifest(manifest.getName(), manifest.getVersion(), manifest.getAuthor(),
+                manifest.getDescription(), manifest.getXinbotVersion(), derived);
     }
 
     private static List<String> listFiles(Path dir, String suffix) throws IOException {
