@@ -142,3 +142,28 @@ xinbot.command.reload.disconnect=Перезагрузка конфигураци
 
 xinbot.proxy.error.no_info=Прокси включён, но информация о прокси не настроена; продолжение без прокси.
 xinbot.plugin.yml.invalid_type=Плагин %s имеет недопустимый тип '%s', используется PLUGIN по умолчанию.
+# Подкоманды CLI и справка
+xinbot.args.unknown=Неизвестный аргумент: %s
+xinbot.help.usage=Использование:\n  xinbot [<config.conf>]              Запустить бота с указанным файлом конфигурации\n  xinbot --install <file.zip>         Установить модпак\n  xinbot --export <out.zip>           Экспортировать текущие плагины и языковые файлы в модпак\n  xinbot --modpack-info <file.zip>    Показать манифест модпака\n  xinbot --version                    Показать версию\n  xinbot --license                    Показать лицензию\n  xinbot --help                       Показать эту справку
+
+# Сообщения модпака
+xinbot.modpack.manifest.invalid=Недопустимый манифест модпака: поля 'name' и 'version' обязательны.
+xinbot.modpack.manifest.missing=Манифест модпака %s не найден в архиве.
+xinbot.modpack.file.not_found=Файл модпака не найден: %s
+xinbot.modpack.zip.unsafe_entry=Пропущена небезопасная запись архива: %s
+xinbot.modpack.install.usage=Использование: --install <file.zip>
+xinbot.modpack.install.start=Установка модпака: %s (версия %s)
+xinbot.modpack.install.file=Установлено: %s
+xinbot.modpack.install.overwrite=Перезапись существующего файла: %s
+xinbot.modpack.install.done=Модпак '%s' установлен: плагинов — %d, языковых файлов — %d.
+xinbot.modpack.install.failed=Не удалось установить модпак: %s
+xinbot.modpack.export.usage=Использование: --export <out.zip>
+xinbot.modpack.export.done=Модпак экспортирован в %s: плагинов — %d, языковых файлов — %d.
+xinbot.modpack.export.failed=Не удалось экспортировать модпак: %s
+xinbot.modpack.info.usage=Использование: --modpack-info <file.zip>
+xinbot.modpack.info.name=Модпак: %s (версия %s)
+xinbot.modpack.info.author=Автор: %s
+xinbot.modpack.info.description=Описание: %s
+xinbot.modpack.info.xinbot_version=Версия Xinbot: %s
+xinbot.modpack.info.plugins=Плагины: %s
+xinbot.modpack.info.failed=Не удалось прочитать информацию о модпаке: %s

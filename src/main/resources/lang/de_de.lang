@@ -142,3 +142,28 @@ xinbot.command.reload.disconnect=Konfiguration wird neu geladen...
 
 xinbot.proxy.error.no_info=Proxy ist aktiviert, aber es sind keine Proxy-Informationen konfiguriert; es wird ohne Proxy fortgefahren.
 xinbot.plugin.yml.invalid_type=Plugin %s hat einen ungültigen Typ '%s', es wird standardmäßig PLUGIN verwendet.
+# CLI-Unterbefehle und Hilfe
+xinbot.args.unknown=Unbekanntes Argument: %s
+xinbot.help.usage=Verwendung:\n  xinbot [<config.conf>]              Bot mit der angegebenen Konfigurationsdatei starten\n  xinbot --install <file.zip>         Ein Modpack installieren\n  xinbot --export <out.zip>           Aktuelle Plugins und Sprachdateien als Modpack exportieren\n  xinbot --modpack-info <file.zip>    Das Manifest eines Modpacks anzeigen\n  xinbot --version                    Version anzeigen\n  xinbot --license                    Lizenz anzeigen\n  xinbot --help                       Diese Hilfe anzeigen
+
+# Modpack-Meldungen
+xinbot.modpack.manifest.invalid=Ungültiges Modpack-Manifest: 'name' und 'version' sind erforderlich.
+xinbot.modpack.manifest.missing=Modpack-Manifest %s im Archiv nicht gefunden.
+xinbot.modpack.file.not_found=Modpack-Datei nicht gefunden: %s
+xinbot.modpack.zip.unsafe_entry=Unsicherer Archiveintrag übersprungen: %s
+xinbot.modpack.install.usage=Verwendung: --install <file.zip>
+xinbot.modpack.install.start=Modpack wird installiert: %s (Version %s)
+xinbot.modpack.install.file=Installiert: %s
+xinbot.modpack.install.overwrite=Vorhandene Datei wird überschrieben: %s
+xinbot.modpack.install.done=Modpack '%s' installiert: %d Plugin(s), %d Sprachdatei(en).
+xinbot.modpack.install.failed=Modpack konnte nicht installiert werden: %s
+xinbot.modpack.export.usage=Verwendung: --export <out.zip>
+xinbot.modpack.export.done=Modpack nach %s exportiert: %d Plugin(s), %d Sprachdatei(en).
+xinbot.modpack.export.failed=Modpack konnte nicht exportiert werden: %s
+xinbot.modpack.info.usage=Verwendung: --modpack-info <file.zip>
+xinbot.modpack.info.name=Modpack: %s (Version %s)
+xinbot.modpack.info.author=Autor: %s
+xinbot.modpack.info.description=Beschreibung: %s
+xinbot.modpack.info.xinbot_version=Xinbot-Version: %s
+xinbot.modpack.info.plugins=Plugins: %s
+xinbot.modpack.info.failed=Modpack-Informationen konnten nicht gelesen werden: %s

@@ -142,3 +142,28 @@ xinbot.command.reload.disconnect=設定を再読み込みしています...
 
 xinbot.proxy.error.no_info=プロキシは有効ですが、プロキシ情報が設定されていません。プロキシなしで続行します。
 xinbot.plugin.yml.invalid_type=プラグイン %s の type '%s' は無効です。デフォルトの PLUGIN を使用します。
+# CLI サブコマンドとヘルプ
+xinbot.args.unknown=不明な引数: %s
+xinbot.help.usage=使い方:\n  xinbot [<config.conf>]              指定した設定ファイルでボットを起動\n  xinbot --install <file.zip>         モッドパックをインストール\n  xinbot --export <out.zip>           現在のプラグインと言語ファイルをモッドパックとして書き出す\n  xinbot --modpack-info <file.zip>    モッドパックのマニフェストを表示\n  xinbot --version                    バージョンを表示\n  xinbot --license                    ライセンスを表示\n  xinbot --help                       このヘルプを表示
+
+# モッドパック関連
+xinbot.modpack.manifest.invalid=モッドパックのマニフェストが無効です: 'name' と 'version' は必須です。
+xinbot.modpack.manifest.missing=アーカイブ内にモッドパックのマニフェスト %s が見つかりません。
+xinbot.modpack.file.not_found=モッドパックファイルが見つかりません: %s
+xinbot.modpack.zip.unsafe_entry=安全でないアーカイブエントリをスキップしました: %s
+xinbot.modpack.install.usage=使い方: --install <file.zip>
+xinbot.modpack.install.start=モッドパックをインストール中: %s (バージョン %s)
+xinbot.modpack.install.file=インストールしました: %s
+xinbot.modpack.install.overwrite=既存のファイルを上書きします: %s
+xinbot.modpack.install.done=モッドパック '%s' をインストールしました: プラグイン %d 個、言語ファイル %d 個。
+xinbot.modpack.install.failed=モッドパックのインストールに失敗しました: %s
+xinbot.modpack.export.usage=使い方: --export <out.zip>
+xinbot.modpack.export.done=モッドパックを %s に書き出しました: プラグイン %d 個、言語ファイル %d 個。
+xinbot.modpack.export.failed=モッドパックの書き出しに失敗しました: %s
+xinbot.modpack.info.usage=使い方: --modpack-info <file.zip>
+xinbot.modpack.info.name=モッドパック: %s (バージョン %s)
+xinbot.modpack.info.author=作者: %s
+xinbot.modpack.info.description=説明: %s
+xinbot.modpack.info.xinbot_version=Xinbot バージョン: %s
+xinbot.modpack.info.plugins=プラグイン: %s
+xinbot.modpack.info.failed=モッドパック情報の読み込みに失敗しました: %s
