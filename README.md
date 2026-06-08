@@ -55,6 +55,49 @@ Please refer to the [documentation site](https://xinbot.shouldbe.top/guide/getti
 
 ---
 
+## Modpacks
+
+A **modpack** bundles a set of plugins and language files into a single `.zip` so a
+ready-to-use setup can be shared and installed in one step. A modpack never contains
+`config.conf`, so account credentials and sessions are never shipped.
+
+Archive layout:
+
+```
+example-modpack.zip
+├── modpack.yml          # manifest (name & version required)
+├── plugins/             # plugin jars -> installed into the plugin directory
+│   └── *.jar
+└── lang/                # optional .lang overrides -> installed into ./lang/
+    └── *.lang
+```
+
+`modpack.yml`:
+
+```yaml
+name: "2b2t.xin Survival Pack"   # required
+version: "1.0.0"                  # required
+author: "huangdihd"              # optional
+description: "..."               # optional
+xinbotVersion: ">=2.2.0"         # optional, informational
+plugins: [PluginA, PluginB]       # optional, informational
+```
+
+CLI sub-commands (run instead of starting the bot):
+
+```bash
+java -jar xinbot.jar --install <file.zip>       # install a modpack into ./plugin and ./lang
+java -jar xinbot.jar --export <out.zip>         # pack current plugins + lang files into a modpack
+java -jar xinbot.jar --modpack-info <file.zip>  # print a modpack's manifest
+java -jar xinbot.jar --help                     # list all sub-commands
+```
+
+Installing overwrites existing files of the same name (with a warning) and ignores any
+archive entry outside `plugins/` and `lang/`. The plugin directory is read from
+`config.conf` when present, otherwise the default `plugin/` is used.
+
+---
+
 ## License
 GPL-3.0-or-later, see LICENSE for the full text.
 
