@@ -193,7 +193,7 @@ xinbot.proxy.error.no_info=代理已启用，但未配置 info，将不使用代
 xinbot.plugin.yml.invalid_type=插件 %s 的 type '%s' 无效，已回退为 PLUGIN。
 # CLI 子命令与帮助
 xinbot.args.unknown=未知参数：%s
-xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定配置文件启动机器人\n  xinbot --install <file.zip>         安装整合包\n  xinbot --export <out.zip>           将当前插件与语言文件导出为整合包\n  xinbot --modpack-info <file.zip>    查看整合包清单信息\n  xinbot --version                    显示版本\n  xinbot --license                    显示许可证\n  xinbot --help                       显示此帮助
+xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定配置文件启动机器人\n  xinbot --install <file.zip>         安装整合包\n  xinbot --export <out.zip>           将当前插件与语言文件导出为整合包\n  xinbot --export-config <out.zip>    导出插件、语言文件与脱敏后的配置\n  xinbot --modpack-info <file.zip>    查看整合包清单信息\n  xinbot --version                    显示版本\n  xinbot --license                    显示许可证\n  xinbot --help                       显示此帮助
 
 # 整合包相关
 xinbot.modpack.manifest.invalid=整合包清单无效：'name' 和 'version' 为必填项。
@@ -215,5 +215,20 @@ xinbot.modpack.info.author=作者：%s
 xinbot.modpack.info.description=描述：%s
 xinbot.modpack.info.xinbot_version=Xinbot 版本：%s
 xinbot.modpack.info.plugins=插件：%s
+xinbot.modpack.info.config=包含配置：是（已脱敏，安装时填入）
 xinbot.modpack.info.failed=读取整合包信息失败：%s
+
+# 整合包配置打包（--export-config）与安装时交互填写
+xinbot.modpack.export_config.usage=用法：--export-config <out.zip>
+xinbot.modpack.export.no_config=没有可导出的配置文件：%s
+xinbot.modpack.export.config=已打包脱敏后的配置（账号、owner 与代理凭据已清空）。
+xinbot.modpack.install.config.exists=配置 %s 已存在；保留原配置并跳过整合包内的配置。
+xinbot.modpack.install.config.written=已写入整合包内的配置：%s
+xinbot.modpack.setup.start=该整合包包含配置，请填写你的信息：
+xinbot.modpack.setup.owner=Owner（你的游戏 ID）：
+xinbot.modpack.setup.account_name=机器人账号名：
+xinbot.modpack.setup.account_password=机器人账号密码（没有则留空）：
+xinbot.modpack.setup.proxy_username=代理用户名（没有则留空）：
+xinbot.modpack.setup.proxy_password=代理密码（没有则留空）：
+xinbot.modpack.setup.done=配置已填写完成并保存到 %s
 

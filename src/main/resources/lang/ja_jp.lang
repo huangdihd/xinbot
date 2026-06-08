@@ -144,7 +144,7 @@ xinbot.proxy.error.no_info=プロキシは有効ですが、プロキシ情報�
 xinbot.plugin.yml.invalid_type=プラグイン %s の type '%s' は無効です。デフォルトの PLUGIN を使用します。
 # CLI サブコマンドとヘルプ
 xinbot.args.unknown=不明な引数: %s
-xinbot.help.usage=使い方:\n  xinbot [<config.conf>]              指定した設定ファイルでボットを起動\n  xinbot --install <file.zip>         モッドパックをインストール\n  xinbot --export <out.zip>           現在のプラグインと言語ファイルをモッドパックとして書き出す\n  xinbot --modpack-info <file.zip>    モッドパックのマニフェストを表示\n  xinbot --version                    バージョンを表示\n  xinbot --license                    ライセンスを表示\n  xinbot --help                       このヘルプを表示
+xinbot.help.usage=使い方:\n  xinbot [<config.conf>]              指定した設定ファイルでボットを起動\n  xinbot --install <file.zip>         モッドパックをインストール\n  xinbot --export <out.zip>           現在のプラグインと言語ファイルをモッドパックとして書き出す\n  xinbot --export-config <out.zip>    プラグイン・言語ファイル・マスキング済み設定を書き出す\n  xinbot --modpack-info <file.zip>    モッドパックのマニフェストを表示\n  xinbot --version                    バージョンを表示\n  xinbot --license                    ライセンスを表示\n  xinbot --help                       このヘルプを表示
 
 # モッドパック関連
 xinbot.modpack.manifest.invalid=モッドパックのマニフェストが無効です: 'name' と 'version' は必須です。
@@ -166,4 +166,19 @@ xinbot.modpack.info.author=作者: %s
 xinbot.modpack.info.description=説明: %s
 xinbot.modpack.info.xinbot_version=Xinbot バージョン: %s
 xinbot.modpack.info.plugins=プラグイン: %s
+xinbot.modpack.info.config=設定を同梱: あり（機密情報は除去済み、インストール時に入力）
 xinbot.modpack.info.failed=モッドパック情報の読み込みに失敗しました: %s
+
+# 設定の同梱 (--export-config) とインストール時の対話入力
+xinbot.modpack.export_config.usage=使い方: --export-config <out.zip>
+xinbot.modpack.export.no_config=書き出せる設定ファイルがありません: %s
+xinbot.modpack.export.config=マスキング済みの設定を同梱しました（アカウント・owner・プロキシ認証情報を消去）。
+xinbot.modpack.install.config.exists=設定 %s は既に存在します。既存の設定を残し、同梱設定をスキップします。
+xinbot.modpack.install.config.written=同梱設定を書き込みました: %s
+xinbot.modpack.setup.start=このモッドパックには設定が含まれています。あなたの情報を入力してください:
+xinbot.modpack.setup.owner=Owner（あなたのゲーム内名）:
+xinbot.modpack.setup.account_name=ボットのアカウント名:
+xinbot.modpack.setup.account_password=ボットのアカウントパスワード（なければ空欄）:
+xinbot.modpack.setup.proxy_username=プロキシのユーザー名（なければ空欄）:
+xinbot.modpack.setup.proxy_password=プロキシのパスワード（なければ空欄）:
+xinbot.modpack.setup.done=設定の入力が完了し、%s に保存しました
