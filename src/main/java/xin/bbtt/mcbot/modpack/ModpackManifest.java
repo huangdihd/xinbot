@@ -75,19 +75,27 @@ public class ModpackManifest {
             throw new IllegalArgumentException(LangManager.get("xinbot.modpack.manifest.invalid"));
         }
 
-        String name = String.valueOf(map.get("name"));
-        String version = String.valueOf(map.get("version"));
-        String author = map.get("author") == null ? null : String.valueOf(map.get("author"));
-        String description = map.get("description") == null ? null : String.valueOf(map.get("description"));
-        String xinbotVersion = map.get("xinbotVersion") == null ? null : String.valueOf(map.get("xinbotVersion"));
+        return new ModpackManifest(
+                String.valueOf(map.get("name")),
+                String.valueOf(map.get("version")),
+                str(map.get("author")),
+                str(map.get("description")),
+                str(map.get("xinbotVersion")),
+                stringList(map.get("plugins")));
+    }
 
-        List<String> plugins = new ArrayList<>();
-        Object pluginsObj = map.get("plugins");
-        if (pluginsObj instanceof List<?> list) {
-            for (Object o : list) plugins.add(String.valueOf(o));
+    /** Stringifies a manifest value, preserving {@code null} for absent keys. */
+    private static String str(Object value) {
+        return value == null ? null : String.valueOf(value);
+    }
+
+    /** Converts a manifest value into a list of strings, or an empty list when absent. */
+    private static List<String> stringList(Object value) {
+        List<String> result = new ArrayList<>();
+        if (value instanceof List<?> list) {
+            for (Object o : list) result.add(String.valueOf(o));
         }
-
-        return new ModpackManifest(name, version, author, description, xinbotVersion, plugins);
+        return result;
     }
 
     /**

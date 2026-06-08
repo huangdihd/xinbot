@@ -67,31 +67,42 @@ public class ModpackInstaller {
         Files.createDirectories(pluginRoot);
         Files.createDirectories(langRoot);
 
-        int plugins = 0;
-        int langs = 0;
-
+        int[] counts = new int[2];
         try (ZipFile zip = new ZipFile(zipFile.toFile())) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                if (entry.isDirectory()) continue;
-                String name = entry.getName();
-
-                if (hasParentTraversal(name)) {
-                    log.warn(LangManager.get("xinbot.modpack.zip.unsafe_entry", name));
-                    continue;
-                }
-
-                if (name.startsWith(PLUGINS_PREFIX) && name.endsWith(".jar")) {
-                    if (extract(zip, entry, pluginRoot, fileName(name))) plugins++;
-                } else if (name.startsWith(LANG_PREFIX) && name.endsWith(".lang")) {
-                    if (extract(zip, entry, langRoot, fileName(name))) langs++;
-                }
-                // Everything else (including modpack.yml and unknown paths) is ignored.
+                installEntry(zip, entries.nextElement(), pluginRoot, langRoot, counts);
             }
         }
 
-        log.info(LangManager.get("xinbot.modpack.install.done", manifest.getName(), plugins, langs));
+        log.info(LangManager.get("xinbot.modpack.install.done", manifest.getName(), counts[0], counts[1]));
+    }
+
+    /**
+     * Handles a single archive entry: extracts whitelisted plugin/lang files into
+     * their target directory, skipping directories and unsafe paths. Everything
+     * outside {@code plugins/*.jar} and {@code lang/*.lang} (including
+     * {@code modpack.yml}) is ignored. {@code counts[0]} / {@code counts[1]}
+     * accumulate the number of installed plugins / language files.
+     */
+    private static void installEntry(ZipFile zip, ZipEntry entry, Path pluginRoot, Path langRoot, int[] counts)
+            throws IOException {
+        if (entry.isDirectory()) return;
+        String name = entry.getName();
+        if (hasParentTraversal(name)) {
+            log.warn(LangManager.get("xinbot.modpack.zip.unsafe_entry", name));
+            return;
+        }
+        if (matches(name, PLUGINS_PREFIX, ".jar") && extract(zip, entry, pluginRoot, fileName(name))) {
+            counts[0]++;
+        } else if (matches(name, LANG_PREFIX, ".lang") && extract(zip, entry, langRoot, fileName(name))) {
+            counts[1]++;
+        }
+    }
+
+    /** True if the entry name has the given directory prefix and file suffix. */
+    private static boolean matches(String name, String prefix, String suffix) {
+        return name.startsWith(prefix) && name.endsWith(suffix);
     }
 
     /**
