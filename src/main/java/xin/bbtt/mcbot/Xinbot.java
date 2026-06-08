@@ -21,11 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
+import xin.bbtt.mcbot.cli.Cli;
 import xin.bbtt.mcbot.config.BotConfig;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Optional;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +37,7 @@ import java.nio.file.StandardCopyOption;
 public class Xinbot {
     private static final Logger log = LoggerFactory.getLogger(Xinbot.class.getSimpleName());
 
-    public static final String version = Xinbot.class.getPackage().getImplementationVersion();
+    public static final String version = Optional.ofNullable(Xinbot.class.getPackage().getImplementationVersion()).orElse("dev");
     public static final String license = """
             Copyright (C) 2024-2026 huangdihd
             This program is free software: you can redistribute it and/or modify
@@ -96,34 +97,24 @@ public class Xinbot {
     public static void main(String[] args){
         BotConfig config = null;
 
-        // Handle arguments
+        // Init xinbot language early so all CLI output is localized
+        LangManager.init();
+        LangManager.initLang(Xinbot.class.getClassLoader());
+        LangManager.loadExternal();
+
+        // Handle sub-commands (anything starting with '-'), e.g. --version, --install
+        Cli cli = Cli.create();
+        if (cli.isSubcommand(args)) {
+            System.exit(cli.dispatch(args) ? 0 : 1);
+        }
+
         if (args.length > 1) {
             log.error(LangManager.get("xinbot.args.invalid"));
             return;
         }
 
-        // If didn't specify a configuration file path then use default path
-        if (args.length == 0) {
-            args = new String[] { defaultConfigPath };
-        }
-
-        // The version and The license sub command
-        if (args[0].equals("--version") || args[0].equals("-v")) {
-            log.info(LangManager.get("xinbot.version", version));
-            return;
-        }
-        if (args[0].equals("--license") || args[0].equals("-l")) {
-            Arrays.stream(license.split("\n")).forEach(log::info);
-            return;
-        }
-
-        // Init xinbot language
-        LangManager.init();
-        LangManager.initLang(Xinbot.class.getClassLoader());
-        LangManager.loadExternal();
-
-        // Load the configuration file
-        configPath = args[0];
+        // Load the configuration file (use the default path when none is given)
+        configPath = args.length == 0 ? defaultConfigPath : args[0];
         // Check if config file exists, if not copy from resources
         Path configFilePath = Paths.get(configPath);
         if (!Files.exists(configFilePath)) {

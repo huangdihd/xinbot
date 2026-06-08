@@ -134,3 +134,31 @@ xinbot.command.reload.success=已成功從 %s 重新載入設定
 xinbot.command.reload.failed=從 %s 重新載入設定失敗
 xinbot.command.reload.disconnect=正在重載設定...
 
+xinbot.proxy.error.no_info=代理已啟用，但未設定 info，將不使用代理。
+xinbot.plugin.yml.invalid_type=外掛程式 %s 的 type '%s' 無效，已回退為 PLUGIN。
+# CLI 子指令與說明
+xinbot.args.unknown=未知參數：%s
+xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定設定檔啟動機器人\n  xinbot --install <file.zip>         安裝整合包\n  xinbot --export <out.zip>           將目前外掛與語言檔匯出為整合包\n  xinbot --modpack-info <file.zip>    檢視整合包清單資訊\n  xinbot --version                    顯示版本\n  xinbot --license                    顯示授權\n  xinbot --help                       顯示此說明
+
+# 整合包相關
+xinbot.modpack.manifest.invalid=整合包清單無效：'name' 與 'version' 為必填項。
+xinbot.modpack.manifest.missing=壓縮檔中找不到整合包清單 %s。
+xinbot.modpack.file.not_found=找不到整合包檔案：%s
+xinbot.modpack.zip.unsafe_entry=已略過不安全的壓縮檔項目：%s
+xinbot.modpack.install.usage=用法：--install <file.zip>
+xinbot.modpack.install.start=正在安裝整合包：%s（版本 %s）
+xinbot.modpack.install.file=已安裝：%s
+xinbot.modpack.install.overwrite=正在覆寫已存在的檔案：%s
+xinbot.modpack.install.done=整合包 '%s' 安裝完成：%d 個外掛，%d 個語言檔。
+xinbot.modpack.install.failed=安裝整合包失敗：%s
+xinbot.modpack.export.usage=用法：--export <out.zip>
+xinbot.modpack.export.done=已匯出整合包至 %s：%d 個外掛，%d 個語言檔。
+xinbot.modpack.export.failed=匯出整合包失敗：%s
+xinbot.modpack.info.usage=用法：--modpack-info <file.zip>
+xinbot.modpack.info.name=整合包：%s（版本 %s）
+xinbot.modpack.info.author=作者：%s
+xinbot.modpack.info.description=描述：%s
+xinbot.modpack.info.xinbot_version=Xinbot 版本：%s
+xinbot.modpack.info.plugins=外掛：%s
+xinbot.modpack.info.failed=讀取整合包資訊失敗：%s
+

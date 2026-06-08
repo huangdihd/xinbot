@@ -191,3 +191,31 @@ xinbot.command.reload.success=Successfully reloaded configuration from: %s
 xinbot.command.reload.failed=Failed to reload configuration from: %s
 xinbot.command.reload.disconnect=Reloading config...
 
+xinbot.proxy.error.no_info=Proxy is enabled but no proxy info is configured; proceeding without a proxy.
+xinbot.plugin.yml.invalid_type=Plugin %s has an invalid type '%s', defaulting to PLUGIN.
+# CLI sub-commands & help
+xinbot.args.unknown=Unknown argument: %s
+xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
+
+# Modpack messages
+xinbot.modpack.manifest.invalid=Invalid modpack manifest: 'name' and 'version' are required.
+xinbot.modpack.manifest.missing=Modpack manifest %s not found in archive.
+xinbot.modpack.file.not_found=Modpack file not found: %s
+xinbot.modpack.zip.unsafe_entry=Skipped unsafe archive entry: %s
+xinbot.modpack.install.usage=Usage: --install <file.zip>
+xinbot.modpack.install.start=Installing modpack: %s (version %s)
+xinbot.modpack.install.file=Installed: %s
+xinbot.modpack.install.overwrite=Overwriting existing file: %s
+xinbot.modpack.install.done=Modpack '%s' installed: %d plugin(s), %d language file(s).
+xinbot.modpack.install.failed=Failed to install modpack: %s
+xinbot.modpack.export.usage=Usage: --export <out.zip>
+xinbot.modpack.export.done=Exported modpack to %s: %d plugin(s), %d language file(s).
+xinbot.modpack.export.failed=Failed to export modpack: %s
+xinbot.modpack.info.usage=Usage: --modpack-info <file.zip>
+xinbot.modpack.info.name=Modpack: %s (version %s)
+xinbot.modpack.info.author=Author: %s
+xinbot.modpack.info.description=Description: %s
+xinbot.modpack.info.xinbot_version=Xinbot version: %s
+xinbot.modpack.info.plugins=Plugins: %s
+xinbot.modpack.info.failed=Failed to read modpack info: %s
+

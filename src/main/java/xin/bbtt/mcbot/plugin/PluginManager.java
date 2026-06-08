@@ -140,9 +140,17 @@ public class PluginManager {
         PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, PluginManager.class.getClassLoader());
         pluginLoaders.put(info.name, pluginClassLoader);
         pluginDependencies.put(info.name, info.depends);
-        
-        Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
-        Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
+
+        Plugin plugin;
+        try {
+            Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
+            plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            pluginLoaders.remove(info.name);
+            pluginDependencies.remove(info.name);
+            try { pluginClassLoader.close(); } catch (IOException ignored) {}
+            throw e;
+        }
         
         RegisteredPlugin rp;
         if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
@@ -216,9 +224,17 @@ public class PluginManager {
 
         pluginLoaders.put(info.name, pluginClassLoader);
         this.pluginDependencies.put(info.name, info.depends);
-        
-        Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
-        Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
+
+        Plugin plugin;
+        try {
+            Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
+            plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            pluginLoaders.remove(info.name);
+            pluginDependencies.remove(info.name);
+            try { pluginClassLoader.close(); } catch (IOException ignored) {}
+            throw e;
+        }
         
         if (plugins.containsKey(info.name)) {
             pluginClassLoader.close();
@@ -246,9 +262,19 @@ public class PluginManager {
                 PluginInfo info = new PluginInfo();
                 info.name = String.valueOf(map.get("name"));
                 info.mainClass = String.valueOf(map.get("main"));
+                if (info.name == null || info.name.isBlank() || "null".equals(info.name)
+                        || info.mainClass == null || info.mainClass.isBlank() || "null".equals(info.mainClass)) {
+                    return null;
+                }
                 info.version = String.valueOf(map.getOrDefault("version", "1.0.0"));
-                info.type = PluginType.valueOf(String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase());
-                
+                String typeStr = String.valueOf(map.getOrDefault("type", "PLUGIN")).toUpperCase();
+                try {
+                    info.type = PluginType.valueOf(typeStr);
+                } catch (IllegalArgumentException e) {
+                    log.warn(LangManager.get("xinbot.plugin.yml.invalid_type", file.getName(), typeStr));
+                    info.type = PluginType.PLUGIN;
+                }
+
                 parseDepends(map, info.depends);
                 return info;
             }
@@ -330,7 +356,8 @@ public class PluginManager {
     }
 
     public void enablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.getSession().isConnected()) {
+        var session = Bot.INSTANCE.getSession();
+        if (rp instanceof RegisteredMetaPlugin && session != null && session.isConnected()) {
             log.error(LangManager.get("xinbot.metaplugin.error.enable_runtime"));
             return;
         }
@@ -356,7 +383,8 @@ public class PluginManager {
     }
 
     public void disablePlugin(RegisteredPlugin rp) {
-        if (rp instanceof RegisteredMetaPlugin && Bot.INSTANCE.getSession().isConnected()) {
+        var session = Bot.INSTANCE.getSession();
+        if (rp instanceof RegisteredMetaPlugin && session != null && session.isConnected()) {
             log.error(LangManager.get("xinbot.metaplugin.error.disable_runtime"));
             return;
         }
@@ -366,8 +394,10 @@ public class PluginManager {
         }
         eventManager.unregisterAll(rp.getPlugin());
         commandManager.unregisterAll(rp.getPlugin());
-        for (SessionListener sessionListener : sessionListeners.getOrDefault(rp.getName(), Collections.emptyList())) {
-            Bot.INSTANCE.getSession().removeListener(sessionListener);
+        if (session != null) {
+            for (SessionListener sessionListener : sessionListeners.getOrDefault(rp.getName(), Collections.emptyList())) {
+                session.removeListener(sessionListener);
+            }
         }
         sessionListeners.remove(rp.getName());
         try {
@@ -496,12 +526,19 @@ public class PluginManager {
     }
 
     public void addListener(SessionListener sessionListener, Plugin plugin) {
-        sessionListeners.get(getPluginName(plugin)).add(sessionListener);
-        Bot.INSTANCE.getSession().addListener(sessionListener);
+        sessionListeners.computeIfAbsent(getPluginName(plugin), k -> new ArrayList<>()).add(sessionListener);
+        var session = Bot.INSTANCE.getSession();
+        if (session != null) {
+            session.addListener(sessionListener);
+        }
     }
 
     public void removeListener(SessionListener sessionListener, Plugin plugin) {
-        sessionListeners.get(getPluginName(plugin)).remove(sessionListener);
-        Bot.INSTANCE.getSession().removeListener(sessionListener);
+        List<SessionListener> listeners = sessionListeners.get(getPluginName(plugin));
+        if (listeners != null) listeners.remove(sessionListener);
+        var session = Bot.INSTANCE.getSession();
+        if (session != null) {
+            session.removeListener(sessionListener);
+        }
     }
 }

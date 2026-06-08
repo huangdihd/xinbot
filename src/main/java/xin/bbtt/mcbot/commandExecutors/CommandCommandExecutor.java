@@ -49,10 +49,14 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
         if (args.length == 1 && args[0].isEmpty()) {
             return rootCommands;
         }
+        var session = Bot.INSTANCE.getSession();
+        if (session == null || !session.isConnected()) {
+            return List.of();
+        }
         String cmd = String.join(" ", args);
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bot.INSTANCE.getSession().addListener(new CommandSuggestionsListener(future, transactionId));
-        Bot.INSTANCE.getSession().send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
+        session.addListener(new CommandSuggestionsListener(future, transactionId));
+        session.send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
         List<String> results;
         try {
             results = future.get(200, TimeUnit.MILLISECONDS);

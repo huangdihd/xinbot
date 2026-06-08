@@ -61,8 +61,13 @@ public class  BotConfigData {
             public void setType(String type) {
                 if (type == null || type.isEmpty()) {
                     this.type = null;
-                } else {
-                    this.type = org.geysermc.mcprotocollib.network.ProxyInfo.Type.valueOf(type);
+                    return;
+                }
+                try {
+                    this.type = org.geysermc.mcprotocollib.network.ProxyInfo.Type.valueOf(type.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid proxy type '" + type + "', valid values: "
+                            + java.util.Arrays.toString(org.geysermc.mcprotocollib.network.ProxyInfo.Type.values()));
                 }
             }
 

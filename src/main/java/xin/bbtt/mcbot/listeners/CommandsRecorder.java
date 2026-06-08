@@ -29,16 +29,18 @@ import java.util.List;
 
 public class CommandsRecorder extends SessionAdapter {
 
-    public final static List<String> rootCommands = new ArrayList<>();
+    public static volatile List<String> rootCommands = new ArrayList<>();
 
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (!(packet instanceof ClientboundCommandsPacket commandsPacket)) return;
         CommandNode node = commandsPacket.getNodes()[0];
         if (node.getType() != CommandType.ROOT) return;
+        List<String> newRootCommands = new ArrayList<>();
         for (int childIndex : node.getChildIndices()) {
             CommandNode child = commandsPacket.getNodes()[childIndex];
-            rootCommands.add(child.getName());
+            newRootCommands.add(child.getName());
         }
+        rootCommands = newRootCommands;
     }
 }

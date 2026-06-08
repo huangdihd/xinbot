@@ -189,3 +189,31 @@ xinbot.command.reload.success=已成功从 %s 重新加载配置
 xinbot.command.reload.failed=从 %s 重新加载配置失败
 xinbot.command.reload.disconnect=正在重载配置...
 
+xinbot.proxy.error.no_info=代理已启用，但未配置 info，将不使用代理。
+xinbot.plugin.yml.invalid_type=插件 %s 的 type '%s' 无效，已回退为 PLUGIN。
+# CLI 子命令与帮助
+xinbot.args.unknown=未知参数：%s
+xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定配置文件启动机器人\n  xinbot --install <file.zip>         安装整合包\n  xinbot --export <out.zip>           将当前插件与语言文件导出为整合包\n  xinbot --modpack-info <file.zip>    查看整合包清单信息\n  xinbot --version                    显示版本\n  xinbot --license                    显示许可证\n  xinbot --help                       显示此帮助
+
+# 整合包相关
+xinbot.modpack.manifest.invalid=整合包清单无效：'name' 和 'version' 为必填项。
+xinbot.modpack.manifest.missing=压缩包中未找到整合包清单 %s。
+xinbot.modpack.file.not_found=未找到整合包文件：%s
+xinbot.modpack.zip.unsafe_entry=已跳过不安全的压缩包条目：%s
+xinbot.modpack.install.usage=用法：--install <file.zip>
+xinbot.modpack.install.start=正在安装整合包：%s（版本 %s）
+xinbot.modpack.install.file=已安装：%s
+xinbot.modpack.install.overwrite=正在覆盖已存在的文件：%s
+xinbot.modpack.install.done=整合包 '%s' 安装完成：%d 个插件，%d 个语言文件。
+xinbot.modpack.install.failed=安装整合包失败：%s
+xinbot.modpack.export.usage=用法：--export <out.zip>
+xinbot.modpack.export.done=已导出整合包到 %s：%d 个插件，%d 个语言文件。
+xinbot.modpack.export.failed=导出整合包失败：%s
+xinbot.modpack.info.usage=用法：--modpack-info <file.zip>
+xinbot.modpack.info.name=整合包：%s（版本 %s）
+xinbot.modpack.info.author=作者：%s
+xinbot.modpack.info.description=描述：%s
+xinbot.modpack.info.xinbot_version=Xinbot 版本：%s
+xinbot.modpack.info.plugins=插件：%s
+xinbot.modpack.info.failed=读取整合包信息失败：%s
+

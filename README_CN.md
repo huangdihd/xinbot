@@ -53,6 +53,43 @@
 
 请参考[文档站](https://xinbot.shouldbe.top/zh/guide/getting-started.html)
 
+## 整合包（Modpack）
+
+**整合包**把一组插件和语言文件打包成单个 `.zip`，便于把一套开箱即用的配置分享给他人并一键安装。整合包**不包含** `config.conf`，因此不会泄露账号密码与登录会话。
+
+压缩包结构：
+
+```
+example-modpack.zip
+├── modpack.yml          # 清单（name 与 version 必填）
+├── plugins/             # 插件 jar —— 安装到插件目录
+│   └── *.jar
+└── lang/                # 可选的 .lang 覆盖 —— 安装到 ./lang/
+    └── *.lang
+```
+
+`modpack.yml`：
+
+```yaml
+name: "2b2t.xin 生存整合包"      # 必填
+version: "1.0.0"                  # 必填
+author: "huangdihd"              # 可选
+description: "..."               # 可选
+xinbotVersion: ">=2.2.0"         # 可选，仅作展示
+plugins: [PluginA, PluginB]       # 可选，仅作展示
+```
+
+命令行子命令（执行后不会启动机器人）：
+
+```bash
+java -jar xinbot.jar --install <file.zip>       # 将整合包安装到 ./plugin 与 ./lang
+java -jar xinbot.jar --export <out.zip>         # 把当前插件与语言文件打包成整合包
+java -jar xinbot.jar --modpack-info <file.zip>  # 打印整合包清单信息
+java -jar xinbot.jar --help                     # 列出全部子命令
+```
+
+安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/` 与 `lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
+
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。
 
