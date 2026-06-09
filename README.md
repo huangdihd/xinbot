@@ -58,8 +58,8 @@ Please refer to the [documentation site](https://xinbot.shouldbe.top/guide/getti
 ## Modpacks
 
 A **modpack** bundles a set of plugins and language files into a single `.zip` so a
-ready-to-use setup can be shared and installed in one step. A modpack never contains
-`config.conf`, so account credentials and sessions are never shipped.
+ready-to-use setup can be shared and installed in one step. A modpack can optionally
+also carry a bot config, but only after every secret has been stripped — see below.
 
 Archive layout:
 
@@ -68,8 +68,10 @@ example-modpack.zip
 ├── modpack.yml          # manifest (name & version required)
 ├── plugins/             # plugin jars -> installed into the plugin directory
 │   └── *.jar
-└── lang/                # optional .lang overrides -> installed into ./lang/
-    └── *.lang
+├── lang/                # optional .lang overrides -> installed into ./lang/
+│   └── *.lang
+└── config/              # optional sanitized config (--export-config only)
+    └── config.conf
 ```
 
 `modpack.yml`:
@@ -88,13 +90,26 @@ CLI sub-commands (run instead of starting the bot):
 ```bash
 java -jar xinbot.jar --install <file.zip>       # install a modpack into ./plugin and ./lang
 java -jar xinbot.jar --export <out.zip>         # pack current plugins + lang files into a modpack
+java -jar xinbot.jar --export-config <out.zip>  # ...also bundle the current config, with secrets stripped
 java -jar xinbot.jar --modpack-info <file.zip>  # print a modpack's manifest
 java -jar xinbot.jar --help                     # list all sub-commands
 ```
 
 Installing overwrites existing files of the same name (with a warning) and ignores any
-archive entry outside `plugins/` and `lang/`. The plugin directory is read from
-`config.conf` when present, otherwise the default `plugin/` is used.
+archive entry outside `plugins/`, `lang/` and `config/`. The plugin directory is read
+from `config.conf` when present, otherwise the default `plugin/` is used.
+
+### Bundling a config
+
+`--export-config` packs the current `config.conf` into the modpack **after clearing
+every secret**: the account name/password/session, the `owner`, and proxy
+credentials are all blanked. Non-sensitive settings (reconnect timings, plugin
+directory, translation, online mode, proxy address/type) are kept.
+
+When such a modpack is installed and the working directory has **no** existing
+`config.conf`, the bundled config is written and you are prompted to fill the blanked
+fields back in (owner, bot account name/password, and proxy credentials if a proxy is
+enabled). An existing `config.conf` is never overwritten.
 
 ---
 

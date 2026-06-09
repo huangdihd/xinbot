@@ -144,7 +144,7 @@ xinbot.proxy.error.no_info=Le proxy est activé mais aucune information de proxy
 xinbot.plugin.yml.invalid_type=Le plugin %s a un type '%s' invalide ; utilisation de PLUGIN par défaut.
 # Sous-commandes CLI et aide
 xinbot.args.unknown=Argument inconnu : %s
-xinbot.help.usage=Utilisation :\n  xinbot [<config.conf>]              Démarrer le bot avec le fichier de configuration indiqué\n  xinbot --install <file.zip>         Installer un modpack\n  xinbot --export <out.zip>           Exporter les plugins et fichiers de langue actuels en modpack\n  xinbot --modpack-info <file.zip>    Afficher le manifeste d'un modpack\n  xinbot --version                    Afficher la version\n  xinbot --license                    Afficher la licence\n  xinbot --help                       Afficher cette aide
+xinbot.help.usage=Utilisation :\n  xinbot [<config.conf>]              Démarrer le bot avec le fichier de configuration indiqué\n  xinbot --install <file.zip>         Installer un modpack\n  xinbot --export <out.zip>           Exporter les plugins et fichiers de langue actuels en modpack\n  xinbot --export-config <out.zip>    Exporter les plugins, fichiers de langue et une configuration anonymisée\n  xinbot --modpack-info <file.zip>    Afficher le manifeste d'un modpack\n  xinbot --version                    Afficher la version\n  xinbot --license                    Afficher la licence\n  xinbot --help                       Afficher cette aide
 
 # Messages du modpack
 xinbot.modpack.manifest.invalid=Manifeste de modpack invalide : 'name' et 'version' sont requis.
@@ -166,4 +166,19 @@ xinbot.modpack.info.author=Auteur : %s
 xinbot.modpack.info.description=Description : %s
 xinbot.modpack.info.xinbot_version=Version de Xinbot : %s
 xinbot.modpack.info.plugins=Plugins : %s
+xinbot.modpack.info.config=Configuration incluse : oui (identifiants supprimés ; renseignés à l'installation)
 xinbot.modpack.info.failed=Échec de la lecture des informations du modpack : %s
+
+# Inclusion de la configuration (--export-config) et saisie interactive à l'installation
+xinbot.modpack.export_config.usage=Utilisation : --export-config <out.zip>
+xinbot.modpack.export.no_config=Aucun fichier de configuration à exporter : %s
+xinbot.modpack.export.config=Configuration anonymisée incluse (identifiants du compte, owner et proxy effacés).
+xinbot.modpack.install.config.exists=La configuration %s existe déjà ; elle est conservée et la configuration du modpack est ignorée.
+xinbot.modpack.install.config.written=Configuration du modpack écrite : %s
+xinbot.modpack.setup.start=Ce modpack inclut une configuration. Veuillez renseigner vos informations :
+xinbot.modpack.setup.owner=Owner (votre pseudo en jeu) :
+xinbot.modpack.setup.account_name=Nom du compte du bot :
+xinbot.modpack.setup.account_password=Mot de passe du compte du bot (laisser vide si aucun) :
+xinbot.modpack.setup.proxy_username=Nom d'utilisateur du proxy (laisser vide si aucun) :
+xinbot.modpack.setup.proxy_password=Mot de passe du proxy (laisser vide si aucun) :
+xinbot.modpack.setup.done=Configuration complétée et enregistrée dans %s

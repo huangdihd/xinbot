@@ -195,7 +195,7 @@ xinbot.proxy.error.no_info=Proxy is enabled but no proxy info is configured; pro
 xinbot.plugin.yml.invalid_type=Plugin %s has an invalid type '%s', defaulting to PLUGIN.
 # CLI sub-commands & help
 xinbot.args.unknown=Unknown argument: %s
-xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
+xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --export-config <out.zip>    Export plugins, language files and a sanitized config\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
 
 # Modpack messages
 xinbot.modpack.manifest.invalid=Invalid modpack manifest: 'name' and 'version' are required.
@@ -217,5 +217,20 @@ xinbot.modpack.info.author=Author: %s
 xinbot.modpack.info.description=Description: %s
 xinbot.modpack.info.xinbot_version=Xinbot version: %s
 xinbot.modpack.info.plugins=Plugins: %s
+xinbot.modpack.info.config=Bundled config: yes (credentials stripped; filled in on install)
 xinbot.modpack.info.failed=Failed to read modpack info: %s
+
+# Modpack config bundling (--export-config) and interactive setup on install
+xinbot.modpack.export_config.usage=Usage: --export-config <out.zip>
+xinbot.modpack.export.no_config=No config file to export: %s
+xinbot.modpack.export.config=Bundled a sanitized config (account, owner and proxy credentials cleared).
+xinbot.modpack.install.config.exists=Config %s already exists; keeping it and skipping the bundled config.
+xinbot.modpack.install.config.written=Wrote bundled config: %s
+xinbot.modpack.setup.start=This modpack includes a config. Please fill in your details:
+xinbot.modpack.setup.owner=Owner (your in-game name):
+xinbot.modpack.setup.account_name=Bot account name:
+xinbot.modpack.setup.account_password=Bot account password (leave blank if none):
+xinbot.modpack.setup.proxy_username=Proxy username (leave blank if none):
+xinbot.modpack.setup.proxy_password=Proxy password (leave blank if none):
+xinbot.modpack.setup.done=Config completed and saved to %s
 

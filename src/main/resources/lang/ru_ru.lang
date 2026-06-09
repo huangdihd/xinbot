@@ -144,7 +144,7 @@ xinbot.proxy.error.no_info=Прокси включён, но информаци�
 xinbot.plugin.yml.invalid_type=Плагин %s имеет недопустимый тип '%s', используется PLUGIN по умолчанию.
 # Подкоманды CLI и справка
 xinbot.args.unknown=Неизвестный аргумент: %s
-xinbot.help.usage=Использование:\n  xinbot [<config.conf>]              Запустить бота с указанным файлом конфигурации\n  xinbot --install <file.zip>         Установить модпак\n  xinbot --export <out.zip>           Экспортировать текущие плагины и языковые файлы в модпак\n  xinbot --modpack-info <file.zip>    Показать манифест модпака\n  xinbot --version                    Показать версию\n  xinbot --license                    Показать лицензию\n  xinbot --help                       Показать эту справку
+xinbot.help.usage=Использование:\n  xinbot [<config.conf>]              Запустить бота с указанным файлом конфигурации\n  xinbot --install <file.zip>         Установить модпак\n  xinbot --export <out.zip>           Экспортировать текущие плагины и языковые файлы в модпак\n  xinbot --export-config <out.zip>    Экспортировать плагины, языковые файлы и обезличенную конфигурацию\n  xinbot --modpack-info <file.zip>    Показать манифест модпака\n  xinbot --version                    Показать версию\n  xinbot --license                    Показать лицензию\n  xinbot --help                       Показать эту справку
 
 # Сообщения модпака
 xinbot.modpack.manifest.invalid=Недопустимый манифест модпака: поля 'name' и 'version' обязательны.
@@ -166,4 +166,19 @@ xinbot.modpack.info.author=Автор: %s
 xinbot.modpack.info.description=Описание: %s
 xinbot.modpack.info.xinbot_version=Версия Xinbot: %s
 xinbot.modpack.info.plugins=Плагины: %s
+xinbot.modpack.info.config=Конфигурация в комплекте: да (учётные данные удалены, заполняются при установке)
 xinbot.modpack.info.failed=Не удалось прочитать информацию о модпаке: %s
+
+# Упаковка конфигурации (--export-config) и интерактивный ввод при установке
+xinbot.modpack.export_config.usage=Использование: --export-config <out.zip>
+xinbot.modpack.export.no_config=Нет файла конфигурации для экспорта: %s
+xinbot.modpack.export.config=Добавлена обезличенная конфигурация (учётные данные аккаунта, owner и прокси очищены).
+xinbot.modpack.install.config.exists=Конфигурация %s уже существует; она сохранена, конфигурация из модпака пропущена.
+xinbot.modpack.install.config.written=Записана конфигурация из модпака: %s
+xinbot.modpack.setup.start=Этот модпак содержит конфигурацию. Пожалуйста, введите свои данные:
+xinbot.modpack.setup.owner=Owner (ваш игровой ник):
+xinbot.modpack.setup.account_name=Имя аккаунта бота:
+xinbot.modpack.setup.account_password=Пароль аккаунта бота (оставьте пустым, если нет):
+xinbot.modpack.setup.proxy_username=Имя пользователя прокси (оставьте пустым, если нет):
+xinbot.modpack.setup.proxy_password=Пароль прокси (оставьте пустым, если нет):
+xinbot.modpack.setup.done=Конфигурация заполнена и сохранена в %s
