@@ -42,3 +42,4 @@
 
 ### Mac OS ###
 .DS_Store
+.codegraph/

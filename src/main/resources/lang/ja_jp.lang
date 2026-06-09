@@ -21,6 +21,7 @@ xinbot.plugin.disabled=プラグインを無効化しました: %s
 xinbot.plugin.unloaded=プラグインをアンロードしました: %s
 xinbot.plugin.tree.header=プラグイン依存関係ツリー:
 xinbot.plugin.dependency.missing=プラグイン '%2$s' に必要な依存関係 '%1$s' が見つかりません
+xinbot.plugin.softdependency.missing=プラグイン '%2$s' のソフト依存関係 '%1$s' が見つかりませんが、通常通り読み込みます
 xinbot.plugin.load.all.failed=すべてのプラグインの読み込みに失敗しました。循環依存または依存関係の欠如が検出されました。
 xinbot.plugin.not.loaded=- プラグイン '%s' は読み込まれませんでした（依存関係の欠如または循環ループ）
 xinbot.plugin.load.smoothly.failed=プラグインを正常に読み込めませんでした: %s

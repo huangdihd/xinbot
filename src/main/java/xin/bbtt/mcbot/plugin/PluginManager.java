@@ -125,6 +125,7 @@ public class PluginManager {
         String version;
         PluginType type;
         List<String> depends = new ArrayList<>();
+        List<String> softDepends = new ArrayList<>();
         URL url;
     }
 
@@ -205,9 +206,16 @@ public class PluginManager {
     }
 
     private void instantiateAndLoad(PluginInfo info) throws Exception {
+        List<String> effectiveDepends = new ArrayList<>(info.depends);
+        for (String softDep : info.softDepends) {
+            if (pluginLoaders.containsKey(softDep) || plugins.containsKey(softDep)) {
+                effectiveDepends.add(softDep);
+            }
+        }
+
         ClassLoader parent = PluginManager.class.getClassLoader();
-        if (!info.depends.isEmpty()) {
-            PluginClassLoader firstDepLoader = pluginLoaders.get(info.depends.get(0));
+        if (!effectiveDepends.isEmpty()) {
+            PluginClassLoader firstDepLoader = pluginLoaders.get(effectiveDepends.get(0));
             if (firstDepLoader != null) {
                 parent = firstDepLoader;
             }
@@ -215,15 +223,15 @@ public class PluginManager {
 
         PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{info.url}, parent);
         
-        for (int i = 1; i < info.depends.size(); i++) {
-            PluginClassLoader depLoader = pluginLoaders.get(info.depends.get(i));
+        for (int i = 1; i < effectiveDepends.size(); i++) {
+            PluginClassLoader depLoader = pluginLoaders.get(effectiveDepends.get(i));
             if (depLoader != null) {
                 pluginClassLoader.addDependency(depLoader);
             }
         }
 
         pluginLoaders.put(info.name, pluginClassLoader);
-        this.pluginDependencies.put(info.name, info.depends);
+        this.pluginDependencies.put(info.name, effectiveDepends);
 
         Plugin plugin;
         try {
@@ -276,6 +284,7 @@ public class PluginManager {
                 }
 
                 parseDepends(map, info.depends);
+                parseSoftDepends(map, info.softDepends);
                 return info;
             }
         }
@@ -283,6 +292,15 @@ public class PluginManager {
 
     private void parseDepends(Map<String, Object> map, List<String> target) {
         Object dependObj = map.getOrDefault("depend", map.get("depends"));
+        if (dependObj instanceof List) {
+            for (Object dep : (List<?>) dependObj) target.add(String.valueOf(dep));
+        } else if (dependObj instanceof String) {
+            target.add((String) dependObj);
+        }
+    }
+
+    private void parseSoftDepends(Map<String, Object> map, List<String> target) {
+        Object dependObj = map.getOrDefault("softdepend", map.get("softdepends"));
         if (dependObj instanceof List) {
             for (Object dep : (List<?>) dependObj) target.add(String.valueOf(dep));
         } else if (dependObj instanceof String) {
@@ -324,6 +342,16 @@ public class PluginManager {
                 } else if (infoMap.containsKey(dep)) {
                     dependents.computeIfAbsent(dep, k -> new ArrayList<>()).add(info.name);
                     inDegree.merge(info.name, 1, Integer::sum);
+                }
+            }
+            for (String softDep : info.softDepends) {
+                if (infoMap.containsKey(softDep) || plugins.containsKey(softDep)) {
+                    if (infoMap.containsKey(softDep)) {
+                        dependents.computeIfAbsent(softDep, k -> new ArrayList<>()).add(info.name);
+                        inDegree.merge(info.name, 1, Integer::sum);
+                    }
+                } else {
+                    log.info(LangManager.get("xinbot.plugin.softdependency.missing", softDep, info.name));
                 }
             }
         }

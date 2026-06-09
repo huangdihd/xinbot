@@ -21,6 +21,7 @@ xinbot.plugin.disabled=Disabled plugin: %s
 xinbot.plugin.unloaded=Unloaded plugin: %s
 xinbot.plugin.tree.header=Plugin Dependency Tree:
 xinbot.plugin.dependency.missing=Missing dependency '%s' required by plugin '%s'
+xinbot.plugin.softdependency.missing=Soft dependency '%s' not found for plugin '%s', loading without it
 xinbot.plugin.load.all.failed=Failed to load all plugins. Circular dependency or missing dependencies detected.
 xinbot.plugin.not.loaded=- Plugin '%s' was not loaded (Missing dependency or circular loop)
 xinbot.plugin.load.smoothly.failed=Failed to load plugin smoothly: %s

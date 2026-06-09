@@ -21,6 +21,7 @@ xinbot.plugin.disabled=Отключен плагин: %s
 xinbot.plugin.unloaded=Выгружен плагин: %s
 xinbot.plugin.tree.header=Дерево зависимостей плагина:
 xinbot.plugin.dependency.missing=Отсутствует зависимость '%s', необходимая для плагина '%s'
+xinbot.plugin.softdependency.missing=Мягкая зависимость '%s' не найдена для плагина '%s', загрузка продолжается
 xinbot.plugin.load.all.failed=Не удалось загрузить все плагины. Обнаружена циклическая зависимость или отсутствие зависимостей.
 xinbot.plugin.not.loaded=- Плагин '%s' не был загружен (отсутствующая зависимость или циклический цикл)
 xinbot.plugin.load.smoothly.failed=Не удалось плавно загрузить плагин: %s

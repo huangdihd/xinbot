@@ -17,6 +17,7 @@ xinbot.bot.error.stopping=停止機器人時發生錯誤
 xinbot.plugin.unloaded=已載入外掛程式：%s
 xinbot.plugin.tree.header=外掛程式相依樹：
 xinbot.plugin.dependency.missing=外掛程式「%2$s」缺少相依項目「%1$s」
+xinbot.plugin.softdependency.missing=外掛程式「%2$s」的軟相依「%1$s」未找到，將正常載入
 xinbot.plugin.load.all.failed=無法載入所有外掛程式。偵測到循環相依或缺少相依項目。
 xinbot.plugin.not.loaded=- 外掛程式「%s」未載入（缺少相依項目或循環相依）
 xinbot.plugin.load.smoothly.failed=無法順利載入外掛程式：%s

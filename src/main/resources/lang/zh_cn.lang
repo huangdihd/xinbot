@@ -21,6 +21,7 @@ xinbot.plugin.disabled=已禁用插件：%s
 xinbot.plugin.unloaded=已卸载插件：%s
 xinbot.plugin.tree.header=插件依赖树：
 xinbot.plugin.dependency.missing=插件“%2$s”缺少依赖项“%1$s”
+xinbot.plugin.softdependency.missing=插件“%2$s”的软依赖“%1$s”未找到，将正常加载
 xinbot.plugin.load.all.failed=无法加载所有插件。检测到循环依赖或缺少依赖项。
 xinbot.plugin.not.loaded=- 插件“%s”未加载（缺少依赖项或循环依赖）
 xinbot.plugin.load.smoothly.failed=无法顺利加载插件：%s
