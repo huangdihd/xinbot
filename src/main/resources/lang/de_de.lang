@@ -51,13 +51,11 @@ xinbot.auth.session.not.found=Keine Sitzung für das Online-Konto gefunden
 xinbot.auth.device.code.start=Gerätecode-Anmeldung wird gestartet...
 xinbot.auth.device.code.prompt=Gehen Sie zu %s, um sich mit dem Code %s in Ihrem Minecraft-Konto anzumelden
 
-
 xinbot.command.not.found.error=Kein Befehl für %s gefunden
 xinbot.command.execute.error=Fehler beim Ausführen des Befehls %s
 xinbot.command.complete.error=Kehler beim Abschließen des Befehls %s
 
 xinbot.chat.system.received=Nachricht erhalten: %s
-
 
 xinbot.command.command.description=Ein Befehl zum Senden von Befehlen.
 xinbot.command.command.usage=command command
@@ -144,7 +142,7 @@ xinbot.proxy.error.no_info=Proxy ist aktiviert, aber es sind keine Proxy-Informa
 xinbot.plugin.yml.invalid_type=Plugin %s hat einen ungültigen Typ '%s', es wird standardmäßig PLUGIN verwendet.
 # CLI-Unterbefehle und Hilfe
 xinbot.args.unknown=Unbekanntes Argument: %s
-xinbot.help.usage=Verwendung:\n  xinbot [<config.conf>]              Bot mit der angegebenen Konfigurationsdatei starten\n  xinbot --install <file.zip>         Ein Modpack installieren\n  xinbot --export <out.zip>           Aktuelle Plugins und Sprachdateien als Modpack exportieren\n  xinbot --export-config <out.zip>    Plugins, Sprachdateien und eine anonymisierte Konfiguration exportieren\n  xinbot --modpack-info <file.zip>    Das Manifest eines Modpacks anzeigen\n  xinbot --version                    Version anzeigen\n  xinbot --license                    Lizenz anzeigen\n  xinbot --help                       Diese Hilfe anzeigen
+xinbot.help.usage=Verwendung:\n  xinbot [<config.conf>]              Bot mit der angegebenen Konfigurationsdatei starten\n  xinbot --install <file.zip>         Ein Modpack installieren\n  xinbot --export <out.zip>           Aktuelle Plugins und Sprachdateien als Modpack exportieren\n  xinbot --modpack-info <file.zip>    Das Manifest eines Modpacks anzeigen\n  xinbot --version                    Version anzeigen\n  xinbot --license                    Lizenz anzeigen\n  xinbot --help                       Diese Hilfe anzeigen
 
 # Modpack-Meldungen
 xinbot.modpack.manifest.invalid=Ungültiges Modpack-Manifest: 'name' und 'version' sind erforderlich.
@@ -166,19 +164,5 @@ xinbot.modpack.info.author=Autor: %s
 xinbot.modpack.info.description=Beschreibung: %s
 xinbot.modpack.info.xinbot_version=Xinbot-Version: %s
 xinbot.modpack.info.plugins=Plugins: %s
-xinbot.modpack.info.config=Konfiguration enthalten: ja (Zugangsdaten entfernt; bei der Installation ausgefüllt)
 xinbot.modpack.info.failed=Modpack-Informationen konnten nicht gelesen werden: %s
 
-# Konfigurations-Bündelung (--export-config) und interaktive Eingabe bei der Installation
-xinbot.modpack.export_config.usage=Verwendung: --export-config <out.zip>
-xinbot.modpack.export.no_config=Keine Konfigurationsdatei zum Exportieren: %s
-xinbot.modpack.export.config=Anonymisierte Konfiguration gebündelt (Konto-, owner- und Proxy-Zugangsdaten entfernt).
-xinbot.modpack.install.config.exists=Konfiguration %s existiert bereits; sie bleibt erhalten, die gebündelte Konfiguration wird übersprungen.
-xinbot.modpack.install.config.written=Gebündelte Konfiguration geschrieben: %s
-xinbot.modpack.setup.start=Dieses Modpack enthält eine Konfiguration. Bitte gib deine Daten ein:
-xinbot.modpack.setup.owner=Owner (dein Spielername):
-xinbot.modpack.setup.account_name=Bot-Kontoname:
-xinbot.modpack.setup.account_password=Bot-Kontopasswort (leer lassen, falls keines):
-xinbot.modpack.setup.proxy_username=Proxy-Benutzername (leer lassen, falls keiner):
-xinbot.modpack.setup.proxy_password=Proxy-Passwort (leer lassen, falls keines):
-xinbot.modpack.setup.done=Konfiguration ausgefüllt und in %s gespeichert

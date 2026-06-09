@@ -48,13 +48,11 @@ xinbot.auth.session.not.found=未找到正版帳號的會話
 xinbot.auth.device.code.start=開始設備代碼登入...
 xinbot.auth.device.code.prompt=請前往 %s 並輸入代碼 %s 以登入你的 Minecraft 帳號
 
-
 xinbot.command.not.found.error=未找到命令 %s
 xinbot.command.execute.error=執行命令 %s 時出錯
 xinbot.command.complete.error=完成命令 %s 時出錯
 
 xinbot.chat.system.received=收到訊息: %s
-
 
 xinbot.command.command.description=發送命令的命令。
 xinbot.command.command.usage=command command
@@ -138,7 +136,7 @@ xinbot.proxy.error.no_info=代理已啟用，但未設定 info，將不使用代
 xinbot.plugin.yml.invalid_type=外掛程式 %s 的 type '%s' 無效，已回退為 PLUGIN。
 # CLI 子指令與說明
 xinbot.args.unknown=未知參數：%s
-xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定設定檔啟動機器人\n  xinbot --install <file.zip>         安裝整合包\n  xinbot --export <out.zip>           將目前外掛與語言檔匯出為整合包\n  xinbot --export-config <out.zip>    匯出外掛、語言檔與脫敏後的設定\n  xinbot --modpack-info <file.zip>    檢視整合包清單資訊\n  xinbot --version                    顯示版本\n  xinbot --license                    顯示授權\n  xinbot --help                       顯示此說明
+xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定設定檔啟動機器人\n  xinbot --install <file.zip>         安裝整合包\n  xinbot --export <out.zip>           將目前外掛與語言檔匯出為整合包\n  xinbot --modpack-info <file.zip>    檢視整合包清單資訊\n  xinbot --version                    顯示版本\n  xinbot --license                    顯示授權\n  xinbot --help                       顯示此說明
 
 # 整合包相關
 xinbot.modpack.manifest.invalid=整合包清單無效：'name' 與 'version' 為必填項。
@@ -160,20 +158,5 @@ xinbot.modpack.info.author=作者：%s
 xinbot.modpack.info.description=描述：%s
 xinbot.modpack.info.xinbot_version=Xinbot 版本：%s
 xinbot.modpack.info.plugins=外掛：%s
-xinbot.modpack.info.config=包含設定：是（已脫敏，安裝時填入）
 xinbot.modpack.info.failed=讀取整合包資訊失敗：%s
-
-# 整合包設定打包（--export-config）與安裝時互動填寫
-xinbot.modpack.export_config.usage=用法：--export-config <out.zip>
-xinbot.modpack.export.no_config=沒有可匯出的設定檔：%s
-xinbot.modpack.export.config=已打包脫敏後的設定（帳號、owner 與代理憑據已清空）。
-xinbot.modpack.install.config.exists=設定 %s 已存在；保留原設定並略過整合包內的設定。
-xinbot.modpack.install.config.written=已寫入整合包內的設定：%s
-xinbot.modpack.setup.start=此整合包包含設定，請填寫你的資訊：
-xinbot.modpack.setup.owner=Owner（你的遊戲 ID）：
-xinbot.modpack.setup.account_name=機器人帳號名：
-xinbot.modpack.setup.account_password=機器人帳號密碼（沒有則留空）：
-xinbot.modpack.setup.proxy_username=代理使用者名稱（沒有則留空）：
-xinbot.modpack.setup.proxy_password=代理密碼（沒有則留空）：
-xinbot.modpack.setup.done=設定已填寫完成並儲存到 %s
 

@@ -64,10 +64,8 @@ example-modpack.zip
 ├── modpack.yml          # 清单（name 与 version 必填）
 ├── plugins/             # 插件 jar —— 安装到插件目录
 │   └── *.jar
-├── lang/                # 可选的 .lang 覆盖 —— 安装到 ./lang/
-│   └── *.lang
-└── config/              # 可选的脱敏配置（仅 --export-config）
-    └── config.conf
+└── lang/                # 可选的 .lang 覆盖 —— 安装到 ./lang/
+    └── *.lang
 ```
 
 `modpack.yml`：
@@ -86,18 +84,11 @@ plugins: [PluginA, PluginB]       # 可选，仅作展示
 ```bash
 java -jar xinbot.jar --install <file.zip>       # 将整合包安装到 ./plugin 与 ./lang
 java -jar xinbot.jar --export <out.zip>         # 把当前插件与语言文件打包成整合包
-java -jar xinbot.jar --export-config <out.zip>  # 在上面基础上额外打包脱敏后的当前配置
 java -jar xinbot.jar --modpack-info <file.zip>  # 打印整合包清单信息
 java -jar xinbot.jar --help                     # 列出全部子命令
 ```
 
-安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/`、`lang/`、`config/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
-
-### 打包配置
-
-`--export-config` 会把当前 `config.conf` 打进整合包，但**会先清空所有敏感信息**：账号名/密码/登录会话、`owner`、以及代理用户名密码全部置空；非敏感设置（重连参数、插件目录、语言开关、在线模式、代理地址/类型）保留。
-
-当这种整合包被安装、且工作目录中**不存在** `config.conf` 时，会写入打包的配置并**交互式提示你回填**这些被清空的字段（owner、机器人账号名/密码，以及启用代理时的代理凭据）。已存在的 `config.conf` 绝不会被覆盖。
+安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/`、`lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
 
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。

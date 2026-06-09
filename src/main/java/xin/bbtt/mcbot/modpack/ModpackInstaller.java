@@ -45,17 +45,8 @@ public class ModpackInstaller {
     private static final String PLUGINS_PREFIX = "plugins/";
     private static final String LANG_PREFIX = "lang/";
 
-    /** Outcome of an install: how much was extracted, and the config written (if any). */
-    public record InstallResult(int plugins, int langs, Path configFile) {
-        /** @return true if a bundled config was extracted and needs completing. */
-        public boolean hasConfig() {
-            return configFile != null;
-        }
-    }
-
-    /** Installs without extracting any bundled config. */
-    public static InstallResult install(Path zipFile, Path pluginDir, Path langDir) throws IOException {
-        return install(zipFile, pluginDir, langDir, null);
+    /** Outcome of an install: how many plugins and language files were extracted. */
+    public record InstallResult(int plugins, int langs) {
     }
 
     /**
@@ -64,13 +55,11 @@ public class ModpackInstaller {
      * @param zipFile    path to the modpack archive
      * @param pluginDir  destination directory for plugin jars
      * @param langDir    destination directory for {@code .lang} overrides (usually {@code ./lang})
-     * @param configFile destination for a bundled {@code config.conf}, or {@code null} to skip it;
-     *                   an existing config file is never overwritten
      * @return what was installed
      * @throws IOException              if the archive cannot be read or files cannot be written
      * @throws IllegalArgumentException if the manifest is missing or invalid
      */
-    public static InstallResult install(Path zipFile, Path pluginDir, Path langDir, Path configFile) throws IOException {
+    public static InstallResult install(Path zipFile, Path pluginDir, Path langDir) throws IOException {
         if (!Files.isRegularFile(zipFile)) {
             throw new IOException(LangManager.get("xinbot.modpack.file.not_found", zipFile));
         }
@@ -84,43 +73,15 @@ public class ModpackInstaller {
         Files.createDirectories(langRoot);
 
         int[] counts = new int[2];
-        Path writtenConfig;
         try (ZipFile zip = new ZipFile(zipFile.toFile())) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 installEntry(zip, entries.nextElement(), pluginRoot, langRoot, counts);
             }
-            writtenConfig = extractConfig(zip, configFile);
         }
 
         log.info(LangManager.get("xinbot.modpack.install.done", manifest.getName(), counts[0], counts[1]));
-        return new InstallResult(counts[0], counts[1], writtenConfig);
-    }
-
-    /**
-     * Extracts a bundled {@code config.conf} to {@code configFile}, unless one is
-     * already present (an existing config — possibly with real credentials — is
-     * never clobbered).
-     *
-     * @return the written config path, or {@code null} if nothing was extracted
-     */
-    private static Path extractConfig(ZipFile zip, Path configFile) throws IOException {
-        if (configFile == null) return null;
-        ZipEntry entry = zip.getEntry(ModpackConfig.ENTRY);
-        if (entry == null) return null;
-
-        Path target = configFile.toAbsolutePath().normalize();
-        if (Files.exists(target)) {
-            log.warn(LangManager.get("xinbot.modpack.install.config.exists", target.getFileName().toString()));
-            return null;
-        }
-        if (target.getParent() != null) Files.createDirectories(target.getParent());
-
-        try (InputStream is = zip.getInputStream(entry)) {
-            Files.copy(is, target, StandardCopyOption.REPLACE_EXISTING);
-        }
-        log.info(LangManager.get("xinbot.modpack.install.config.written", target.getFileName().toString()));
-        return target;
+        return new InstallResult(counts[0], counts[1]);
     }
 
     /**
