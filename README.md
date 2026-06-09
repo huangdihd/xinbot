@@ -58,8 +58,8 @@ Please refer to the [documentation site](https://xinbot.shouldbe.top/guide/getti
 ## Modpacks
 
 A **modpack** bundles a set of plugins and language files into a single `.zip` so a
-ready-to-use setup can be shared and installed in one step. A modpack can optionally
-also carry a bot config, but only after every secret has been stripped — see below.
+ready-to-use setup can be shared and installed in one step. A modpack never contains
+`config.conf`, so account credentials and sessions are never shipped.
 
 Archive layout:
 
@@ -93,8 +93,8 @@ java -jar xinbot.jar --help                     # list all sub-commands
 ```
 
 Installing overwrites existing files of the same name (with a warning) and ignores any
-archive entry outside `plugins/` and `lang/`. The plugin directory is read
-from `config.conf` when present, otherwise the default `plugin/` is used.
+archive entry outside `plugins/` and `lang/`. The plugin directory is read from
+`config.conf` when present, otherwise the default `plugin/` is used.
 
 ---
 
