@@ -17,6 +17,7 @@ xinbot.bot.error.stopping=停止機器人時發生錯誤
 xinbot.plugin.unloaded=已載入外掛程式：%s
 xinbot.plugin.tree.header=外掛程式相依樹：
 xinbot.plugin.dependency.missing=外掛程式「%2$s」缺少相依項目「%1$s」
+xinbot.plugin.softdependency.missing=外掛程式「%2$s」的軟相依「%1$s」未找到，將正常載入
 xinbot.plugin.load.all.failed=無法載入所有外掛程式。偵測到循環相依或缺少相依項目。
 xinbot.plugin.not.loaded=- 外掛程式「%s」未載入（缺少相依項目或循環相依）
 xinbot.plugin.load.smoothly.failed=無法順利載入外掛程式：%s
@@ -48,13 +49,11 @@ xinbot.auth.session.not.found=未找到正版帳號的會話
 xinbot.auth.device.code.start=開始設備代碼登入...
 xinbot.auth.device.code.prompt=請前往 %s 並輸入代碼 %s 以登入你的 Minecraft 帳號
 
-
 xinbot.command.not.found.error=未找到命令 %s
 xinbot.command.execute.error=執行命令 %s 時出錯
 xinbot.command.complete.error=完成命令 %s 時出錯
 
 xinbot.chat.system.received=收到訊息: %s
-
 
 xinbot.command.command.description=發送命令的命令。
 xinbot.command.command.usage=command command

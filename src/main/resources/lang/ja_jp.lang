@@ -21,6 +21,7 @@ xinbot.plugin.disabled=プラグインを無効化しました: %s
 xinbot.plugin.unloaded=プラグインをアンロードしました: %s
 xinbot.plugin.tree.header=プラグイン依存関係ツリー:
 xinbot.plugin.dependency.missing=プラグイン '%2$s' に必要な依存関係 '%1$s' が見つかりません
+xinbot.plugin.softdependency.missing=プラグイン '%2$s' のソフト依存関係 '%1$s' が見つかりませんが、通常通り読み込みます
 xinbot.plugin.load.all.failed=すべてのプラグインの読み込みに失敗しました。循環依存または依存関係の欠如が検出されました。
 xinbot.plugin.not.loaded=- プラグイン '%s' は読み込まれませんでした（依存関係の欠如または循環ループ）
 xinbot.plugin.load.smoothly.failed=プラグインを正常に読み込めませんでした: %s
@@ -51,13 +52,11 @@ xinbot.auth.session.not.found=オンラインアカウントのセッション�
 xinbot.auth.device.code.start=デバイスコードログインを開始します...
 xinbot.auth.device.code.prompt=Minecraft アカウントにログインするには、%s にアクセスしてコード %s を入力してください
 
-
 xinbot.command.not.found.error=コマンド %s が見つかりませんでした
 xinbot.command.execute.error=コマンド %s の実行中にエラーが発生しました
 xinbot.command.complete.error=コマンド %s の完了中にエラーが発生しました
 
 xinbot.chat.system.received=メッセージを受信しました: %s
-
 
 xinbot.command.command.description=コマンドを送信するコマンド。
 xinbot.command.command.usage=command command
@@ -167,3 +166,4 @@ xinbot.modpack.info.description=説明: %s
 xinbot.modpack.info.xinbot_version=Xinbot バージョン: %s
 xinbot.modpack.info.plugins=プラグイン: %s
 xinbot.modpack.info.failed=モッドパック情報の読み込みに失敗しました: %s
+

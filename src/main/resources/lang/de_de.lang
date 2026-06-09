@@ -21,6 +21,7 @@ xinbot.plugin.disabled=Plugin deaktiviert: %s
 xinbot.plugin.unloaded=Plugin entladen: %s
 xinbot.plugin.tree.header=Plugin-Abhängigkeitsbaum:
 xinbot.plugin.dependency.missing=Fehlende Abhängigkeit '%s' erforderlich für Plugin '%s'
+xinbot.plugin.softdependency.missing=Optionale Abhängigkeit '%s' nicht gefunden für Plugin '%s', Laden ohne
 xinbot.plugin.load.all.failed=Alle Plugins konnten nicht geladen werden. Zirkuläre Abhängigkeit oder fehlende Abhängigkeiten erkannt.
 xinbot.plugin.not.loaded=- Plugin '%s' wurde nicht geladen (Fehlende Abhängigkeit oder zirkuläre Schleife)
 xinbot.plugin.load.smoothly.failed=Plugin konnte nicht reibungslos geladen werden: %s
@@ -51,13 +52,11 @@ xinbot.auth.session.not.found=Keine Sitzung für das Online-Konto gefunden
 xinbot.auth.device.code.start=Gerätecode-Anmeldung wird gestartet...
 xinbot.auth.device.code.prompt=Gehen Sie zu %s, um sich mit dem Code %s in Ihrem Minecraft-Konto anzumelden
 
-
 xinbot.command.not.found.error=Kein Befehl für %s gefunden
 xinbot.command.execute.error=Fehler beim Ausführen des Befehls %s
 xinbot.command.complete.error=Kehler beim Abschließen des Befehls %s
 
 xinbot.chat.system.received=Nachricht erhalten: %s
-
 
 xinbot.command.command.description=Ein Befehl zum Senden von Befehlen.
 xinbot.command.command.usage=command command
@@ -167,3 +166,4 @@ xinbot.modpack.info.description=Beschreibung: %s
 xinbot.modpack.info.xinbot_version=Xinbot-Version: %s
 xinbot.modpack.info.plugins=Plugins: %s
 xinbot.modpack.info.failed=Modpack-Informationen konnten nicht gelesen werden: %s
+

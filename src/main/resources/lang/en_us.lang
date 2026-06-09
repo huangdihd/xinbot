@@ -21,6 +21,7 @@ xinbot.plugin.disabled=Disabled plugin: %s
 xinbot.plugin.unloaded=Unloaded plugin: %s
 xinbot.plugin.tree.header=Plugin Dependency Tree:
 xinbot.plugin.dependency.missing=Missing dependency '%s' required by plugin '%s'
+xinbot.plugin.softdependency.missing=Soft dependency '%s' not found for plugin '%s', loading without it
 xinbot.plugin.load.all.failed=Failed to load all plugins. Circular dependency or missing dependencies detected.
 xinbot.plugin.not.loaded=- Plugin '%s' was not loaded (Missing dependency or circular loop)
 xinbot.plugin.load.smoothly.failed=Failed to load plugin smoothly: %s
@@ -69,7 +70,6 @@ xinbot.auth.session.not.found=No session found for the online account
 xinbot.auth.device.code.start=Starting device code login...
 xinbot.auth.device.code.prompt=Go to %s to login your minecraft account with code: %s
 
-
 xinbot.plugin.dir.invalid=The plugins directory does not exist or is invalid: %s
 xinbot.plugin.not.found=No plugins found.
 xinbot.plugin.load.failed=Failed to load plugin: %s
@@ -104,14 +104,11 @@ xinbot.command.sub.unknown=Unknown sub-command: %s. Available sub-commands: %s
 xinbot.plugin.loaded.count=There are %d plugins loaded: %s
 xinbot.player.online.count=There are %d players online: %s
 
-
-
 xinbot.command.not.found.error=No command found for command %s
 xinbot.command.execute.error=Error while executing command %s
 xinbot.command.complete.error=Error while Complete command %s
 
 xinbot.chat.system.received=Received message: %s
-
 
 xinbot.command.command.description=A command to send commands.
 xinbot.command.command.usage=command command

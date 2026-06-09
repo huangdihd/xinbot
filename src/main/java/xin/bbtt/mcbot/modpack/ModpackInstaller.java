@@ -45,16 +45,21 @@ public class ModpackInstaller {
     private static final String PLUGINS_PREFIX = "plugins/";
     private static final String LANG_PREFIX = "lang/";
 
+    /** Outcome of an install: how many plugins and language files were extracted. */
+    public record InstallResult(int plugins, int langs) {
+    }
+
     /**
      * Installs the modpack at {@code zipFile}.
      *
-     * @param zipFile   path to the modpack archive
-     * @param pluginDir destination directory for plugin jars
-     * @param langDir   destination directory for {@code .lang} overrides (usually {@code ./lang})
+     * @param zipFile    path to the modpack archive
+     * @param pluginDir  destination directory for plugin jars
+     * @param langDir    destination directory for {@code .lang} overrides (usually {@code ./lang})
+     * @return what was installed
      * @throws IOException              if the archive cannot be read or files cannot be written
      * @throws IllegalArgumentException if the manifest is missing or invalid
      */
-    public static void install(Path zipFile, Path pluginDir, Path langDir) throws IOException {
+    public static InstallResult install(Path zipFile, Path pluginDir, Path langDir) throws IOException {
         if (!Files.isRegularFile(zipFile)) {
             throw new IOException(LangManager.get("xinbot.modpack.file.not_found", zipFile));
         }
@@ -76,6 +81,7 @@ public class ModpackInstaller {
         }
 
         log.info(LangManager.get("xinbot.modpack.install.done", manifest.getName(), counts[0], counts[1]));
+        return new InstallResult(counts[0], counts[1]);
     }
 
     /**

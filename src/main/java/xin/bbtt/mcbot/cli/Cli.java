@@ -112,7 +112,8 @@ public final class Cli {
 
     private static boolean install(String[] args) {
         try {
-            ModpackInstaller.install(Paths.get(args[0]), Paths.get(resolvePluginDirectory()), Paths.get(LANG_DIR));
+            ModpackInstaller.install(
+                    Paths.get(args[0]), Paths.get(resolvePluginDirectory()), Paths.get(LANG_DIR));
             return true;
         } catch (Exception e) {
             log.error(LangManager.get("xinbot.modpack.install.failed", e.getMessage()), e);

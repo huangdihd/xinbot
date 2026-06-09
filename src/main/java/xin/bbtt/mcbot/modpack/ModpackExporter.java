@@ -42,24 +42,17 @@ public class ModpackExporter {
     /**
      * Exports a modpack archive to {@code outZip}.
      *
-     * @param outZip    destination archive path
-     * @param pluginDir directory whose {@code *.jar} files are bundled under {@code plugins/}
-     * @param langDir   directory whose {@code *.lang} files are bundled under {@code lang/}
-     * @param manifest  the manifest written as {@code modpack.yml}; its {@code plugins}
-     *                  list is regenerated from the bundled jars when empty
+     * @param outZip      destination archive path
+     * @param pluginDir   directory whose {@code *.jar} files are bundled under {@code plugins/}
+     * @param langDir     directory whose {@code *.lang} files are bundled under {@code lang/}
+     * @param manifest    the manifest written as {@code modpack.yml}; its {@code plugins}
+     *                    list is regenerated from the bundled jars when empty
      * @throws IOException if the archive cannot be written
      */
     public static void export(Path outZip, Path pluginDir, Path langDir, ModpackManifest manifest) throws IOException {
         List<String> jarNames = listFiles(pluginDir, ".jar");
         List<String> langNames = listFiles(langDir, ".lang");
-
-        ModpackManifest effective = manifest;
-        if (manifest.getPlugins().isEmpty() && !jarNames.isEmpty()) {
-            List<String> derived = new ArrayList<>();
-            for (String jar : jarNames) derived.add(jar.substring(0, jar.length() - ".jar".length()));
-            effective = new ModpackManifest(manifest.getName(), manifest.getVersion(), manifest.getAuthor(),
-                    manifest.getDescription(), manifest.getXinbotVersion(), derived);
-        }
+        ModpackManifest effective = withDerivedPlugins(manifest, jarNames);
 
         if (outZip.getParent() != null) Files.createDirectories(outZip.getParent());
 
@@ -70,6 +63,18 @@ public class ModpackExporter {
         }
 
         log.info(LangManager.get("xinbot.modpack.export.done", outZip, jarNames.size(), langNames.size()));
+    }
+
+    /**
+     * Returns a manifest whose {@code plugins} list is derived from the bundled jar
+     * names when the supplied manifest does not already list them.
+     */
+    private static ModpackManifest withDerivedPlugins(ModpackManifest manifest, List<String> jarNames) {
+        if (!manifest.getPlugins().isEmpty() || jarNames.isEmpty()) return manifest;
+        List<String> derived = new ArrayList<>();
+        for (String jar : jarNames) derived.add(jar.substring(0, jar.length() - ".jar".length()));
+        return new ModpackManifest(manifest.getName(), manifest.getVersion(), manifest.getAuthor(),
+                manifest.getDescription(), manifest.getXinbotVersion(), derived);
     }
 
     private static List<String> listFiles(Path dir, String suffix) throws IOException {

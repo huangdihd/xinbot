@@ -21,6 +21,7 @@ xinbot.plugin.disabled=Отключен плагин: %s
 xinbot.plugin.unloaded=Выгружен плагин: %s
 xinbot.plugin.tree.header=Дерево зависимостей плагина:
 xinbot.plugin.dependency.missing=Отсутствует зависимость '%s', необходимая для плагина '%s'
+xinbot.plugin.softdependency.missing=Мягкая зависимость '%s' не найдена для плагина '%s', загрузка продолжается
 xinbot.plugin.load.all.failed=Не удалось загрузить все плагины. Обнаружена циклическая зависимость или отсутствие зависимостей.
 xinbot.plugin.not.loaded=- Плагин '%s' не был загружен (отсутствующая зависимость или циклический цикл)
 xinbot.plugin.load.smoothly.failed=Не удалось плавно загрузить плагин: %s
@@ -51,13 +52,11 @@ xinbot.auth.session.not.found=Сессия для лицензионного а�
 xinbot.auth.device.code.start=Запуск входа по коду устройства...
 xinbot.auth.device.code.prompt=Перейдите на %s для входа в свой аккаунт Minecraft с кодом: %s
 
-
 xinbot.command.not.found.error=Команда не найдена для команды %s
 xinbot.command.execute.error=Ошибка при выполнении команды %s
 xinbot.command.complete.error=Ошибка при завершении команды %s
 
 xinbot.chat.system.received=Получено сообщение: %s
-
 
 xinbot.command.command.description=Команда для отправки команд.
 xinbot.command.command.usage=command command
@@ -167,3 +166,4 @@ xinbot.modpack.info.description=Описание: %s
 xinbot.modpack.info.xinbot_version=Версия Xinbot: %s
 xinbot.modpack.info.plugins=Плагины: %s
 xinbot.modpack.info.failed=Не удалось прочитать информацию о модпаке: %s
+
