@@ -138,28 +138,11 @@ public class PluginManager {
         
         if (plugins.containsKey(info.name)) return;
 
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, PluginManager.class.getClassLoader());
-        pluginLoaders.put(info.name, pluginClassLoader);
-        pluginDependencies.put(info.name, info.depends);
-
-        Plugin plugin;
-        try {
-            Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
-            plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            pluginLoaders.remove(info.name);
-            pluginDependencies.remove(info.name);
-            try { pluginClassLoader.close(); } catch (IOException ignored) {}
-            throw e;
-        }
-        
-        RegisteredPlugin rp;
-        if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
-            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, (MetaPlugin) plugin);
-        } else {
-            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, plugin, PluginType.PLUGIN);
-        }
-        loadPlugin(rp);
+        info.file = pluginFile;
+        info.url = url;
+        // Delegate to the shared loader so runtime loads (e.g. `pm load`/`pm reload`)
+        // wire up the (soft)dependency classloader chain just like startup batch loading.
+        instantiateAndLoad(info);
     }
 
     public void loadPlugins(String pluginsDirectory) {
