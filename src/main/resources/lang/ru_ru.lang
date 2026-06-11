@@ -36,6 +36,7 @@ xinbot.metaplugin.error.load_runtime=Невозможно загрузить Met
 xinbot.metaplugin.error.enable_runtime=Невозможно включить MetaPlugin во время работы!
 xinbot.metaplugin.error.disable_runtime=Невозможно отключить MetaPlugin во время работы!
 xinbot.metaplugin.error.unload_runtime=Невозможно выгрузить MetaPlugin во время работы!
+xinbot.metaplugin.error.unload_dependency_runtime=Невозможно выгрузить плагин %s во время работы: от него зависит MetaPlugin!
 xinbot.metaplugin.error.count=Для запуска бота должен быть ровно один MetaPlugin! (Найдено: %d)
 
 # LangManager messages

@@ -31,6 +31,7 @@ xinbot.metaplugin.error.load_runtime=不允許在運行過程中載入元外掛�
 xinbot.metaplugin.error.enable_runtime=不允許在運行過程中啟用元外掛程式！
 xinbot.metaplugin.error.disable_runtime=不允許在運行過程中停用元外掛程式！
 xinbot.metaplugin.error.unload_runtime=不允許在運行過程中卸載元外掛程式！
+xinbot.metaplugin.error.unload_dependency_runtime=不允許在運行過程中卸載外掛程式 %s：該外掛程式被元外掛程式依賴！
 xinbot.metaplugin.error.count=機器人啟動必須有且僅有一個元外掛程式！（當前找到：%d 個）
 xinbot.plugin.enabled=已啟用外掛程式：%s
 xinbot.plugin.disabled=已停用外掛程式：%s

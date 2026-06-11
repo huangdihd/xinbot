@@ -36,6 +36,7 @@ xinbot.metaplugin.error.load_runtime=MetaPlugin kann während der Laufzeit nicht
 xinbot.metaplugin.error.enable_runtime=MetaPlugin kann während der Laufzeit nicht aktiviert werden!
 xinbot.metaplugin.error.disable_runtime=MetaPlugin kann während der Laufzeit nicht deaktiviert werden!
 xinbot.metaplugin.error.unload_runtime=MetaPlugin kann während der Laufzeit nicht entladen werden!
+xinbot.metaplugin.error.unload_dependency_runtime=Plugin %s kann während der Laufzeit nicht entladen werden: das MetaPlugin hängt davon ab!
 xinbot.metaplugin.error.count=Der Bot muss genau ein MetaPlugin zum Starten haben! (Gefunden: %d)
 
 # LangManager messages

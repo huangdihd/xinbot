@@ -36,6 +36,7 @@ xinbot.metaplugin.error.load_runtime=不允许在运行过程中加载元插件�
 xinbot.metaplugin.error.enable_runtime=不允许在运行过程中启用元插件！
 xinbot.metaplugin.error.disable_runtime=不允许在运行过程中禁用元插件！
 xinbot.metaplugin.error.unload_runtime=不允许在运行过程中卸载元插件！
+xinbot.metaplugin.error.unload_dependency_runtime=不允许在运行过程中卸载插件 %s：该插件被元插件依赖！
 xinbot.metaplugin.error.count=机器人启动必须有且仅有一个元插件！（当前找到：%d 个）
 
 # LangManager messages

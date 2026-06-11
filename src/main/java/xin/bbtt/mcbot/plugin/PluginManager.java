@@ -432,6 +432,10 @@ public class PluginManager {
             return;
         }
         if (!plugins.containsKey(rp.getName())) return;
+        if (Bot.INSTANCE.isRunning() && isMetaPluginDependency(rp.getName())) {
+            log.error(LangManager.get("xinbot.metaplugin.error.unload_dependency_runtime", rp.getName()));
+            return;
+        }
 
         String pluginName = rp.getName();
         unloadDependents(pluginName);
@@ -454,6 +458,36 @@ public class PluginManager {
             if (plugins.containsKey(dependent.getName())) {
                 log.info(LangManager.get("xinbot.plugin.unload.dependent", dependent.getName(), pluginName));
                 unloadPlugin(dependent);
+            }
+        }
+    }
+
+    // A plugin the meta plugin (transitively) depends on shares the meta plugin's
+    // lifecycle restrictions: unloading it would tear down the meta plugin's
+    // classloader chain, so it must not be unloaded during runtime either.
+    private boolean isMetaPluginDependency(String pluginName) {
+        for (RegisteredPlugin p : plugins.values()) {
+            if (p instanceof RegisteredMetaPlugin
+                    && getTransitiveDependencies(p.getName()).contains(pluginName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getTransitiveDependencies(String pluginName) {
+        List<String> ordered = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        visited.add(pluginName);
+        collectDependencies(pluginName, visited, ordered);
+        return ordered;
+    }
+
+    private void collectDependencies(String pluginName, Set<String> visited, List<String> ordered) {
+        for (String dep : pluginDependencies.getOrDefault(pluginName, Collections.emptyList())) {
+            if (visited.add(dep)) {
+                collectDependencies(dep, visited, ordered);
+                ordered.add(dep);
             }
         }
     }
@@ -498,6 +532,11 @@ public class PluginManager {
     public void enableAll() {
         RegisteredMetaPlugin meta = getMetaPlugin();
         if (meta != null) {
+            // Dependencies must be enabled before the meta plugin itself.
+            for (String depName : getTransitiveDependencies(meta.getName())) {
+                RegisteredPlugin dep = plugins.get(depName);
+                if (dep != null) enablePlugin(dep);
+            }
             enablePlugin(meta);
         }
         for (RegisteredPlugin rp : plugins.values()) {
