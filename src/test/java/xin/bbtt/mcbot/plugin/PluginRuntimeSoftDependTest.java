@@ -3,12 +3,11 @@ package xin.bbtt.mcbot.plugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.BotTestState;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -39,12 +38,8 @@ class PluginRuntimeSoftDependTest {
 
         // Ensure no session/running state leaks in from other tests so loading does not
         // try to auto-enable the plugins (we only care about the classloader wiring here).
-        Field sessionField = Bot.class.getDeclaredField("session");
-        sessionField.setAccessible(true);
-        sessionField.set(Bot.INSTANCE, null);
-        Field runningField = Bot.class.getDeclaredField("running");
-        runningField.setAccessible(true);
-        runningField.set(Bot.INSTANCE, false);
+        BotTestState.clearSession();
+        BotTestState.setRunning(false);
     }
 
     private File createPluginJar(String fileName, String yml) throws Exception {

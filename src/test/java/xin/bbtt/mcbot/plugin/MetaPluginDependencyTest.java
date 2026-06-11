@@ -4,12 +4,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.BotTestState;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -33,19 +32,13 @@ class MetaPluginDependencyTest {
     void setUp() throws Exception {
         DummyMetaPlugin.reset();
         pluginManager = new PluginManager();
-        setBotField("session", null);
-        setBotField("running", false);
+        BotTestState.clearSession();
+        BotTestState.setRunning(false);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        setBotField("running", false);
-    }
-
-    private void setBotField(String name, Object value) throws Exception {
-        Field field = Bot.class.getDeclaredField(name);
-        field.setAccessible(true);
-        field.set(Bot.INSTANCE, value);
+        BotTestState.setRunning(false);
     }
 
     private void createPluginJar(String fileName, String yml, Class<?> mainClass) throws Exception {
@@ -112,7 +105,7 @@ class MetaPluginDependencyTest {
     @Test
     void metaPluginDependencyCannotBeUnloadedDuringRuntime() throws Exception {
         loadMetaWithDependency();
-        setBotField("running", true);
+        BotTestState.setRunning(true);
 
         pluginManager.unloadPlugin(pluginManager.getPlugin("LibPlugin"));
 
