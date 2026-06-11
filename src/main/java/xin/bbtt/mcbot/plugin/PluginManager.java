@@ -138,28 +138,20 @@ public class PluginManager {
         
         if (plugins.containsKey(info.name)) return;
 
-        PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{url}, PluginManager.class.getClassLoader());
-        pluginLoaders.put(info.name, pluginClassLoader);
-        pluginDependencies.put(info.name, info.depends);
+        // The startup batch loader refuses plugins with missing hard dependencies
+        // (topological sort excludes them); the runtime path must do the same instead
+        // of silently loading with a broken classloader chain.
+        for (String dep : info.depends) {
+            if (!plugins.containsKey(dep)) {
+                throw new IllegalArgumentException(LangManager.get("xinbot.plugin.dependency.missing", dep, info.name));
+            }
+        }
 
-        Plugin plugin;
-        try {
-            Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
-            plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            pluginLoaders.remove(info.name);
-            pluginDependencies.remove(info.name);
-            try { pluginClassLoader.close(); } catch (IOException ignored) {}
-            throw e;
-        }
-        
-        RegisteredPlugin rp;
-        if (info.type == PluginType.META_PLUGIN && plugin instanceof MetaPlugin) {
-            rp = new RegisteredMetaPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, (MetaPlugin) plugin);
-        } else {
-            rp = new RegisteredPlugin(info.name, info.version, info.mainClass, info.depends, info.file, url, plugin, PluginType.PLUGIN);
-        }
-        loadPlugin(rp);
+        info.file = pluginFile;
+        info.url = url;
+        // Delegate to the shared loader so runtime loads (e.g. `pm load`/`pm reload`)
+        // wire up the (soft)dependency classloader chain just like startup batch loading.
+        instantiateAndLoad(info);
     }
 
     public void loadPlugins(String pluginsDirectory) {
@@ -449,6 +441,10 @@ public class PluginManager {
             return;
         }
         if (!plugins.containsKey(rp.getName())) return;
+        if (Bot.INSTANCE.isRunning() && isMetaPluginDependency(rp.getName())) {
+            log.error(LangManager.get("xinbot.metaplugin.error.unload_dependency_runtime", rp.getName()));
+            return;
+        }
 
         String pluginName = rp.getName();
         unloadDependents(pluginName);
@@ -471,6 +467,36 @@ public class PluginManager {
             if (plugins.containsKey(dependent.getName())) {
                 log.info(LangManager.get("xinbot.plugin.unload.dependent", dependent.getName(), pluginName));
                 unloadPlugin(dependent);
+            }
+        }
+    }
+
+    // A plugin the meta plugin (transitively) depends on shares the meta plugin's
+    // lifecycle restrictions: unloading it would tear down the meta plugin's
+    // classloader chain, so it must not be unloaded during runtime either.
+    private boolean isMetaPluginDependency(String pluginName) {
+        for (RegisteredPlugin p : plugins.values()) {
+            if (p instanceof RegisteredMetaPlugin
+                    && getTransitiveDependencies(p.getName()).contains(pluginName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getTransitiveDependencies(String pluginName) {
+        List<String> ordered = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        visited.add(pluginName);
+        collectDependencies(pluginName, visited, ordered);
+        return ordered;
+    }
+
+    private void collectDependencies(String pluginName, Set<String> visited, List<String> ordered) {
+        for (String dep : pluginDependencies.getOrDefault(pluginName, Collections.emptyList())) {
+            if (visited.add(dep)) {
+                collectDependencies(dep, visited, ordered);
+                ordered.add(dep);
             }
         }
     }
@@ -515,6 +541,11 @@ public class PluginManager {
     public void enableAll() {
         RegisteredMetaPlugin meta = getMetaPlugin();
         if (meta != null) {
+            // Dependencies must be enabled before the meta plugin itself.
+            for (String depName : getTransitiveDependencies(meta.getName())) {
+                RegisteredPlugin dep = plugins.get(depName);
+                if (dep != null) enablePlugin(dep);
+            }
             enablePlugin(meta);
         }
         for (RegisteredPlugin rp : plugins.values()) {

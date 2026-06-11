@@ -36,6 +36,7 @@ xinbot.metaplugin.error.load_runtime=Cannot load MetaPlugin during runtime!
 xinbot.metaplugin.error.enable_runtime=Cannot enable MetaPlugin during runtime!
 xinbot.metaplugin.error.disable_runtime=Cannot disable MetaPlugin during runtime!
 xinbot.metaplugin.error.unload_runtime=Cannot unload MetaPlugin during runtime!
+xinbot.metaplugin.error.unload_dependency_runtime=Cannot unload plugin %s during runtime: the MetaPlugin depends on it!
 xinbot.metaplugin.error.count=Bot must have exactly one MetaPlugin to start! (Found: %d)
 
 # LangManager messages

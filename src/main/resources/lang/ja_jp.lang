@@ -36,6 +36,7 @@ xinbot.metaplugin.error.load_runtime=実行中に MetaPlugin を読み込むこ�
 xinbot.metaplugin.error.enable_runtime=実行中に MetaPlugin を有効にすることはできません！
 xinbot.metaplugin.error.disable_runtime=実行中に MetaPlugin を無効にすることはできません！
 xinbot.metaplugin.error.unload_runtime=実行中に MetaPlugin をアンロードすることはできません！
+xinbot.metaplugin.error.unload_dependency_runtime=実行中にプラグイン %s をアンロードすることはできません。MetaPlugin が依存しています！
 xinbot.metaplugin.error.count=ボットを開始するには、正確に1つの MetaPlugin が必要です！（見つかった数: %d）
 
 # LangManager messages
