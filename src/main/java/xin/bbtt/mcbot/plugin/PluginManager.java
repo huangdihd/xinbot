@@ -138,6 +138,15 @@ public class PluginManager {
         
         if (plugins.containsKey(info.name)) return;
 
+        // The startup batch loader refuses plugins with missing hard dependencies
+        // (topological sort excludes them); the runtime path must do the same instead
+        // of silently loading with a broken classloader chain.
+        for (String dep : info.depends) {
+            if (!plugins.containsKey(dep)) {
+                throw new IllegalArgumentException(LangManager.get("xinbot.plugin.dependency.missing", dep, info.name));
+            }
+        }
+
         info.file = pluginFile;
         info.url = url;
         // Delegate to the shared loader so runtime loads (e.g. `pm load`/`pm reload`)

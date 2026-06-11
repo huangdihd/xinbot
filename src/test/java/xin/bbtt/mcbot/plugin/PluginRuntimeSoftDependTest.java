@@ -14,6 +14,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Regression test for runtime plugin loading (e.g. the {@code pm load} / {@code pm reload}
@@ -104,5 +105,21 @@ class PluginRuntimeSoftDependTest {
 
         assertThat(pluginManager.getPlugin("AppPlugin")).isNotNull();
         assertThat(pluginManager.getPluginDependencies().get("AppPlugin")).doesNotContain("MissingPlugin");
+    }
+
+    @Test
+    void runtimeLoadRejectsMissingHardDependency() throws Exception {
+        File appJar = createPluginJar("app-plugin.jar",
+                "name: AppPlugin\nmain: xin.bbtt.mcbot.plugin.DummyPlugin\nversion: 1.0.0\n"
+                        + "depend: [MissingPlugin]\n");
+
+        // The startup batch loader refuses plugins with missing hard dependencies,
+        // so the runtime path must refuse them too instead of silently loading
+        // without the dependency wired in.
+        assertThatThrownBy(() -> pluginManager.loadPlugin(appJar))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThat(pluginManager.getPlugin("AppPlugin")).isNull();
+        assertThat(pluginManager.getPluginLoader("AppPlugin")).isNull();
     }
 }
