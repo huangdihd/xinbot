@@ -29,7 +29,12 @@ jobs:
           "xin.bbtt.mcbot.listeners.CommandsRecorderTest",
           "xin.bbtt.mcbot.plugin.PluginClassloaderLeakTest",
           "xin.bbtt.mcbot.config.BotConfigDataTest",
-          "xin.bbtt.mcbot.plugin.PluginYmlValidationTest"
+          "xin.bbtt.mcbot.plugin.PluginYmlValidationTest",
+          "xin.bbtt.mcbot.LoginFlow.LoginFlowTest",
+          "xin.bbtt.mcbot.LoginFlow.LoginFlowRealWorldTest",
+          "xin.bbtt.mcbot.modpack.ModpackTest",
+          "xin.bbtt.mcbot.plugin.MetaPluginDependencyTest",
+          "xin.bbtt.mcbot.plugin.PluginRuntimeSoftDependTest"
         ]
 
     steps:
