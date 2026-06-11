@@ -98,6 +98,14 @@ archive entry outside `plugins/` and `lang/`. The plugin directory is read from
 
 ---
 
+## Community
+
+- **QQ Group**: `434173700` — main community for users and players
+- **Telegram**: [t.me/xinbot_develop](https://t.me/xinbot_develop)
+- **Issues**: bug reports and feature requests are welcome on [GitHub Issues](https://github.com/huangdihd/xinbot/issues)
+
+---
+
 ## License
 GPL-3.0-or-later, see LICENSE for the full text.
 
