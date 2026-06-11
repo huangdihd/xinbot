@@ -90,6 +90,14 @@ java -jar xinbot.jar --help                     # 列出全部子命令
 
 安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/` 与 `lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
 
+## 社区
+
+- **QQ 群**: `434173700` — 用户与玩家交流主群
+- **Telegram**: [t.me/xinbot_develop](https://t.me/xinbot_develop)
+- **问题反馈**: 欢迎在 [GitHub Issues](https://github.com/huangdihd/xinbot/issues) 提交 bug 与新功能建议
+
+---
+
 ## 许可证
 GPL-3.0-or-later，详见 LICENSE。
 
