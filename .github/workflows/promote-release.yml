@@ -6,11 +6,15 @@ on:
       - master
     types:
       - closed
+  workflow_dispatch:
 
 jobs:
   promote:
-    # Only trigger when a PR within this repository is merged, ignore PRs from forks
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
+    # Allow an explicit recovery run, or a merged PR from this repository.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: master
           lfs: true
 
       - name: Set up JDK 17
@@ -28,19 +32,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          # Writes ~/.m2/settings.xml with a <server id="central"> entry and
-          # imports the signing key, both required by `mvn -Pcentral deploy`.
+          # Writes ~/.m2/settings.xml with the Central credentials referenced
+          # by the environment variables in the publish step.
           server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Change SNAPSHOT to RELEASE
         id: version
         env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_REF: master
           RUN_ATTEMPT: ${{ github.run_attempt }}
+          MANUAL_RUN: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Current version: $CURRENT_VERSION"
@@ -57,10 +60,10 @@ jobs:
             
             echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             echo "changed=true" >> "$GITHUB_OUTPUT"
-          elif [[ "$RUN_ATTEMPT" -gt 1 && "$CURRENT_VERSION" == *"-RELEASE" ]]; then
+          elif [[ "$CURRENT_VERSION" == *"-RELEASE" && ( "$RUN_ATTEMPT" -gt 1 || "$MANUAL_RUN" == "true" ) ]]; then
             # A previous attempt may have pushed the release version before a
             # later GitHub Release or Central step failed. Resume that version
-            # instead of silently skipping every step on workflow rerun.
+            # on a retry or an explicit manual recovery run.
             echo "Resuming release workflow for: $CURRENT_VERSION"
             echo "new_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -101,11 +104,12 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
         run: mvn -B -ntp -Pcentral clean deploy -DskipTests
 
       - name: Delete PR Head Branch
-        if: steps.version.outputs.changed == 'true'
+        if: steps.version.outputs.changed == 'true' && github.event_name == 'pull_request'
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
