@@ -28,11 +28,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+          # Writes ~/.m2/settings.xml with a <server id="central"> entry and
+          # imports the signing key, both required by `mvn -Pcentral deploy`.
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Change SNAPSHOT to RELEASE
         id: version
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
         run: |
           CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Current version: $CURRENT_VERSION"
@@ -49,6 +57,13 @@ jobs:
             
             echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$RUN_ATTEMPT" -gt 1 && "$CURRENT_VERSION" == *"-RELEASE" ]]; then
+            # A previous attempt may have pushed the release version before a
+            # later GitHub Release or Central step failed. Resume that version
+            # instead of silently skipping every step on workflow rerun.
+            echo "Resuming release workflow for: $CURRENT_VERSION"
+            echo "new_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "Version is not a SNAPSHOT version. Skipping."
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -64,12 +79,30 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ steps.version.outputs.new_version }}"
-          gh release create "$VERSION" \
-            --title "$VERSION" \
-            --draft \
-            --generate-notes \
-            target/xinbot-$VERSION.jar \
-            target/original-xinbot-$VERSION.jar
+          if gh release view "$VERSION" > /dev/null 2>&1; then
+            echo "Draft release $VERSION already exists; refreshing its assets."
+            gh release upload "$VERSION" \
+              --clobber \
+              target/xinbot-$VERSION.jar \
+              target/original-xinbot-$VERSION.jar
+          else
+            gh release create "$VERSION" \
+              --title "$VERSION" \
+              --draft \
+              --generate-notes \
+              target/xinbot-$VERSION.jar \
+              target/original-xinbot-$VERSION.jar
+          fi
+
+      # Runs after the draft release so a Central-side rejection does not cost
+      # the GitHub release that was already built and verified above.
+      - name: Publish to Maven Central
+        if: steps.version.outputs.changed == 'true'
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B -ntp -Pcentral clean deploy -DskipTests
 
       - name: Delete PR Head Branch
         if: steps.version.outputs.changed == 'true'

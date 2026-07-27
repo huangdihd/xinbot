@@ -9,10 +9,7 @@
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+/.idea/*
 *.iws
 *.iml
 *.ipr
@@ -43,3 +40,11 @@
 ### Mac OS ###
 .DS_Store
 .codegraph/
+
+### Secrets — never commit signing material
+*.asc
+*.gpg
+*.pgp
+*.rev
+*.p12
+secring.*

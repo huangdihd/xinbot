@@ -191,7 +191,7 @@ public class Bot {
                 return;
             }
         }
-        log.info(LangManager.get("xinbot.bot.connection.completed"));
+        if (running) log.info(LangManager.get("xinbot.bot.connection.completed"));
     }
 
     private void onDisconnect(Component reason) {
@@ -259,6 +259,7 @@ public class Bot {
         }
     }
 
+    @SuppressWarnings("unused")
     public void addPacketListener(SessionListener listener, Plugin plugin){
         getPluginManager().addListener(listener, plugin);
     }
@@ -279,6 +280,7 @@ public class Bot {
         toBeSentMessages.add(message);
     }
 
+    @SuppressWarnings("unused")
     public int getAndIncreaseSequence() {
         return this.sequence.getAndAdd(1);
     }
