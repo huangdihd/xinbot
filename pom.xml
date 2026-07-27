@@ -21,10 +21,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>xin.bbtt</groupId>
+    <groupId>top.shouldbe</groupId>
     <artifactId>xinbot</artifactId>
     <version>2.3.3-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <name>xinbot</name>
+    <description>A scriptable, plugin-extensible Minecraft bot client built on MCProtocolLib.</description>
+    <url>https://xinbot.shouldbe.top/</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>huangdihd</id>
+            <name>huangdihd</name>
+            <email>hd20100104@icloud.com</email>
+            <url>https://github.com/huangdihd</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/huangdihd/xinbot.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/huangdihd/xinbot.git</developerConnection>
+        <url>https://github.com/huangdihd/xinbot</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <repository>
@@ -235,7 +263,11 @@
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <shadedArtifactId>${project.artifactId}</shadedArtifactId>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <!-- Deployed POM must not carry the shaded-in deps: MCProtocolLib is a
+                                 SNAPSHOT hosted only on repo.opencollab.dev and would be unresolvable
+                                 for anyone consuming this from Maven Central. -->
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -258,7 +290,105 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Publish the pre-shade jar alongside the fat jar as the "thin" classifier.
+                 Declared after the shade plugin so it runs once original-*.jar exists. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-thin-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/original-${project.build.finalName}.jar</file>
+                                    <type>jar</type>
+                                    <classifier>thin</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- mvn -Pcentral deploy  ->  publishes to Maven Central via the Central Portal.
+             Left out of the default build so ordinary `mvn package` needs no GPG key. -->
+        <profile>
+            <id>central</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.12.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.11.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
