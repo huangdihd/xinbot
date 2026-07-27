@@ -369,10 +369,8 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
+                            <signer>bc</signer>
+                            <bestPractices>true</bestPractices>
                         </configuration>
                     </plugin>
                     <plugin>
