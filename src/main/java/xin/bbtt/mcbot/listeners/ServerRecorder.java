@@ -29,10 +29,31 @@ public class ServerRecorder extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (!(packet instanceof ClientboundLoginPacket loginPacket)) return;
-        Server newServer = Bot.INSTANCE.getPluginManager().getMetaPlugin().getServer(loginPacket);
-        ServerChangeEvent event = new ServerChangeEvent(newServer, Bot.INSTANCE.getServer());
-        if (newServer != null) Bot.INSTANCE.setServer(newServer);
-        Bot.INSTANCE.getPluginManager().events().callEvent(event);
+        Bot bot = Bot.INSTANCE;
+
+        if (session != bot.getSession()) {
+            return;
+        }
+
+        if (!(packet instanceof ClientboundLoginPacket loginPacket)) {
+            return;
+        }
+
+        Server oldServer = bot.getServer();
+        Server newServer = bot.getPluginManager()
+            .getMetaPlugin()
+            .getServer(loginPacket);
+
+        if (newServer == null) {
+            return;
+        }
+
+        bot.setServer(newServer);
+
+        bot.getPluginManager()
+            .events()
+            .callEvent(
+                new ServerChangeEvent(newServer, oldServer)
+            );
     }
 }

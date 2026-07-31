@@ -128,8 +128,8 @@ public class Bot {
             }
         }
         log.info(LangManager.get("xinbot.bot.starting", protocol.getProfile().getName()));
-        
-        java.util.concurrent.CompletableFuture.runAsync(this::connect);
+
+        scheduler.execute(this::connect);
         
         getInput();
     }
@@ -173,10 +173,16 @@ public class Bot {
     }
 
     private void connect() {
-        server = null;
-        serverReadyFuture = new CompletableFuture<>();
+        if (!running) {
+            return;
+        }
 
-        session = new ClientNetworkSession(
+        setServer(null);
+
+        CompletableFuture<Server> readyFuture = new CompletableFuture<>();
+        serverReadyFuture = readyFuture;
+
+        ClientNetworkSession newSession = new ClientNetworkSession(
             pluginManager.getMetaPlugin().getServerSocketAddress(),
             protocol,
             DefaultPacketHandlerExecutor.createExecutor(),
@@ -184,97 +190,157 @@ public class Bot {
             proxyInfo
         );
 
-        session.addListener(new SessionAdapter() {
+        session = newSession;
+
+        newSession.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
-                CompletableFuture<Server> future = serverReadyFuture;
-                if (future != null && !future.isDone()) {
-                    future.completeExceptionally(
-                        new IllegalStateException((Throwable) event.getReason())
-                    );
-                }
+                readyFuture.completeExceptionally(
+                    new IllegalStateException(
+                        Utils.toString(event.getReason())
+                    )
+                );
 
-                onDisconnect(event.getReason());
+                onDisconnect(newSession, event.getReason());
             }
         });
 
-        session.addListener(packetListener);
-        session.addListener(serverRecorder);
-        session.addListener(chatMessagePrinter);
-        session.addListener(messageSender);
-        session.addListener(blockChangedAckRecorder);
-        session.addListener(serverMembersChangedMessagePrinter);
-        session.addListener(commandsRecorder);
-
-        pluginManager.enableAll();
-
-        log.info(LangManager.get("xinbot.bot.connecting"));
-        getPluginManager().events().callEvent(new ConnectEvent());
-
-        session.connect();
+        newSession.addListener(packetListener);
+        newSession.addListener(serverRecorder);
+        newSession.addListener(chatMessagePrinter);
+        newSession.addListener(messageSender);
+        newSession.addListener(blockChangedAckRecorder);
+        newSession.addListener(serverMembersChangedMessagePrinter);
+        newSession.addListener(commandsRecorder);
 
         try {
-            serverReadyFuture.get(
+            pluginManager.enableAll();
+
+            log.info(LangManager.get("xinbot.bot.connecting"));
+            pluginManager.events().callEvent(new ConnectEvent());
+
+            newSession.connect();
+
+            Server connectedServer = readyFuture.get(
                 config.getConfigData().getReconnectTimeout(),
                 TimeUnit.MILLISECONDS
             );
 
-            if (running) {
-                log.info(LangManager.get("xinbot.bot.connection.completed"));
+            if (running && session == newSession) {
+                log.info(
+                    LangManager.get(
+                        "xinbot.bot.connection.completed",
+                        connectedServer
+                    )
+                );
             }
         } catch (TimeoutException e) {
-            disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
+            if (session == newSession) {
+                newSession.disconnect(
+                    LangManager.get("xinbot.bot.connection.timed.out")
+                );
+            }
+        } catch (ExecutionException e) {
+            if (running && session == newSession) {
+                log.warn("Connection failed", e.getCause());
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            log.warn(
-                "Connection failed",
-                e.getCause()
-            );
+        } catch (Exception e) {
+            readyFuture.completeExceptionally(e);
+
+            if (session == newSession) {
+                log.error("Failed to initialize connection", e);
+
+                if (newSession.isConnected()) {
+                    newSession.disconnect(e.getMessage());
+                } else {
+                    onDisconnect(
+                        newSession,
+                        Component.text(
+                            e.getMessage() == null
+                                ? e.getClass().getSimpleName()
+                                : e.getMessage()
+                        )
+                    );
+                }
+            }
+        } finally {
+            if (serverReadyFuture == readyFuture) {
+                serverReadyFuture = null;
+            }
         }
     }
 
-    private void onDisconnect(Component reason) {
+    private void onDisconnect(
+        ClientSession disconnectedSession,
+        Component reason
+    ) {
+        disconnectedSession.removeListener(packetListener);
+        disconnectedSession.removeListener(serverRecorder);
+        disconnectedSession.removeListener(chatMessagePrinter);
+        disconnectedSession.removeListener(messageSender);
+        disconnectedSession.removeListener(blockChangedAckRecorder);
+        disconnectedSession.removeListener(serverMembersChangedMessagePrinter);
+        disconnectedSession.removeListener(commandsRecorder);
+
+        // 这是旧连接的延迟回调，不应该影响当前连接
+        if (session != disconnectedSession) {
+            return;
+        }
+
+        session = null;
+
         DisconnectEvent event = new DisconnectEvent(reason);
-        getPluginManager().events().callEvent(event);
+        pluginManager.events().callEvent(event);
 
         String reasonStr = Utils.toString(reason);
         String translatedReason = reasonStr;
+
         if (reasonStr.toLowerCase().contains("timed out")) {
             translatedReason = LangManager.get("xinbot.disconnect.timeout");
         } else if (reasonStr.toLowerCase().contains("end of stream")) {
-            translatedReason = LangManager.get("xinbot.disconnect.endOfStream");
+            translatedReason = LangManager.get(
+                "xinbot.disconnect.endOfStream"
+            );
         }
 
-        log.info(LangManager.get("xinbot.bot.disconnect.reason", parseColors(translatedReason)));
+        log.info(
+            LangManager.get(
+                "xinbot.bot.disconnect.reason",
+                parseColors(translatedReason)
+            )
+        );
 
         players.clear();
         pluginManager.disableAll();
-        session.removeListener(packetListener);
-        session.removeListener(serverRecorder);
-        session.removeListener(chatMessagePrinter);
-        session.removeListener(messageSender);
-        session.removeListener(blockChangedAckRecorder);
-        session.removeListener(serverMembersChangedMessagePrinter);
-        session.removeListener(commandsRecorder);
-        server = null;
-        if (!running) return;
+        setServer(null);
+
+        if (!running) {
+            return;
+        }
 
         protocol = AccountLoader.getProtocol();
 
         long delay = config.getConfigData().getReconnectDelay();
+
         if (delay > 0) {
             log.info(LangManager.get("xinbot.bot.reconnecting", delay));
-            scheduler.schedule(() -> {
-                if (running) connect();
-            }, delay, TimeUnit.MILLISECONDS);
-        } else {
-            connect();
         }
+
+        scheduler.schedule(
+            this::connect,
+            Math.max(0, delay),
+            TimeUnit.MILLISECONDS
+        );
     }
 
     public void disconnect(String reason){
-        session.disconnect(reason);
+        ClientSession currentSession = session;
+
+        if (currentSession != null) {
+            currentSession.disconnect(reason);
+        }
     }
 
     public void reloadConfig(String configPath) throws Exception {
