@@ -220,3 +220,4 @@ xinbot.modpack.info.failed=Failed to read modpack info: %s
 # Updates
 xinbot.update.checking=Checking for Xinbot updates...
 xinbot.update.newversion=A new version of Xinbot, %s, is available. See %s for more details.
+xinbot.update.checking.failed=Failed to check for updates: %s
