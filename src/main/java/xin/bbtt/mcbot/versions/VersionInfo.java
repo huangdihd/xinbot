@@ -1,6 +1,5 @@
-
 /*
- * Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2026 huangdihd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +15,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package xin.bbtt.mcbot.event;
+package xin.bbtt.mcbot.versions;
 
-import xin.bbtt.mcbot.plugin.Plugin;
+import java.net.URI;
+import java.time.Instant;
+import java.util.Objects;
 
-public record RegisteredListener(Plugin plugin, Listener listener, EventPriority priority,
-                          EventExecutor executor, HandlerList handlerList) {
-    void callEvent(Event event) throws Exception {
-        executor.execute(listener, event);
+public record VersionInfo(
+    Version latestVersion,
+    URI downloadUrl,
+    URI releaseUrl,
+    Instant updatedAt
+) {
+    public VersionInfo {
+        Objects.requireNonNull(latestVersion, "latestVersion");
+        Objects.requireNonNull(downloadUrl, "downloadUrl");
+        Objects.requireNonNull(releaseUrl, "releaseUrl");
+        Objects.requireNonNull(updatedAt, "updatedAt");
     }
 }

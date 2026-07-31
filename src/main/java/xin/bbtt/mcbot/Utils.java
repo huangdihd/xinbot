@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot;
@@ -21,7 +21,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -100,41 +99,32 @@ public class Utils {
     }
 
     public static ArrayList<String> toStrings(Component component, NamedTextColor defaultColor) {
-        ArrayList<String> result = new ArrayList<>();
+
+        String content = "";
 
         if (component instanceof TranslatableComponent translatable) {
             Object[] args = translatable.arguments().stream()
                     .map(arg -> Utils.toString(arg.asComponent()))
                     .toArray();
-            String text = LangManager.get(translatable.key(), args);
-            if (!text.isEmpty()) {
-                StringBuilder colorCode = new StringBuilder();
-                TextColor textColor = translatable.color();
-                if (textColor instanceof NamedTextColor namedTextColor) {
-                    colorCode.append(colorCodeMap.getOrDefault(namedTextColor, ""));
-                    defaultColor = namedTextColor;
-                } else {
-                    colorCode.append(colorCodeMap.getOrDefault(defaultColor, ""));
-                }
-                colorCode.append(getStyleAnsi(translatable));
-                colorCode.append(text);
-                result.add(colorCode.toString());
-            }
+            content = LangManager.get(translatable.key(), args);
         }
         else if (component instanceof TextComponent textComponent) {
-            String content = textComponent.content();
-            TextColor textColor = textComponent.color();
-            StringBuilder colorCode = new StringBuilder();
-            if (textColor instanceof NamedTextColor namedTextColor) {
-                colorCode.append(colorCodeMap.getOrDefault(namedTextColor, ""));
+            content = textComponent.content();
+        }
+
+        ArrayList<String> result = new ArrayList<>();
+
+        if (!content.isEmpty()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (component.color() instanceof NamedTextColor namedTextColor) {
+                stringBuilder.append(colorCodeMap.getOrDefault(namedTextColor, ""));
                 defaultColor = namedTextColor;
+            } else {
+                stringBuilder.append(colorCodeMap.getOrDefault(defaultColor, ""));
             }
-            else {
-                colorCode.append(colorCodeMap.getOrDefault(defaultColor, ""));
-            }
-            colorCode.append(getStyleAnsi(textComponent));
-            colorCode.append(content);
-            result.add(colorCode.toString());
+            stringBuilder.append(getStyleAnsi(component));
+            stringBuilder.append(content);
+            result.add(stringBuilder.toString());
         }
 
         for (Component child : component.children()) {
@@ -210,6 +200,7 @@ public class Utils {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName).getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
+    @SuppressWarnings("unused")
     public static HashedStack itemStackToHashedStack(ItemStack itemStack) {
         if (itemStack == null || itemStack.getId() == 0) {
             return new HashedStack(0, 0, Map.of(), Set.of());

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2026 huangdihd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.listeners;
 
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
@@ -25,11 +42,11 @@ class CommandsRecorderTest {
                 OptionalInt.empty(), name, null, null, null);
     }
 
-    private static ClientboundCommandsPacket commandsPacket(String... names) {
-        CommandNode[] nodes = new CommandNode[names.length + 1];
-        int[] childIndices = new int[names.length];
-        for (int i = 0; i < names.length; i++) {
-            nodes[i + 1] = literal(names[i]);
+    private static ClientboundCommandsPacket commandsPacket() {
+        CommandNode[] nodes = new CommandNode[new String[]{"tp", "gamemode"}.length + 1];
+        int[] childIndices = new int[new String[]{"tp", "gamemode"}.length];
+        for (int i = 0; i < new String[]{"tp", "gamemode"}.length; i++) {
+            nodes[i + 1] = literal(new String[]{"tp", "gamemode"}[i]);
             childIndices[i] = i + 1;
         }
         nodes[0] = root(childIndices);
@@ -39,7 +56,7 @@ class CommandsRecorderTest {
     @Test
     void rebuildsRootCommandsWithoutAccumulatingOnReconnect() {
         CommandsRecorder recorder = new CommandsRecorder();
-        ClientboundCommandsPacket packet = commandsPacket("tp", "gamemode");
+        ClientboundCommandsPacket packet = commandsPacket();
 
         // First commands packet from the server.
         recorder.packetReceived(null, packet);

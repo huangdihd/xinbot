@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot.LoginFlow;
@@ -106,6 +106,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
      * Marks this step as a login command step.
      * When the command is sent, a {@link xin.bbtt.mcbot.events.SendLoginCommandEvent} will be fired.
      */
+    @SuppressWarnings("unused")
     public LoginFlowStepBuilder<T> login() {
         this.commandType = LoginFlowStep.CommandType.LOGIN;
         return this;
@@ -115,6 +116,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
      * Marks this step as a register command step.
      * When the command is sent, a {@link xin.bbtt.mcbot.events.SendRegisterCommandEvent} will be fired.
      */
+    @SuppressWarnings("unused")
     public LoginFlowStepBuilder<T> register() {
         this.commandType = LoginFlowStep.CommandType.REGISTER;
         return this;
@@ -127,6 +129,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
      *
      * @param predicate the skip condition
      */
+    @SuppressWarnings("unused")
     public LoginFlowStepBuilder<T> skipWhen(Predicate<T> predicate) {
         this.skipPredicate = predicate;
         return this;
@@ -141,7 +144,7 @@ public class LoginFlowStepBuilder<T extends Packet> {
             packetClass, predicate, commandTemplate,
             (Class) successPacketClass, (Predicate) successPredicate,
             onSuccess, description, commandType,
-            (Predicate) skipPredicate
+            skipPredicate
         ));
         return parent;
     }

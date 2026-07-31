@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot;
@@ -23,6 +23,9 @@ import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.cli.Cli;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.versions.UpdateChecker;
+import xin.bbtt.mcbot.versions.Version;
+import xin.bbtt.mcbot.versions.VersionInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +40,8 @@ import java.nio.file.StandardCopyOption;
 public class Xinbot {
     private static final Logger log = LoggerFactory.getLogger(Xinbot.class.getSimpleName());
 
-    public static final String version = Optional.ofNullable(Xinbot.class.getPackage().getImplementationVersion()).orElse("dev");
-    public static final String license = """
+    public static final Version VERSION = Version.from(Optional.ofNullable(Xinbot.class.getPackage().getImplementationVersion()).orElse("0.0.0-DEV"));
+    public static final String LICENSE = """
             Copyright (C) 2024-2026 huangdihd
             This program is free software: you can redistribute it and/or modify
             it under the terms of the GNU General Public License as published by
@@ -93,6 +96,14 @@ public class Xinbot {
         }
     }
 
+    private static void checkForUpdates() {
+        log.info(LangManager.get("xinbot.update.checking"));
+        VersionInfo latestVersionInfo = UpdateChecker.fetchLatestVersionInfo();
+        if (latestVersionInfo.latestVersion().isNewerThan(VERSION)) {
+            log.info(LangManager.get("xinbot.update.newversion", latestVersionInfo.latestVersion(), latestVersionInfo.releaseUrl()));
+        }
+    }
+
 
     public static void main(String[] args){
         BotConfig config = null;
@@ -138,7 +149,7 @@ public class Xinbot {
         // Initialize minecraft language
         if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();
 
-        log.info(LangManager.get("xinbot.version", version));
+        log.info(LangManager.get("xinbot.version", VERSION));
 
         // Initialize the plugin directory
         File pluginDir = new File(config.getConfigData().getPlugin().getDirectory());
@@ -159,6 +170,14 @@ public class Xinbot {
         }
         catch (Exception e) {
             log.error(LangManager.get("xinbot.config.save.failed"), e);
+        }
+
+        // Check for updates
+        try {
+            if (config.getConfigData().getCheckForUpdates()) checkForUpdates();
+        }
+        catch (Exception e) {
+            log.error(LangManager.get("xinbot.update.checking.failed"), e);
         }
 
         // Initialize the bot
