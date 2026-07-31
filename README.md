@@ -33,7 +33,7 @@
 English / [简体中文](README_CN.md)
 
 ## Demonstration
-[![asciicast](https://asciinema.org/a/BEV8M98rQ9oAko3d.svg)](https://asciinema.org/a/BEV8M98rQ9oAko3d)
+[![asciicast](https://asciinema.org/a/AerrrnFkYGqLboa0.svg)](https://asciinema.org/a/AerrrnFkYGqLboa0)
 
 ## ⚠️ Important Note
 Starting from 2.0.0, Xinbot must have a MetaPlugin installed to start and interact with the server. The purpose of a MetaPlugin is to handle server-specific interaction logic (such as login handshakes, auto-reconnect, etc.), allowing the core framework to remain generic.
