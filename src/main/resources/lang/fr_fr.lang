@@ -168,3 +168,6 @@ xinbot.modpack.info.xinbot_version=Version de Xinbot : %s
 xinbot.modpack.info.plugins=Plugins : %s
 xinbot.modpack.info.failed=Échec de la lecture des informations du modpack : %s
 
+xinbot.update.checking=Vérification des mises à jour de Xinbot...
+xinbot.update.newversion=Une nouvelle version de Xinbot, %s, est disponible. Consultez %s pour plus de détails.
+xinbot.update.checking.failed=Échec de la vérification des mises à jour : %s

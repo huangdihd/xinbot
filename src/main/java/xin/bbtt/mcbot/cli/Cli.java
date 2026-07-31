@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot.cli;
@@ -96,12 +96,12 @@ public final class Cli {
     // ---- handlers --------------------------------------------------------
 
     private boolean version() {
-        log.info(LangManager.get("xinbot.version", Xinbot.version));
+        log.info(LangManager.get("xinbot.version", Xinbot.VERSION));
         return true;
     }
 
     private boolean license() {
-        Arrays.stream(Xinbot.license.split("\n")).forEach(log::info);
+        Arrays.stream(Xinbot.LICENSE.split("\n")).forEach(log::info);
         return true;
     }
 
@@ -124,7 +124,7 @@ public final class Cli {
     private static boolean export(String[] args) {
         Path outZip = Paths.get(args[0]);
         String name = outZip.getFileName().toString().replaceFirst("(?i)\\.zip$", "");
-        ModpackManifest manifest = new ModpackManifest(name, "1.0.0", null, null, Xinbot.version, null);
+        ModpackManifest manifest = new ModpackManifest(name, "1.0.0", null, null, Xinbot.VERSION.toString(), null);
         try {
             ModpackExporter.export(outZip, Paths.get(resolvePluginDirectory()), Paths.get(LANG_DIR), manifest);
             return true;

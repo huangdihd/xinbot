@@ -168,3 +168,6 @@ xinbot.modpack.info.xinbot_version=Версия Xinbot: %s
 xinbot.modpack.info.plugins=Плагины: %s
 xinbot.modpack.info.failed=Не удалось прочитать информацию о модпаке: %s
 
+xinbot.update.checking=Проверка обновлений Xinbot...
+xinbot.update.newversion=Доступна новая версия Xinbot — %s. Подробности: %s.
+xinbot.update.checking.failed=Не удалось проверить обновления: %s

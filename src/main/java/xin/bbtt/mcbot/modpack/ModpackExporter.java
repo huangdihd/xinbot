@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot.modpack;
@@ -57,7 +57,7 @@ public class ModpackExporter {
         if (outZip.getParent() != null) Files.createDirectories(outZip.getParent());
 
         try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(outZip))) {
-            writeEntry(zos, ModpackManifest.FILE_NAME, effective.toYaml().getBytes(StandardCharsets.UTF_8));
+            writeEntry(zos, effective.toYaml().getBytes(StandardCharsets.UTF_8));
             for (String jar : jarNames) copyEntry(zos, "plugins/" + jar, pluginDir.resolve(jar));
             for (String lang : langNames) copyEntry(zos, "lang/" + lang, langDir.resolve(lang));
         }
@@ -90,8 +90,8 @@ public class ModpackExporter {
         return names;
     }
 
-    private static void writeEntry(ZipOutputStream zos, String name, byte[] data) throws IOException {
-        zos.putNextEntry(new ZipEntry(name));
+    private static void writeEntry(ZipOutputStream zos, byte[] data) throws IOException {
+        zos.putNextEntry(new ZipEntry(ModpackManifest.FILE_NAME));
         zos.write(data);
         zos.closeEntry();
     }

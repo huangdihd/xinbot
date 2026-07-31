@@ -1,24 +1,23 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.ClientSession;
@@ -72,8 +71,21 @@ public class Bot {
     private final Queue<String> toBeSentMessages = new ConcurrentLinkedQueue<>();
     public static final Bot INSTANCE = new Bot();
     @Getter
-    @Setter
     private volatile Server server = null;
+
+    public void setServer(Server server) {
+        this.server = server;
+
+        if (server == null) {
+            return;
+        }
+
+        CompletableFuture<Server> future = serverReadyFuture;
+        if (future != null) {
+            future.complete(server);
+        }
+    }
+
     public final Map<UUID, GameProfile> players = new ConcurrentHashMap<>();
     private final PacketListener packetListener = new PacketListener();
     private final ServerRecorder serverRecorder = new ServerRecorder();
@@ -82,6 +94,7 @@ public class Bot {
     private final BlockChangedAckRecorder blockChangedAckRecorder = new BlockChangedAckRecorder();
     private final ServerMembersChangedMessagePrinter serverMembersChangedMessagePrinter = new ServerMembersChangedMessagePrinter();
     private final CommandsRecorder commandsRecorder = new CommandsRecorder();
+    private volatile CompletableFuture<Server> serverReadyFuture;
     @Getter
     private final AtomicInteger sequence = new AtomicInteger(0);
 
@@ -115,8 +128,8 @@ public class Bot {
             }
         }
         log.info(LangManager.get("xinbot.bot.starting", protocol.getProfile().getName()));
-        
-        java.util.concurrent.CompletableFuture.runAsync(this::connect);
+
+        scheduler.execute(this::connect);
         
         getInput();
     }
@@ -159,82 +172,175 @@ public class Bot {
         }
     }
 
-    private void connect(){
-        session = new ClientNetworkSession( pluginManager.getMetaPlugin().getServerSocketAddress(), protocol, DefaultPacketHandlerExecutor.createExecutor(), null, proxyInfo);
-        session.addListener(new SessionAdapter() {
+    private void connect() {
+        if (!running) {
+            return;
+        }
+
+        setServer(null);
+
+        CompletableFuture<Server> readyFuture = new CompletableFuture<>();
+        serverReadyFuture = readyFuture;
+
+        ClientNetworkSession newSession = new ClientNetworkSession(
+            pluginManager.getMetaPlugin().getServerSocketAddress(),
+            protocol,
+            DefaultPacketHandlerExecutor.createExecutor(),
+            null,
+            proxyInfo
+        );
+
+        session = newSession;
+
+        newSession.addListener(new SessionAdapter() {
             @Override
             public void disconnected(DisconnectedEvent event) {
-                onDisconnect(event.getReason());
+                readyFuture.completeExceptionally(
+                    new IllegalStateException(
+                        Utils.toString(event.getReason())
+                    )
+                );
+
+                onDisconnect(newSession, event.getReason());
             }
         });
-        session.addListener(packetListener);
-        session.addListener(serverRecorder);
-        session.addListener(chatMessagePrinter);
-        session.addListener(messageSender);
-        session.addListener(blockChangedAckRecorder);
-        session.addListener(serverMembersChangedMessagePrinter);
-        session.addListener(commandsRecorder);
-        pluginManager.enableAll();
-        log.info(LangManager.get("xinbot.bot.connecting"));
-        getPluginManager().events().callEvent(new ConnectEvent());
-        session.connect();
-        long start_time = System.currentTimeMillis();
-        while (server == null && running){
-            if (System.currentTimeMillis() - start_time > config.getConfigData().getReconnectTimeout()) {
-                disconnect(LangManager.get("xinbot.bot.connection.timed.out"));
-                break;
+
+        newSession.addListener(packetListener);
+        newSession.addListener(serverRecorder);
+        newSession.addListener(chatMessagePrinter);
+        newSession.addListener(messageSender);
+        newSession.addListener(blockChangedAckRecorder);
+        newSession.addListener(serverMembersChangedMessagePrinter);
+        newSession.addListener(commandsRecorder);
+
+        try {
+            pluginManager.enableAll();
+
+            log.info(LangManager.get("xinbot.bot.connecting"));
+            pluginManager.events().callEvent(new ConnectEvent());
+
+            newSession.connect();
+
+            Server connectedServer = readyFuture.get(
+                config.getConfigData().getReconnectTimeout(),
+                TimeUnit.MILLISECONDS
+            );
+
+            if (running && session == newSession) {
+                log.info(
+                    LangManager.get(
+                        "xinbot.bot.connection.completed",
+                        connectedServer
+                    )
+                );
             }
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
+        } catch (TimeoutException e) {
+            if (session == newSession) {
+                newSession.disconnect(
+                    LangManager.get("xinbot.bot.connection.timed.out")
+                );
+            }
+        } catch (ExecutionException e) {
+            if (running && session == newSession) {
+                log.warn("Connection failed", e.getCause());
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            readyFuture.completeExceptionally(e);
+
+            if (session == newSession) {
+                log.error("Failed to initialize connection", e);
+
+                if (newSession.isConnected()) {
+                    newSession.disconnect(e.getMessage());
+                } else {
+                    onDisconnect(
+                        newSession,
+                        Component.text(
+                            e.getMessage() == null
+                                ? e.getClass().getSimpleName()
+                                : e.getMessage()
+                        )
+                    );
+                }
+            }
+        } finally {
+            if (serverReadyFuture.equals(readyFuture)) {
+                serverReadyFuture = null;
             }
         }
-        if (running) log.info(LangManager.get("xinbot.bot.connection.completed"));
     }
 
-    private void onDisconnect(Component reason) {
+    private void onDisconnect(
+        ClientSession disconnectedSession,
+        Component reason
+    ) {
+        disconnectedSession.removeListener(packetListener);
+        disconnectedSession.removeListener(serverRecorder);
+        disconnectedSession.removeListener(chatMessagePrinter);
+        disconnectedSession.removeListener(messageSender);
+        disconnectedSession.removeListener(blockChangedAckRecorder);
+        disconnectedSession.removeListener(serverMembersChangedMessagePrinter);
+        disconnectedSession.removeListener(commandsRecorder);
+
+        // 这是旧连接的延迟回调，不应该影响当前连接
+        if (session != disconnectedSession) {
+            return;
+        }
+
+        session = null;
+
         DisconnectEvent event = new DisconnectEvent(reason);
-        getPluginManager().events().callEvent(event);
+        pluginManager.events().callEvent(event);
 
         String reasonStr = Utils.toString(reason);
         String translatedReason = reasonStr;
+
         if (reasonStr.toLowerCase().contains("timed out")) {
             translatedReason = LangManager.get("xinbot.disconnect.timeout");
         } else if (reasonStr.toLowerCase().contains("end of stream")) {
-            translatedReason = LangManager.get("xinbot.disconnect.endOfStream");
+            translatedReason = LangManager.get(
+                "xinbot.disconnect.endOfStream"
+            );
         }
 
-        log.info(LangManager.get("xinbot.bot.disconnect.reason", parseColors(translatedReason)));
+        log.info(
+            LangManager.get(
+                "xinbot.bot.disconnect.reason",
+                parseColors(translatedReason)
+            )
+        );
 
         players.clear();
         pluginManager.disableAll();
-        session.removeListener(packetListener);
-        session.removeListener(serverRecorder);
-        session.removeListener(chatMessagePrinter);
-        session.removeListener(messageSender);
-        session.removeListener(blockChangedAckRecorder);
-        session.removeListener(serverMembersChangedMessagePrinter);
-        session.removeListener(commandsRecorder);
-        server = null;
-        if (!running) return;
+        setServer(null);
+
+        if (!running) {
+            return;
+        }
 
         protocol = AccountLoader.getProtocol();
 
         long delay = config.getConfigData().getReconnectDelay();
+
         if (delay > 0) {
             log.info(LangManager.get("xinbot.bot.reconnecting", delay));
-            scheduler.schedule(() -> {
-                if (running) connect();
-            }, delay, TimeUnit.MILLISECONDS);
-        } else {
-            connect();
         }
+
+        scheduler.schedule(
+            this::connect,
+            Math.max(0, delay),
+            TimeUnit.MILLISECONDS
+        );
     }
 
     public void disconnect(String reason){
-        session.disconnect(reason);
+        ClientSession currentSession = session;
+
+        if (currentSession != null) {
+            currentSession.disconnect(reason);
+        }
     }
 
     public void reloadConfig(String configPath) throws Exception {

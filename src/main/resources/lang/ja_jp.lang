@@ -168,3 +168,6 @@ xinbot.modpack.info.xinbot_version=Xinbot バージョン: %s
 xinbot.modpack.info.plugins=プラグイン: %s
 xinbot.modpack.info.failed=モッドパック情報の読み込みに失敗しました: %s
 
+xinbot.update.checking=Xinbot の更新を確認しています...
+xinbot.update.newversion=Xinbot の新しいバージョン %s が利用可能です。詳細は %s をご覧ください。
+xinbot.update.checking.failed=更新の確認に失敗しました: %s

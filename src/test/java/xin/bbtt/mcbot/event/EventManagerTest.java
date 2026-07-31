@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2026 huangdihd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.event;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +40,8 @@ public class EventManagerTest {
 
     public static class TestEvent extends Event {
         private static final HandlerList handlers = new HandlerList();
-        
+
+        @SuppressWarnings("unused")
         public static HandlerList getHandlerList() {
             return handlers;
         }
@@ -38,21 +56,25 @@ public class EventManagerTest {
         public List<String> callOrder = new ArrayList<>();
 
         @EventHandler(priority = EventPriority.NORMAL)
+        @SuppressWarnings("unused")
         public void onNormal(TestEvent event) {
             callOrder.add("NORMAL");
         }
 
         @EventHandler(priority = EventPriority.LOWEST)
+        @SuppressWarnings("unused")
         public void onLowest(TestEvent event) {
             callOrder.add("LOWEST");
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
+        @SuppressWarnings("unused")
         public void onMonitor(TestEvent event) {
             callOrder.add("MONITOR");
         }
         
         @EventHandler(priority = EventPriority.HIGHEST)
+        @SuppressWarnings("unused")
         public void onHighest(TestEvent event) {
             callOrder.add("HIGHEST");
         }

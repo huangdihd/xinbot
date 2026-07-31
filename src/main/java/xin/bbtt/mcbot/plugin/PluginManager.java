@@ -1,18 +1,18 @@
 /*
- *   Copyright (C) 2024-2026 huangdihd
+ * Copyright (C) 2024-2026 huangdihd
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package xin.bbtt.mcbot.plugin;
@@ -61,6 +61,7 @@ public class PluginManager {
     public void registerEvents(Listener listener, Plugin plugin) {
         eventManager.registerEvents(listener, plugin);
     }
+    @SuppressWarnings("unused")
     public void registerCommand(Command command, CommandExecutor executor, Plugin plugin) {
         commandManager.registerCommand(command, executor, plugin);
     }
@@ -198,6 +199,10 @@ public class PluginManager {
     }
 
     private void instantiateAndLoad(PluginInfo info) throws Exception {
+        if (plugins.containsKey(info.name)) {
+            return;
+        }
+
         List<String> effectiveDepends = new ArrayList<>(info.depends);
         for (String softDep : info.softDepends) {
             if (pluginLoaders.containsKey(softDep) || plugins.containsKey(softDep)) {
@@ -230,15 +235,11 @@ public class PluginManager {
             Class<?> clazz = Class.forName(info.mainClass, true, pluginClassLoader);
             plugin = (Plugin) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
+            //noinspection resource
             pluginLoaders.remove(info.name);
             pluginDependencies.remove(info.name);
             try { pluginClassLoader.close(); } catch (IOException ignored) {}
             throw e;
-        }
-        
-        if (plugins.containsKey(info.name)) {
-            pluginClassLoader.close();
-            return;
         }
         
         RegisteredPlugin rp;

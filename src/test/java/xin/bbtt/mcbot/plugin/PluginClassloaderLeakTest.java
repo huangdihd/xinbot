@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2026 huangdihd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.plugin;
 
 import org.junit.jupiter.api.Test;
@@ -21,11 +38,11 @@ class PluginClassloaderLeakTest {
     @TempDir
     Path tempDir;
 
-    private File createJar(String ymlContent) throws Exception {
+    private File createJar() throws Exception {
         File file = tempDir.resolve("bad-plugin.jar").toFile();
         try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(file))) {
             jos.putNextEntry(new JarEntry("plugin.yml"));
-            jos.write(ymlContent.getBytes());
+            jos.write("name: LeakTest\nmain: xin.bbtt.mcbot.plugin.NoSuchPluginClass\nversion: 1.0.0\n".getBytes());
             jos.closeEntry();
         }
         return file;
@@ -36,7 +53,7 @@ class PluginClassloaderLeakTest {
         PluginManager pluginManager = new PluginManager();
         // Valid plugin.yml, but 'main' points to a class that does not exist,
         // so Class.forName fails after the classloader has been registered.
-        File jar = createJar("name: LeakTest\nmain: xin.bbtt.mcbot.plugin.NoSuchPluginClass\nversion: 1.0.0\n");
+        File jar = createJar();
 
         assertThatThrownBy(() -> pluginManager.loadPlugin(jar)).isInstanceOf(Exception.class);
 

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2026 huangdihd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.plugin;
 
 import org.junit.jupiter.api.AfterEach;
@@ -64,11 +81,20 @@ class MetaPluginDependencyTest {
 
     private void loadMetaWithDependency() throws Exception {
         createPluginJar("lib-plugin.jar",
-                "name: LibPlugin\nmain: xin.bbtt.mcbot.plugin.DummyLibPlugin\nversion: 1.0.0\n",
+            """
+                name: LibPlugin
+                main: xin.bbtt.mcbot.plugin.DummyLibPlugin
+                version: 1.0.0
+                """,
                 DummyLibPlugin.class);
         createPluginJar("meta-plugin.jar",
-                "name: TestMeta\nmain: xin.bbtt.mcbot.plugin.DummyMetaPlugin\nversion: 1.0.0\n"
-                        + "type: META_PLUGIN\ndepend: [LibPlugin]\n",
+            """
+                name: TestMeta
+                main: xin.bbtt.mcbot.plugin.DummyMetaPlugin
+                version: 1.0.0
+                type: META_PLUGIN
+                depend: [LibPlugin]
+                """,
                 DummyMetaPlugin.class);
         pluginManager.loadPlugins(tempDir.toString());
     }

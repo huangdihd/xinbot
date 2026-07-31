@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2026 huangdihd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package xin.bbtt.mcbot.plugin;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -67,10 +84,18 @@ class PluginRuntimeSoftDependTest {
     @Test
     void runtimeLoadWiresPresentSoftDependency() throws Exception {
         File libJar = createPluginJar("lib-plugin.jar",
-                "name: LibPlugin\nmain: xin.bbtt.mcbot.plugin.DummyPlugin\nversion: 1.0.0\n");
+            """
+                name: LibPlugin
+                main: xin.bbtt.mcbot.plugin.DummyPlugin
+                version: 1.0.0
+                """);
         File appJar = createPluginJar("app-plugin.jar",
-                "name: AppPlugin\nmain: xin.bbtt.mcbot.plugin.DummyPlugin\nversion: 1.0.0\n"
-                        + "softdepend: [LibPlugin]\n");
+            """
+                name: AppPlugin
+                main: xin.bbtt.mcbot.plugin.DummyPlugin
+                version: 1.0.0
+                softdepend: [LibPlugin]
+                """);
 
         // Load the soft dependency first, then load the consumer at runtime.
         pluginManager.loadPlugin(libJar);
@@ -91,8 +116,12 @@ class PluginRuntimeSoftDependTest {
     @Test
     void runtimeLoadIgnoresAbsentSoftDependency() throws Exception {
         File appJar = createPluginJar("app-plugin.jar",
-                "name: AppPlugin\nmain: xin.bbtt.mcbot.plugin.DummyPlugin\nversion: 1.0.0\n"
-                        + "softdepend: [MissingPlugin]\n");
+            """
+                name: AppPlugin
+                main: xin.bbtt.mcbot.plugin.DummyPlugin
+                version: 1.0.0
+                softdepend: [MissingPlugin]
+                """);
 
         // A soft dependency that is not present must not block the load and must not be
         // recorded as an effective dependency.
@@ -105,8 +134,12 @@ class PluginRuntimeSoftDependTest {
     @Test
     void runtimeLoadRejectsMissingHardDependency() throws Exception {
         File appJar = createPluginJar("app-plugin.jar",
-                "name: AppPlugin\nmain: xin.bbtt.mcbot.plugin.DummyPlugin\nversion: 1.0.0\n"
-                        + "depend: [MissingPlugin]\n");
+            """
+                name: AppPlugin
+                main: xin.bbtt.mcbot.plugin.DummyPlugin
+                version: 1.0.0
+                depend: [MissingPlugin]
+                """);
 
         // The startup batch loader refuses plugins with missing hard dependencies,
         // so the runtime path must refuse them too instead of silently loading

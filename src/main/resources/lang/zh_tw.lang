@@ -162,3 +162,6 @@ xinbot.modpack.info.xinbot_version=Xinbot 版本：%s
 xinbot.modpack.info.plugins=外掛：%s
 xinbot.modpack.info.failed=讀取整合包資訊失敗：%s
 
+xinbot.update.checking=正在檢查 Xinbot 更新...
+xinbot.update.newversion=Xinbot 有新版本 %s 可用，詳見 %s。
+xinbot.update.checking.failed=檢查更新失敗：%s
