@@ -266,7 +266,7 @@ public class Bot {
                 }
             }
         } finally {
-            if (serverReadyFuture == readyFuture) {
+            if (serverReadyFuture.equals(readyFuture)) {
                 serverReadyFuture = null;
             }
         }
