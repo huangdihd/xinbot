@@ -256,10 +256,17 @@ public class CommandManager {
             for (RegisteredCommand regCmd : entry.getValue()) {
                 for (String alias : regCmd.command().aliases()) {
                     boolean conflict = ownersByAlias.get(alias).size() > 1;
-                    String name = conflict ? pluginName + ":" + alias : alias;
-                    if (name.toLowerCase(Locale.ROOT).startsWith(prefixLower)
-                            || conflict && alias.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
-                        names.add(name);
+                    boolean bareMatch = alias.toLowerCase(Locale.ROOT).startsWith(prefixLower);
+                    if (!conflict && bareMatch) {
+                        names.add(alias);
+                    }
+
+                    if (plugin != null || conflict) {
+                        String qualifiedName = pluginName + ":" + alias;
+                        boolean qualifiedMatch = qualifiedName.toLowerCase(Locale.ROOT).startsWith(prefixLower);
+                        if (conflict ? qualifiedMatch || bareMatch : qualifiedMatch && !bareMatch) {
+                            names.add(qualifiedName);
+                        }
                     }
                 }
             }

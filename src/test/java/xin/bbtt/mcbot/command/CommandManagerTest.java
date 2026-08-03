@@ -98,6 +98,19 @@ public class CommandManagerTest {
         assertThat(manager.getCommandNames("b")).contains("bttb", "base");
         assertThat(manager.getCommandNames(""))
                 .doesNotContain("DummyPlugin:bttb", "DummyPlugin:base");
+        assertThat(manager.getCommandNames("Dummy"))
+                .containsExactlyInAnyOrder("DummyPlugin:bttb", "DummyPlugin:base");
+    }
+
+    @Test
+    void qualifiedCompletionIsHiddenOnlyWhenBareAliasMatches() {
+        CommandManager manager = new CommandManager();
+        manager.registerCommand(new Command("dummy", null, "", ""),
+                NO_OP_EXECUTOR, new DummyPlugin());
+
+        assertThat(manager.getCommandNames("dumm")).containsExactly("dummy");
+        assertThat(manager.getCommandNames("DummyPlugin"))
+                .containsExactly("DummyPlugin:dummy");
     }
 
     @Test
