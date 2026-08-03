@@ -238,22 +238,28 @@ public class CommandManager {
 
     public List<String> getCommandNames(String prefix) {
         Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        String prefixLower = prefix.toLowerCase();
+        Map<String, Set<Plugin>> ownersByAlias = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        String prefixLower = prefix.toLowerCase(Locale.ROOT);
+
+        for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
+            for (RegisteredCommand regCmd : entry.getValue()) {
+                for (String alias : regCmd.command().aliases()) {
+                    ownersByAlias.computeIfAbsent(alias, ignored -> new HashSet<>()).add(entry.getKey());
+                }
+            }
+        }
         
         for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
             Plugin plugin = entry.getKey();
-            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
+            String pluginName = Bot.INSTANCE.getPluginManager().getPluginName(plugin);
             
             for (RegisteredCommand regCmd : entry.getValue()) {
                 for (String alias : regCmd.command().aliases()) {
-                    if (alias.toLowerCase().startsWith(prefixLower)) {
-                        names.add(alias);
-                    }
-                    if (pluginName != null) {
-                        String ns = pluginName + ":" + alias;
-                        if (ns.toLowerCase().startsWith(prefixLower)) {
-                            names.add(ns);
-                        }
+                    boolean conflict = ownersByAlias.get(alias).size() > 1;
+                    String name = conflict ? pluginName + ":" + alias : alias;
+                    if (name.toLowerCase(Locale.ROOT).startsWith(prefixLower)
+                            || conflict && alias.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
+                        names.add(name);
                     }
                 }
             }
