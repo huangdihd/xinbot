@@ -56,16 +56,20 @@ public class CommandCommandExecutor extends TabHighlightExecutor {
         }
         String cmd = String.join(" ", args);
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        session.addListener(new CommandSuggestionsListener(future, transactionId));
-        session.send(new ServerboundCommandSuggestionPacket(transactionId, cmd));
-        List<String> results;
+        int currentTransactionId = transactionId++;
+        CommandSuggestionsListener listener = new CommandSuggestionsListener(future, currentTransactionId);
+        session.addListener(listener);
         try {
-            results = future.get(200, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            results = List.of();
+            session.send(new ServerboundCommandSuggestionPacket(currentTransactionId, cmd));
+            return future.get(200, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return List.of();
+        } catch (ExecutionException | TimeoutException e) {
+            return List.of();
+        } finally {
+            session.removeListener(listener);
         }
-        transactionId++;
-        return results;
     }
 
     @Override
