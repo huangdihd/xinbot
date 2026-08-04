@@ -18,11 +18,20 @@
 package xin.bbtt.mcbot.command;
 
 import org.junit.jupiter.api.Test;
+import xin.bbtt.mcbot.plugin.DummyLibPlugin;
+import xin.bbtt.mcbot.plugin.DummyPlugin;
+
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandManagerTest {
+
+    private static final CommandExecutor NO_OP_EXECUTOR = new CommandExecutor() {
+        @Override
+        public void onCommand(Command command, String label, String[] args) {
+        }
+    };
 
     @Test
     void testTokenizeBasic() {
@@ -78,5 +87,37 @@ public class CommandManagerTest {
         List<String> tokens = CommandManager.tokenize(input);
         
         assertThat(tokens).isEmpty();
+    }
+
+    @Test
+    void pluginCompletionHidesQualifiedNameWhenBareAliasMatches() {
+        CommandManager manager = new CommandManager();
+        manager.registerCommand(new Command("dummy", null, "", ""),
+                NO_OP_EXECUTOR, new DummyPlugin());
+
+        assertThat(manager.getCommandNames("dumm")).containsExactly("dummy");
+        assertThat(manager.getCommandNames("DummyPlugin"))
+                .containsExactly("DummyPlugin:dummy");
+    }
+
+    @Test
+    void duplicateAliasesKeepOriginalBareCompletion() {
+        CommandManager manager = new CommandManager();
+        DummyPlugin first = new DummyPlugin();
+        DummyLibPlugin second = new DummyLibPlugin();
+        manager.registerCommand(new Command("shared", null, "", ""), NO_OP_EXECUTOR, first);
+        manager.registerCommand(new Command("shared", null, "", ""), NO_OP_EXECUTOR, second);
+
+        assertThat(manager.getCommandNames("sha")).containsExactly("shared");
+        assertThat(manager.getCommandNames("DummyPlugin"))
+                .containsExactly("DummyPlugin:shared");
+        assertThat(manager.getCommandNames("DummyLibPlugin"))
+                .containsExactly("DummyLibPlugin:shared");
+    }
+
+    @Test
+    void coreCommandsDoNotHaveQualifiedCompletion() {
+        CommandManager manager = new CommandManager();
+        assertThat(manager.getCommandNames("say")).containsExactly("say");
     }
 }
