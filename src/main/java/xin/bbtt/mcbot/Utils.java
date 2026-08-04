@@ -98,33 +98,40 @@ public class Utils {
         return toStrings(component, null);
     }
 
-    public static ArrayList<String> toStrings(Component component, NamedTextColor defaultColor) {
+    public static ArrayList<String> toStrings(
+        Component component,
+        NamedTextColor defaultColor
+    ) {
+        ArrayList<String> result = new ArrayList<>();
 
-        String content = "";
+        String text = null;
+        boolean shouldAdd = false;
 
         if (component instanceof TranslatableComponent translatable) {
             Object[] args = translatable.arguments().stream()
-                    .map(arg -> Utils.toString(arg.asComponent()))
-                    .toArray();
-            content = LangManager.get(translatable.key(), args);
-        }
-        else if (component instanceof TextComponent textComponent) {
-            content = textComponent.content();
+                .map(argument -> Utils.toString(argument.asComponent()))
+                .toArray();
+
+            text = LangManager.get(translatable.key(), args);
+            shouldAdd = !text.isEmpty();
+        } else if (component instanceof TextComponent textComponent) {
+            text = textComponent.content();
+            shouldAdd = true;
         }
 
-        ArrayList<String> result = new ArrayList<>();
+        if (shouldAdd) {
+            NamedTextColor effectiveColor = defaultColor;
 
-        if (!content.isEmpty()) {
-            StringBuilder stringBuilder = new StringBuilder();
             if (component.color() instanceof NamedTextColor namedTextColor) {
-                stringBuilder.append(colorCodeMap.getOrDefault(namedTextColor, ""));
-                defaultColor = namedTextColor;
-            } else {
-                stringBuilder.append(colorCodeMap.getOrDefault(defaultColor, ""));
+                effectiveColor = namedTextColor;
             }
-            stringBuilder.append(getStyleAnsi(component));
-            stringBuilder.append(content);
-            result.add(stringBuilder.toString());
+
+            String ansiText = colorCodeMap.getOrDefault(effectiveColor, "")
+                + getStyleAnsi(component)
+                + text;
+
+            result.add(ansiText);
+            defaultColor = effectiveColor;
         }
 
         for (Component child : component.children()) {
