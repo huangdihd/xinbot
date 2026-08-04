@@ -237,30 +237,50 @@ public class CommandManager {
     }
 
     public List<String> getCommandNames(String prefix) {
-        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         String prefixLower = prefix.toLowerCase(Locale.ROOT);
+        Set<String> names = getBareCommandNames(prefixLower);
 
-        for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
-            Plugin plugin = entry.getKey();
-            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
-            
-            for (RegisteredCommand regCmd : entry.getValue()) {
+        if (names.isEmpty()) {
+            names = getQualifiedCommandNames(prefixLower);
+        }
+        return new ArrayList<>(names);
+    }
+
+    private Set<String> getBareCommandNames(String prefixLower) {
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+        for (List<RegisteredCommand> commands : byPlugin.values()) {
+            for (RegisteredCommand regCmd : commands) {
                 for (String alias : regCmd.command().aliases()) {
-                    boolean bareMatch = alias.toLowerCase(Locale.ROOT).startsWith(prefixLower);
-                    if (bareMatch) {
+                    if (alias.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
                         names.add(alias);
-                    }
-
-                    if (pluginName != null && !bareMatch) {
-                        String qualifiedName = pluginName + ":" + alias;
-                        if (qualifiedName.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
-                            names.add(qualifiedName);
-                        }
                     }
                 }
             }
         }
-        return new ArrayList<>(names);
+        return names;
+    }
+
+    private Set<String> getQualifiedCommandNames(String prefixLower) {
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+        for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
+            Plugin plugin = entry.getKey();
+            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
+            if (pluginName == null) {
+                continue;
+            }
+            
+            for (RegisteredCommand regCmd : entry.getValue()) {
+                for (String alias : regCmd.command().aliases()) {
+                    String qualifiedName = pluginName + ":" + alias;
+                    if (qualifiedName.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
+                        names.add(qualifiedName);
+                    }
+                }
+            }
+        }
+        return names;
     }
 
     public List<String> callComplete(String command) {
