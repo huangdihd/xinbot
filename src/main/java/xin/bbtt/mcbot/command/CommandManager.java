@@ -238,33 +238,22 @@ public class CommandManager {
 
     public List<String> getCommandNames(String prefix) {
         Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        Map<String, Set<Plugin>> ownersByAlias = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         String prefixLower = prefix.toLowerCase(Locale.ROOT);
 
         for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
-            for (RegisteredCommand regCmd : entry.getValue()) {
-                for (String alias : regCmd.command().aliases()) {
-                    ownersByAlias.computeIfAbsent(alias, ignored -> new HashSet<>()).add(entry.getKey());
-                }
-            }
-        }
-        
-        for (Map.Entry<Plugin, List<RegisteredCommand>> entry : byPlugin.entrySet()) {
             Plugin plugin = entry.getKey();
-            String pluginName = Bot.INSTANCE.getPluginManager().getPluginName(plugin);
+            String pluginName = plugin == null ? null : Bot.INSTANCE.getPluginManager().getPluginName(plugin);
             
             for (RegisteredCommand regCmd : entry.getValue()) {
                 for (String alias : regCmd.command().aliases()) {
-                    boolean conflict = ownersByAlias.get(alias).size() > 1;
                     boolean bareMatch = alias.toLowerCase(Locale.ROOT).startsWith(prefixLower);
-                    if (!conflict && bareMatch) {
+                    if (bareMatch) {
                         names.add(alias);
                     }
 
-                    if (plugin != null || conflict) {
+                    if (pluginName != null && !bareMatch) {
                         String qualifiedName = pluginName + ":" + alias;
-                        boolean qualifiedMatch = qualifiedName.toLowerCase(Locale.ROOT).startsWith(prefixLower);
-                        if (conflict ? qualifiedMatch || bareMatch : qualifiedMatch && !bareMatch) {
+                        if (qualifiedName.toLowerCase(Locale.ROOT).startsWith(prefixLower)) {
                             names.add(qualifiedName);
                         }
                     }

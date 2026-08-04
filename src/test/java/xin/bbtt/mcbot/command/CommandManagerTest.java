@@ -90,20 +90,7 @@ public class CommandManagerTest {
     }
 
     @Test
-    void uniquePluginCommandOnlyUsesShortNames() {
-        CommandManager manager = new CommandManager();
-        manager.registerCommand(new Command("bttb", new String[]{"base"}, "", ""),
-                NO_OP_EXECUTOR, new DummyPlugin());
-
-        assertThat(manager.getCommandNames("b")).contains("bttb", "base");
-        assertThat(manager.getCommandNames(""))
-                .doesNotContain("DummyPlugin:bttb", "DummyPlugin:base");
-        assertThat(manager.getCommandNames("Dummy"))
-                .containsExactlyInAnyOrder("DummyPlugin:bttb", "DummyPlugin:base");
-    }
-
-    @Test
-    void qualifiedCompletionIsHiddenOnlyWhenBareAliasMatches() {
+    void pluginCompletionHidesQualifiedNameWhenBareAliasMatches() {
         CommandManager manager = new CommandManager();
         manager.registerCommand(new Command("dummy", null, "", ""),
                 NO_OP_EXECUTOR, new DummyPlugin());
@@ -114,42 +101,23 @@ public class CommandManagerTest {
     }
 
     @Test
-    void conflictingPluginCommandsOnlyUseQualifiedNames() {
+    void duplicateAliasesKeepOriginalBareCompletion() {
         CommandManager manager = new CommandManager();
         DummyPlugin first = new DummyPlugin();
         DummyLibPlugin second = new DummyLibPlugin();
         manager.registerCommand(new Command("shared", null, "", ""), NO_OP_EXECUTOR, first);
         manager.registerCommand(new Command("shared", null, "", ""), NO_OP_EXECUTOR, second);
 
-        assertThat(manager.getCommandNames("sha"))
-                .containsExactlyInAnyOrder("DummyPlugin:shared", "DummyLibPlugin:shared")
-                .doesNotContain("shared");
-
-        manager.unregisterAll(second);
         assertThat(manager.getCommandNames("sha")).containsExactly("shared");
+        assertThat(manager.getCommandNames("DummyPlugin"))
+                .containsExactly("DummyPlugin:shared");
+        assertThat(manager.getCommandNames("DummyLibPlugin"))
+                .containsExactly("DummyLibPlugin:shared");
     }
 
     @Test
-    void conflictsAreCaseInsensitive() {
+    void coreCommandsDoNotHaveQualifiedCompletion() {
         CommandManager manager = new CommandManager();
-        manager.registerCommand(new Command("Shared", null, "", ""),
-                NO_OP_EXECUTOR, new DummyPlugin());
-        manager.registerCommand(new Command("shared", null, "", ""),
-                NO_OP_EXECUTOR, new DummyLibPlugin());
-
-        assertThat(manager.getCommandNames("SHARED"))
-                .containsExactlyInAnyOrder("DummyPlugin:Shared", "DummyLibPlugin:shared")
-                .doesNotContain("Shared", "shared");
-    }
-
-    @Test
-    void coreParticipatesInConflictsButUniqueAliasesStayShort() {
-        CommandManager manager = new CommandManager();
-        manager.registerCommand(new Command("say", null, "", ""),
-                NO_OP_EXECUTOR, new DummyPlugin());
-
-        assertThat(manager.getCommandNames("say"))
-                .containsExactly("Core:say", "DummyPlugin:say");
-        assertThat(manager.getCommandNames("chat")).containsExactly("chat");
+        assertThat(manager.getCommandNames("say")).containsExactly("say");
     }
 }
