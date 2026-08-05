@@ -1,0 +1,70 @@
+name: QQ Release Notification
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send QQ Group Notification
+        env:
+          QQ_BOT_APP_ID: ${{ secrets.QQ_BOT_APP_ID }}
+          QQ_BOT_APP_SECRET: ${{ secrets.QQ_BOT_APP_SECRET }}
+          QQ_GROUP_OPENID: ${{ secrets.QQ_GROUP_OPENID }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [ -z "$QQ_BOT_APP_ID" ] || [ -z "$QQ_BOT_APP_SECRET" ]; then
+            echo "QQ Bot AppID or AppSecret is missing. Skipping notification."
+            exit 0
+          fi
+          if [ -z "$QQ_GROUP_OPENID" ]; then
+            echo "QQ Group OpenID is missing. Skipping notification."
+            exit 0
+          fi
+
+          # Obtain access token
+          TOKEN_RESPONSE=$(curl -s -X POST "https://bots.qq.com/app/getAppAccessToken" \
+            -H "Content-Type: application/json" \
+            -d "{\"appId\":\"$QQ_BOT_APP_ID\",\"clientSecret\":\"$QQ_BOT_APP_SECRET\"}")
+
+          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
+          if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+            echo "Failed to get access token: $TOKEN_RESPONSE"
+            exit 1
+          fi
+
+          # Build markdown payload
+          JSON_PAYLOAD=$(jq -n \
+            --arg ver "$RELEASE_TAG" \
+            --arg name "$RELEASE_NAME" \
+            --arg url "$RELEASE_URL" \
+            --arg time "$(date '+%Y-%m-%d %H:%M:%S %Z')" \
+            '{
+              msg_type: 2,
+              markdown: {
+                content: ("## New Release Published!\n\n" +
+                  "- **Version**: \($ver)\n" +
+                  "- **Name**: \($name)\n" +
+                  "- **Time**: \($time)\n\n" +
+                  "[View Release on GitHub](\($url))")
+              }
+            }')
+
+          RESPONSE=$(curl -s -X POST \
+            "https://api.bot.qq.com/v2/groups/$QQ_GROUP_OPENID/messages" \
+            -H "Authorization: QQBot $ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD")
+
+          echo "Response: $RESPONSE"
+
+          if echo "$RESPONSE" | jq -e '.id' > /dev/null 2>&1; then
+            echo "Notification sent successfully!"
+          else
+            echo "Failed to send notification."
+            exit 1
+          fi
