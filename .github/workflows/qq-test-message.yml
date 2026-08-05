@@ -28,8 +28,7 @@ jobs:
             exit 1
           fi
 
-          # 1. Obtain access token
-          echo "Getting access token..."
+          # Obtain access token
           TOKEN_RESPONSE=$(curl -s -X POST "https://bots.qq.com/app/getAppAccessToken" \
             -H "Content-Type: application/json" \
             -d "{\"appId\":\"$QQ_BOT_APP_ID\",\"clientSecret\":\"$QQ_BOT_APP_SECRET\"}")
@@ -39,32 +38,28 @@ jobs:
             echo "Failed to get access token: $TOKEN_RESPONSE"
             exit 1
           fi
-          echo "Got access token."
 
-          # 2. Construct message
+          # Build message
           if [ -n "$CUSTOM_MESSAGE" ]; then
             CONTENT="$CUSTOM_MESSAGE"
           else
-            CONTENT="[QQ Bot Test]
-If you see this, the QQ Bot workflow is configured correctly.
-Time: $(date '+%Y-%m-%d %H:%M:%S %Z')
-Repo: ${{ github.repository }}"
+            CONTENT=$(printf '[QQ Bot Test]\n\nIf you see this, the QQ Bot workflow is configured correctly.\n\nTime: %s\nRepo: ${{ github.repository }}' "$(date '+%Y-%m-%d %H:%M:%S %Z')")
           fi
 
-          # 3. Send message
-          echo "Sending message to group..."
-          SEND_RESPONSE=$(curl -s -X POST \
+          # Send
+          JSON_PAYLOAD=$(jq -n --arg content "$CONTENT" '{msg_type: 0, content: $content}')
+
+          RESPONSE=$(curl -s -X POST \
             "https://api.bot.qq.com/v2/groups/$QQ_GROUP_OPENID/messages" \
             -H "Authorization: QQBot $ACCESS_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content "$CONTENT" '{msg_type: 0, content: $content}')")
+            -d "$JSON_PAYLOAD")
 
-          echo "Response: $SEND_RESPONSE"
+          echo "Response: $RESPONSE"
 
-          ERR_CODE=$(echo "$SEND_RESPONSE" | jq -r '.err_code // empty')
-          if [ -z "$ERR_CODE" ]; then
-            echo "Message sent successfully! ID: $(echo "$SEND_RESPONSE" | jq -r '.id')"
+          if echo "$RESPONSE" | jq -e '.id' > /dev/null 2>&1; then
+            echo "Message sent successfully!"
           else
-            echo "Failed to send message. err_code=$ERR_CODE message=$(echo "$SEND_RESPONSE" | jq -r '.message')"
+            echo "Failed to send message."
             exit 1
           fi
