@@ -39,15 +39,15 @@ jobs:
             exit 1
           fi
 
-          # Build message
+          # Build markdown message
           if [ -n "$CUSTOM_MESSAGE" ]; then
-            CONTENT="$CUSTOM_MESSAGE"
+            MD_CONTENT="$CUSTOM_MESSAGE"
           else
-            CONTENT=$(printf '[QQ Bot Test]\n\nIf you see this, the QQ Bot workflow is configured correctly.\n\nTime: %s\nRepo: ${{ github.repository }}' "$(date '+%Y-%m-%d %H:%M:%S %Z')")
+            MD_CONTENT=$(printf '## QQ Bot Test\n\nIf you see this, the QQ Bot workflow is configured correctly.\n\n- **Time**: %s\n- **Repo**: ${{ github.repository }}' "$(date '+%Y-%m-%d %H:%M:%S %Z')")
           fi
 
-          # Send
-          JSON_PAYLOAD=$(jq -n --arg content "$CONTENT" '{msg_type: 0, content: $content}')
+          # Send as markdown
+          JSON_PAYLOAD=$(jq -n --arg md "$MD_CONTENT" '{msg_type: 2, markdown: {content: $md}}')
 
           RESPONSE=$(curl -s -X POST \
             "https://api.bot.qq.com/v2/groups/$QQ_GROUP_OPENID/messages" \
