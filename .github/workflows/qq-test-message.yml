@@ -1,0 +1,71 @@
+name: QQ Test Message
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: '自定义消息（可选，留空使用默认测试消息）'
+        required: false
+        default: ''
+
+jobs:
+  test-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Test Message to QQ Group
+        env:
+          QQ_BOT_APP_ID: ${{ secrets.QQ_BOT_APP_ID }}
+          QQ_BOT_APP_SECRET: ${{ secrets.QQ_BOT_APP_SECRET }}
+          QQ_GROUP_OPENID: ${{ secrets.QQ_GROUP_OPENID }}
+          CUSTOM_MESSAGE: ${{ github.event.inputs.custom_message }}
+        run: |
+          if [ -z "$QQ_BOT_APP_ID" ] || [ -z "$QQ_BOT_APP_SECRET" ]; then
+            echo "QQ Bot AppID or AppSecret is missing."
+            exit 1
+          fi
+          if [ -z "$QQ_GROUP_OPENID" ]; then
+            echo "QQ Group OpenID is missing."
+            exit 1
+          fi
+
+          # 1. Get access_token
+          echo "Getting access token..."
+          TOKEN_RESPONSE=$(curl -s -X POST "https://bots.qq.com/app/getAppAccessToken" \
+            -H "Content-Type: application/json" \
+            -d "{\"appId\":\"$QQ_BOT_APP_ID\",\"clientSecret\":\"$QQ_BOT_APP_SECRET\"}")
+
+          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
+          if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+            echo "❌ Failed to get access token: $TOKEN_RESPONSE"
+            exit 1
+          fi
+          echo "✅ Got access token."
+
+          # 2. Construct message
+          if [ -n "$CUSTOM_MESSAGE" ]; then
+            CONTENT="$CUSTOM_MESSAGE"
+          else
+            CONTENT="🧪 QQ 群通知测试
+
+✅ 如果你看到这条消息，说明 QQ Bot 工作流配置正确！
+📅 时间: $(date '+%Y-%m-%d %H:%M:%S %Z')
+🔗 仓库: ${{ github.repository }}"
+          fi
+
+          # 3. Send message
+          echo "Sending message to group..."
+          SEND_RESPONSE=$(curl -s -X POST \
+            "https://api.bot.qq.com/v2/groups/$QQ_GROUP_OPENID/messages" \
+            -H "Authorization: QQBot $ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content "$CONTENT" '{msg_type: 0, content: $content}')")
+
+          echo "Response: $SEND_RESPONSE"
+
+          ERR_CODE=$(echo "$SEND_RESPONSE" | jq -r '.err_code // empty')
+          if [ -z "$ERR_CODE" ]; then
+            echo "✅ Message sent successfully! ID: $(echo "$SEND_RESPONSE" | jq -r '.id')"
+          else
+            echo "❌ Failed to send message. err_code=$ERR_CODE message=$(echo "$SEND_RESPONSE" | jq -r '.message')"
+            exit 1
+          fi

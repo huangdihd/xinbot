@@ -1,0 +1,54 @@
+name: Telegram Test Message
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: '自定义消息（可选，留空使用默认测试消息）'
+        required: false
+        default: ''
+
+jobs:
+  test-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Test Message to Telegram
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          TG_MESSAGE_THREAD_ID: ${{ secrets.TG_MESSAGE_THREAD_ID }}
+          CUSTOM_MESSAGE: ${{ github.event.inputs.custom_message }}
+        run: |
+          if [ -z "$TG_BOT_TOKEN" ] || [ -z "$TG_CHAT_ID" ]; then
+            echo "Telegram bot token or chat ID is missing."
+            exit 1
+          fi
+
+          if [ -n "$CUSTOM_MESSAGE" ]; then
+            TEXT="$CUSTOM_MESSAGE"
+          else
+            TEXT="🧪 <b>Telegram 通知测试</b>&#10;&#10;✅ 如果你看到这条消息，说明 TG Bot 工作流配置正确！&#10;&#10;📅 时间: $(date '+%Y-%m-%d %H:%M:%S %Z')&#10;🔗 仓库: ${{ github.repository }}"
+          fi
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg chat_id "$TG_CHAT_ID" \
+            --arg thread_id "$TG_MESSAGE_THREAD_ID" \
+            --arg text "$TEXT" \
+            '{
+              chat_id: $chat_id,
+              parse_mode: "HTML",
+              text: $text
+            } + (if $thread_id != "" then {message_thread_id: ($thread_id | tonumber)} else {} end)')
+
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$TG_BOT_TOKEN/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD")
+
+          echo "Response: $RESPONSE"
+
+          if echo "$RESPONSE" | jq -e '.ok' > /dev/null; then
+            echo "✅ Message sent successfully!"
+          else
+            echo "❌ Failed to send message."
+            exit 1
+          fi
