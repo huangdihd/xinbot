@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Interoperability vector writer: builds real heartbeat/crash envelopes with the
  * actual client implementation ({@link TelemetryManager#buildEnvelope}) and writes
@@ -56,16 +58,23 @@ class InteropVectorTest {
         Assumptions.assumeTrue(Files.isDirectory(dir),
                 "Interop vector directory not found (expected " + dir
                         + "): telemetry server is not checked out next to this project");
-        Files.write(dir.resolve("client-heartbeat.bin"),
+        Path heartbeat = dir.resolve("client-heartbeat.bin");
+        Path crash = dir.resolve("client-crash.bin");
+        Files.write(heartbeat,
                 TelemetryManager.buildEnvelope(
                         TelemetryManager.TYPE_HEARTBEAT,
                         HEARTBEAT_JSON.getBytes(StandardCharsets.UTF_8),
                         TelemetryTest.TEST_KEY));
-        Files.write(dir.resolve("client-crash.bin"),
+        Files.write(crash,
                 TelemetryManager.buildEnvelope(
                         TelemetryManager.TYPE_CRASH,
                         CRASH_JSON.getBytes(StandardCharsets.UTF_8),
                         TelemetryTest.TEST_KEY));
+        // A written vector must be a non-empty envelope the server can decode
+        assertTrue(Files.isRegularFile(heartbeat) && Files.size(heartbeat) > 0,
+                "client-heartbeat.bin must be a non-empty interop vector");
+        assertTrue(Files.isRegularFile(crash) && Files.size(crash) > 0,
+                "client-crash.bin must be a non-empty interop vector");
     }
 
     /** Defaults to the telemetry server's test resources; override with -Dinterop.vector.dir=... */

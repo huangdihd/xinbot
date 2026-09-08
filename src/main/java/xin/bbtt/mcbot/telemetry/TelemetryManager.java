@@ -108,8 +108,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     private static final Pattern SENSITIVE_NUMBER = Pattern.compile("-?\\d{4,}");
     /** Replacement for every sensitive number; fixed width leaks no digit count. */
     private static final String REDACTED = "****";
-    /** Replacement for configured passwords; six stars leak no length. */
-    private static final String SECRET_REDACTED = "******";
+    /** Replacement for redacted passwords; six stars leak no length. */
+    private static final String REDACTION_MASK = "******";
 
     private static final Logger log = LoggerFactory.getLogger(TelemetryManager.class.getSimpleName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -135,6 +135,11 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    /** Validated settings the manager runs with; produced by {@link #resolveSettings}. */
+    private record ResolvedSettings(String mode, String ip, int port, byte[] key,
+                                    PayloadOptions options) {
+    }
+
     private final AtomicBoolean enabled = new AtomicBoolean(false);
     private volatile String mode = DEFAULT_MODE;
     private volatile String ip = DEFAULT_IP;
@@ -155,48 +160,58 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
      * the effective settings did not change.
      */
     public synchronized void configure(BotConfigData.Telemetry telemetry) {
-        if (telemetry == null || !telemetry.isEnable()) {
+        ResolvedSettings settings = resolveSettings(telemetry);
+        if (settings == null) {
+            // Disabled or unusable (e.g. no deployment key): keep telemetry off.
             shutdown();
             return;
         }
 
-        String nextMode = normalizeMode(telemetry.getMode());
-        String nextIp = telemetry.getIp() == null || telemetry.getIp().isBlank()
-            ? DEFAULT_IP : telemetry.getIp().trim();
-        int nextPort = telemetry.getPort() > 0 ? telemetry.getPort() : DEFAULT_PORT;
-        PayloadOptions nextOptions = PayloadOptions.of(telemetry);
+        if (enabled.get() && mode.equals(settings.mode()) && ip.equals(settings.ip())
+                && port == settings.port() && Arrays.equals(key, settings.key())
+                && payloadOptions.equals(settings.options())) {
+            return;
+        }
 
-        // Deployment secret is mandatory: without it there is no confidentiality or
-        // sender authentication, so telemetry fails closed instead of sending in clear.
+        shutdown();
+        this.mode = settings.mode();
+        this.ip = settings.ip();
+        this.port = settings.port();
+        this.key = settings.key();
+        this.payloadOptions = settings.options();
+        enabled.set(true);
+        installCrashHandler();
+        startHeartbeat();
+        log.info(LangManager.get("xinbot.telemetry.enabled", mode, ip, port));
+    }
+
+    /**
+     * Validates and normalizes a telemetry configuration into the settings the
+     * manager would run with. {@code null} means telemetry must stay off: the
+     * section is disabled or missing, or the deployment key is blank or invalid
+     * (fails closed instead of sending in clear).
+     */
+    private ResolvedSettings resolveSettings(BotConfigData.Telemetry telemetry) {
+        if (telemetry == null || !telemetry.isEnable()) {
+            return null;
+        }
         if (telemetry.getKey() == null || telemetry.getKey().isBlank()) {
             log.error(LangManager.get("xinbot.telemetry.key.required"));
-            shutdown();
-            return;
+            return null;
         }
         final byte[] nextKey;
         try {
             nextKey = parseKey(telemetry.getKey());
         } catch (IllegalArgumentException e) {
             log.error(LangManager.get("xinbot.telemetry.key.invalid", e.getMessage()));
-            shutdown();
-            return;
+            return null;
         }
-
-        if (enabled.get() && mode.equals(nextMode) && ip.equals(nextIp) && port == nextPort
-            && Arrays.equals(key, nextKey) && payloadOptions.equals(nextOptions)) {
-            return;
-        }
-
-        shutdown();
-        this.mode = nextMode;
-        this.ip = nextIp;
-        this.port = nextPort;
-        this.key = nextKey;
-        this.payloadOptions = nextOptions;
-        enabled.set(true);
-        installCrashHandler();
-        startHeartbeat();
-        log.info(LangManager.get("xinbot.telemetry.enabled", mode, ip, port));
+        return new ResolvedSettings(
+                normalizeMode(telemetry.getMode()),
+                normalizeIp(telemetry.getIp()),
+                telemetry.getPort() > 0 ? telemetry.getPort() : DEFAULT_PORT,
+                nextKey,
+                PayloadOptions.of(telemetry));
     }
 
     /**
@@ -595,7 +610,7 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         String redacted = text;
         for (String secret : secrets) {
             if (secret != null && !secret.isEmpty()) {
-                redacted = redacted.replace(secret, SECRET_REDACTED);
+                redacted = redacted.replace(secret, REDACTION_MASK);
             }
         }
         return redacted;
@@ -608,6 +623,10 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
      */
     static String redactCrashText(String text, Collection<String> secrets) {
         return redactNumbers(redactSecrets(text, secrets));
+    }
+
+    private static String normalizeIp(String ip) {
+        return ip == null || ip.isBlank() ? DEFAULT_IP : ip.trim();
     }
 
     private static String normalizeMode(String mode) {

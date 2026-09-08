@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import xin.bbtt.mcbot.config.BotConfigData;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,16 +69,10 @@ class TelemetryTest {
         byte[] payload = "same".getBytes(StandardCharsets.UTF_8);
         byte[] first = TelemetryManager.buildEnvelope(TelemetryManager.TYPE_HEARTBEAT, payload, TEST_KEY);
         byte[] second = TelemetryManager.buildEnvelope(TelemetryManager.TYPE_HEARTBEAT, payload, TEST_KEY);
-        // IVs start at offset 6 with length 12 and must never repeat
-        assertTrue(first.length >= 18 && second.length >= 18);
-        boolean sameIv = true;
-        for (int i = 6; i < 18; i++) {
-            if (first[i] != second[i]) {
-                sameIv = false;
-                break;
-            }
-        }
-        assertTrue(!sameIv, "random IV should differ between envelopes");
+        // IVs live at offsets 6..17 and must never repeat across envelopes
+        assertFalse(Arrays.equals(Arrays.copyOfRange(first, 6, 18),
+                        Arrays.copyOfRange(second, 6, 18)),
+                "random IV should differ between envelopes");
     }
 
     @Test

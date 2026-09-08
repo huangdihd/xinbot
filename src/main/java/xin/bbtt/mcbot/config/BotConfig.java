@@ -32,8 +32,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotConfig {
+    /** A quoted {@code "enable"} key whose value is a boolean literal ending at a
+     * comma, a line break or the end of the text. */
+    private static final Pattern ENABLE_BOOLEAN = Pattern.compile(
+            "(\"enable\"\\s*:\\s*)(true|false)(?=[,\\r\\n]|$)");
     public BotConfig(String configPath) throws FileNotFoundException, JsonProcessingException {
         this.loadFromFile(configPath);
     }
@@ -106,35 +112,13 @@ public class BotConfig {
         if (block < 0) {
             return null;
         }
-        int key = configText.indexOf("\"enable\"", block);
-        if (key < 0) {
+        // Only the telemetry block's enable is rewritten: searching from the
+        // telemetry key onward never touches e.g. proxy.enable written earlier.
+        Matcher matcher = ENABLE_BOOLEAN.matcher(configText);
+        if (!matcher.find(block)) {
             return null;
         }
-        int colon = configText.indexOf(':', key);
-        if (colon < 0) {
-            return null;
-        }
-        int valueStart = colon + 1;
-        while (valueStart < configText.length()
-                && Character.isWhitespace(configText.charAt(valueStart))) {
-            valueStart++;
-        }
-        int valueEnd = valueStart;
-        while (valueEnd < configText.length()
-                && configText.charAt(valueEnd) != ','
-                && configText.charAt(valueEnd) != '\n'
-                && configText.charAt(valueEnd) != '\r') {
-            valueEnd++;
-        }
-        while (valueEnd > valueStart
-                && Character.isWhitespace(configText.charAt(valueEnd - 1))) {
-            valueEnd--;
-        }
-        String current = configText.substring(valueStart, valueEnd);
-        if (!current.equals("true") && !current.equals("false")) {
-            return null;
-        }
-        return configText.substring(0, valueStart) + enabled + configText.substring(valueEnd);
+        return matcher.replaceFirst(Matcher.quoteReplacement(matcher.group(1)) + enabled);
     }
 
     /**
