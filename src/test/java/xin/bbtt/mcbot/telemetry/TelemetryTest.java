@@ -141,12 +141,12 @@ class TelemetryTest {
 
     @Test
     void redactNumbersMasksFourOrMoreDigitsIncludingNegatives() {
-        // Positive, negative and embedded 4+ digit runs are all masked with ****
+        // Positive and negative runs (leading minus included) are all masked with ****
         assertEquals("player at ****, 64, ****",
                 TelemetryManager.redactNumbers("player at 1234, 64, -98765"));
         assertEquals("line Bot.java:**** threw at **** ms",
                 TelemetryManager.redactNumbers("line Bot.java:10240 threw at 12345 ms"));
-        assertEquals("\"-****\" and \"****\"",
+        assertEquals("\"****\" and \"****\"",
                 TelemetryManager.redactNumbers("\"-1234\" and \"567890\""));
     }
 

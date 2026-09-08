@@ -36,10 +36,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BotConfig {
-    /** A quoted {@code "enable"} key whose value is a boolean literal ending at a
-     * comma, a line break or the end of the text. */
+    /** A quoted {@code "enable"} key whose value is a boolean literal followed by
+     * optional whitespace and then a comma, a line break or the end of the text. */
     private static final Pattern ENABLE_BOOLEAN = Pattern.compile(
-            "(\"enable\"\\s*:\\s*)(true|false)(?=[,\\r\\n]|$)");
+            "(\"enable\"\\s*:\\s*)(true|false)(?=\\s*[,\\r\\n]|$)");
     public BotConfig(String configPath) throws FileNotFoundException, JsonProcessingException {
         this.loadFromFile(configPath);
     }
@@ -118,7 +118,11 @@ public class BotConfig {
         if (!matcher.find(block)) {
             return null;
         }
-        return matcher.replaceFirst(Matcher.quoteReplacement(matcher.group(1)) + enabled);
+        // Replace just the boolean literal (group 2), keeping the key, the
+        // whitespace and the trailing comment of the original line intact.
+        return configText.substring(0, matcher.start(2))
+                + enabled
+                + configText.substring(matcher.end(2));
     }
 
     /**
