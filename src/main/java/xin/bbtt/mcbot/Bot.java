@@ -123,6 +123,7 @@ public class Bot {
 
         running = true;
         protocol = AccountLoader.getProtocol();
+        telemetryManager.updateSecrets(config.getConfigData());
         telemetryManager.configure(config.getConfigData().getTelemetry());
         var proxy = config.getConfigData().getProxy();
         if (proxy.isEnable()) {
@@ -369,6 +370,7 @@ public class Bot {
         if (session != null && session.isConnected()) {
             disconnect(LangManager.get("xinbot.command.reload.disconnect", "Reloading config..."));
         }
+        telemetryManager.updateSecrets(config.getConfigData());
         telemetryManager.configure(config.getConfigData().getTelemetry());
     }
 

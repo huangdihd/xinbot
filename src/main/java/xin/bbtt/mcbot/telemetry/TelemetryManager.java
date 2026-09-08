@@ -45,14 +45,18 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 /**
  * Sends encrypted heartbeat and crash-report payloads to a telemetry server.
@@ -99,6 +103,14 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     /** Stack trace length cap so a crash report cannot exceed the UDP payload ceiling. */
     private static final int MAX_STACK_TRACE_CHARS = 12000;
 
+    /** Matches any run of 4+ digits, with an optional leading minus (player coordinates
+     * and other location data are commonly 4+ digit numbers, negative included). */
+    private static final Pattern SENSITIVE_NUMBER = Pattern.compile("-?\\d{4,}");
+    /** Replacement for every sensitive number; fixed width leaks no digit count. */
+    private static final String REDACTED = "****";
+    /** Replacement for configured passwords; six stars leak no length. */
+    private static final String SECRET_REDACTED = "******";
+
     private static final Logger log = LoggerFactory.getLogger(TelemetryManager.class.getSimpleName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -131,6 +143,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     private volatile byte[] key;
     /** Which optional payload fields may be sent; refreshed on each configure(). */
     private volatile PayloadOptions payloadOptions = PayloadOptions.all();
+    /** Passwords copied from the config; crash text is scanned for them before sending. */
+    private volatile Collection<String> secrets = List.of();
     private volatile ScheduledExecutorService heartbeatExecutor;
     private volatile Thread.UncaughtExceptionHandler previousHandler;
     private volatile boolean handlerInstalled = false;
@@ -183,6 +197,29 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         installCrashHandler();
         startHeartbeat();
         log.info(LangManager.get("xinbot.telemetry.enabled", mode, ip, port));
+    }
+
+    /**
+     * Refreshes the passwords redacted from crash reports from the current config.
+     * Called together with {@link #configure} whenever the config is (re)loaded, so
+     * the redaction always matches the passwords actually in use.
+     */
+    public synchronized void updateSecrets(BotConfigData configData) {
+        Collection<String> next = new ArrayList<>(4);
+        if (configData != null && configData.getAccount() != null) {
+            addSecret(next, configData.getAccount().getPassword());
+        }
+        if (configData != null && configData.getProxy() != null
+                && configData.getProxy().getInfo() != null) {
+            addSecret(next, configData.getProxy().getInfo().getPassword());
+        }
+        secrets = next;
+    }
+
+    private static void addSecret(Collection<String> target, String password) {
+        if (password != null && !password.isBlank()) {
+            target.add(password);
+        }
     }
 
     /** Stops heartbeat reporting. The crash handler stays installed. */
@@ -450,15 +487,18 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         return payload;
     }
 
-    private static Map<String, Object> crashPayload(Throwable throwable, Thread thread) {
+    private Map<String, Object> crashPayload(Throwable throwable, Thread thread) {
         Map<String, Object> payload = basePayload("crash");
         payload.put("thread_name", thread.getName());
         String exception = throwable.getClass().getName();
         if (throwable.getMessage() != null) {
             exception += ": " + throwable.getMessage();
         }
-        payload.put("exception", exception);
-        payload.put("stack_trace", stackTrace(throwable));
+        // Secrets first (a password may itself contain 4+ digits), then 4+ digit
+        // numbers (e.g. player coordinates): the report leaves the client already
+        // redacted, so a compromised receiver cannot harvest either from the text.
+        payload.put("exception", redactCrashText(exception, secrets));
+        payload.put("stack_trace", redactCrashText(stackTrace(throwable), secrets));
         return payload;
     }
 
@@ -530,6 +570,44 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
             stack = stack.substring(0, MAX_STACK_TRACE_CHARS) + "\n... (truncated)";
         }
         return stack;
+    }
+
+    /**
+     * Replaces every run of 4+ digits (an optional leading minus included) with
+     * {@code ****}. Numbers of 3 digits or fewer are left untouched. Exposed as a
+     * static helper so the redaction rule is unit-testable.
+     */
+    static String redactNumbers(String text) {
+        if (text == null) {
+            return null;
+        }
+        return SENSITIVE_NUMBER.matcher(text).replaceAll(REDACTED);
+    }
+
+    /**
+     * Replaces every configured password (exact substring) with {@code ******}.
+     * Exposed as a static helper so the rule is unit-testable.
+     */
+    static String redactSecrets(String text, Collection<String> secrets) {
+        if (text == null) {
+            return null;
+        }
+        String redacted = text;
+        for (String secret : secrets) {
+            if (secret != null && !secret.isEmpty()) {
+                redacted = redacted.replace(secret, SECRET_REDACTED);
+            }
+        }
+        return redacted;
+    }
+
+    /**
+     * Combined crash-text redaction: passwords first, then 4+ digit numbers.
+     * The order matters: if a password holds 4+ digits (e.g. "pass1234") it must
+     * be masked as a whole before the digit rule would fragment it.
+     */
+    static String redactCrashText(String text, Collection<String> secrets) {
+        return redactNumbers(redactSecrets(text, secrets));
     }
 
     private static String normalizeMode(String mode) {

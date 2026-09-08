@@ -23,11 +23,13 @@ import xin.bbtt.mcbot.config.BotConfigData;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -140,6 +142,49 @@ class TelemetryTest {
         // Valid Base64 but the wrong decoded length (16 bytes, not 32)
         String shortKey = Base64.getEncoder().encodeToString("short-key-16b!".getBytes(StandardCharsets.UTF_8));
         assertThrows(IllegalArgumentException.class, () -> TelemetryManager.parseKey(shortKey));
+    }
+
+    @Test
+    void redactNumbersMasksFourOrMoreDigitsIncludingNegatives() {
+        // Positive, negative and embedded 4+ digit runs are all masked with ****
+        assertEquals("player at ****, 64, ****",
+                TelemetryManager.redactNumbers("player at 1234, 64, -98765"));
+        assertEquals("line Bot.java:**** threw at **** ms",
+                TelemetryManager.redactNumbers("line Bot.java:10240 threw at 12345 ms"));
+        assertEquals("\"-****\" and \"****\"",
+                TelemetryManager.redactNumbers("\"-1234\" and \"567890\""));
+    }
+
+    @Test
+    void redactNumbersKeepsShortNumbersAndPlainText() {
+        // Coordinates that are all under 4 digits are not player-identifying, keep them
+        assertEquals("at 64, 255, 7 and -123",
+                TelemetryManager.redactNumbers("at 64, 255, 7 and -123"));
+        assertEquals("no digits here", TelemetryManager.redactNumbers("no digits here"));
+        assertEquals("", TelemetryManager.redactNumbers(""));
+        assertNull(TelemetryManager.redactNumbers(null));
+    }
+
+    @Test
+    void redactSecretsReplacesConfiguredPasswordsWithSixStars() {
+        List<String> secrets = List.of("s3cret", "pa55w0rd");
+        assertEquals("login ****** ok ******",
+                TelemetryManager.redactSecrets("login s3cret ok pa55w0rd", secrets));
+        assertEquals("no match here",
+                TelemetryManager.redactSecrets("no match here", secrets));
+        assertEquals("plain", TelemetryManager.redactSecrets("plain", List.of()));
+        assertNull(TelemetryManager.redactSecrets(null, secrets));
+    }
+
+    @Test
+    void redactCrashTextMasksPasswordWholeBeforeNumberRule() {
+        // Password "abcd1234" itself holds 4+ digits: secret replacement must run
+        // first so the whole password becomes ******, not a digit-broken fragment.
+        assertEquals("token ****** tail",
+                TelemetryManager.redactCrashText("token abcd1234 tail", List.of("abcd1234")));
+        // Without secrets the combined helper still applies the number redaction.
+        assertEquals("numbers only: ****",
+                TelemetryManager.redactCrashText("numbers only: 12345", List.of()));
     }
 
     @Test
