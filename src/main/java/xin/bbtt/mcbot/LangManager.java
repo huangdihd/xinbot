@@ -47,37 +47,43 @@ public class LangManager {
                     "xinbot.langmanager.json.not_found", "未找到 lang/lang.json，跳过 JSON 加载。",
                     "xinbot.langmanager.json.error", "加载语言 %s 的 lang.json 时出错：%s",
                     "xinbot.langmanager.classloader.error", "通过 ClassLoader 加载语言 %s 时出错：%s",
-                    "xinbot.config.error", "加载配置文件时出错"
+                    "xinbot.config.error", "加载配置文件时出错",
+                    "xinbot.jline.init.failed", "初始化 JLine 失败：%s"
             ),
             "en", Map.of(
                     "xinbot.langmanager.json.not_found", "lang/lang.json not found, skipping JSON load.",
                     "xinbot.langmanager.json.error", "Error loading lang.json for %s: %s",
                     "xinbot.langmanager.classloader.error", "Error loading language %s from classloader: %s",
-                    "xinbot.config.error", "Error loading config file"
+                    "xinbot.config.error", "Error loading config file",
+                    "xinbot.jline.init.failed", "Failed to initialize JLine: %s"
             ),
             "de", Map.of(
                     "xinbot.langmanager.json.not_found", "lang/lang.json nicht gefunden, JSON-Ladevorgang wird übersprungen.",
                     "xinbot.langmanager.json.error", "Fehler beim Laden von lang.json für %s: %s",
                     "xinbot.langmanager.classloader.error", "Fehler beim Laden der Sprache %s über ClassLoader: %s",
-                    "xinbot.config.error", "Fehler beim Laden der Konfigurationsdatei"
+                    "xinbot.config.error", "Fehler beim Laden der Konfigurationsdatei",
+                    "xinbot.jline.init.failed", "Fehler beim Initialisieren von JLine: %s"
             ),
             "fr", Map.of(
                     "xinbot.langmanager.json.not_found", "lang/lang.json non trouvé, saut du chargement JSON.",
                     "xinbot.langmanager.json.error", "Erreur lors du chargement de lang.json pour %s : %s",
                     "xinbot.langmanager.classloader.error", "Erreur lors du chargement de la langue %s depuis le classloader : %s",
-                    "xinbot.config.error", "Erreur lors du chargement du fichier de configuration"
+                    "xinbot.config.error", "Erreur lors du chargement du fichier de configuration",
+                    "xinbot.jline.init.failed", "Échec de l'initialisation de JLine : %s"
             ),
             "ja", Map.of(
                     "xinbot.langmanager.json.not_found", "lang/lang.json が见つかりません。JSON の読み込みをスキップします。",
                     "xinbot.langmanager.json.error", "%s の lang.json 読み込み中にエラーが発生しました: %s",
                     "xinbot.langmanager.classloader.error", "ClassLoader から言语 %s を読み込み中にエラーが発生しました: %s",
-                    "xinbot.config.error", "設定ファイルの読み込み中にエラーが発生しました"
+                    "xinbot.config.error", "設定ファイルの読み込み中にエラーが発生しました",
+                    "xinbot.jline.init.failed", "JLine の初期化に失敗しました: %s"
             ),
             "ru", Map.of(
                     "xinbot.langmanager.json.not_found", "lang/lang.json не найден, пропуск загрузки JSON.",
                     "xinbot.langmanager.json.error", "Ошибка при загрузке lang.json для %s: %s",
                     "xinbot.langmanager.classloader.error", "Ошибка при загрузке языка %s из classloader: %s",
-                    "xinbot.config.error", "Ошибка загрузки файла конфигурации"
+                    "xinbot.config.error", "Ошибка загрузки файла конфигурации",
+                    "xinbot.jline.init.failed", "Не удалось инициализировать JLine: %s"
             )
     );
 

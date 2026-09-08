@@ -27,10 +27,12 @@ import xin.bbtt.mcbot.versions.UpdateChecker;
 import xin.bbtt.mcbot.versions.Version;
 import xin.bbtt.mcbot.versions.VersionInfo;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Optional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -96,6 +98,56 @@ public class Xinbot {
         }
     }
 
+    /**
+     * First-run guidance: asks once whether to opt in to telemetry (helps improve
+     * Xinbot) and writes the answer into the freshly copied config file so the
+     * question never comes up again. Anything but an explicit "y"/"yes" keeps
+     * telemetry off; a failed write only warns and never blocks startup.
+     */
+    private static void promptTelemetryOptIn(Path configPath) {
+        if (!readYesNo(LangManager.get("xinbot.telemetry.optin.prompt"))) {
+            log.info(LangManager.get("xinbot.telemetry.optin.declined"));
+            return;
+        }
+        try {
+            if (BotConfig.setTelemetryEnabled(configPath, true)) {
+                log.info(LangManager.get("xinbot.telemetry.optin.enabled", configPath));
+            } else {
+                log.warn(LangManager.get("xinbot.telemetry.optin.apply_failed", configPath));
+            }
+        } catch (IOException e) {
+            log.warn(LangManager.get("xinbot.telemetry.optin.apply_failed", configPath), e);
+        }
+    }
+
+    /** Reads one line from the interactive console; falls back to plain stdin when
+     * no JLine reader exists. EOF, Ctrl+C/Ctrl+D or any read failure counts as "no"
+     * so telemetry can never be enabled by accident. */
+    private static boolean readYesNo(String prompt) {
+        String answer;
+        if (CLI.getLineReader() != null) {
+            try {
+                answer = CLI.getLineReader().readLine(prompt);
+            } catch (Exception e) {
+                answer = null; // interrupted or EOF: keep telemetry off
+            }
+        } else {
+            System.out.print(prompt);
+            System.out.flush();
+            try {
+                answer = new BufferedReader(new InputStreamReader(
+                        System.in, java.nio.charset.StandardCharsets.UTF_8)).readLine();
+            } catch (IOException e) {
+                answer = null;
+            }
+        }
+        if (answer == null) {
+            return false;
+        }
+        String trimmed = answer.trim();
+        return trimmed.equalsIgnoreCase("y") || trimmed.equalsIgnoreCase("yes");
+    }
+
     private static void checkForUpdates() {
         log.info(LangManager.get("xinbot.update.checking"));
         VersionInfo latestVersionInfo = UpdateChecker.fetchLatestVersionInfo();
@@ -110,16 +162,24 @@ public class Xinbot {
 
         // Init xinbot language early so all CLI output is localized
         LangManager.init();
+
+        Cli cli = Cli.create();
+
+        // Interactive mode only: make the output layer ready before anything can
+        // log. Until the LineReader exists, JLineConsoleAppender prints UTF-8 bytes
+        // raw to System.out, which garbles CJK text on Windows GBK consoles.
+        // Sub-commands (e.g. --version, CI runs) never build a terminal eagerly and
+        // keep logging on plain stdout instead.
+        if (!cli.isSubcommand(args)) {
+            CLI.init();
+        }
+
+        // Loading translations can emit info/error logs; the output layer above is
+        // already safe by this point in interactive mode.
         LangManager.initLang(Xinbot.class.getClassLoader());
         LangManager.loadExternal();
 
-        // Initialize JLine before any log output: until the LineReader is ready,
-        // JLineConsoleAppender falls back to System.out and prints UTF-8 bytes raw,
-        // which garbles CJK text on Windows GBK consoles. printAbove() is safe.
-        CLI.init();
-
         // Handle sub-commands (anything starting with '-'), e.g. --version, --install
-        Cli cli = Cli.create();
         if (cli.isSubcommand(args)) {
             System.exit(cli.dispatch(args) ? 0 : 1);
         }
@@ -136,6 +196,9 @@ public class Xinbot {
         if (!Files.exists(configFilePath)) {
             log.info(LangManager.get("xinbot.config.loading", configPath));
             copyDefaultConfig(configPath);
+            // First run: ask once whether to enable telemetry, and persist the
+            // answer into the config that was just created (see promptTelemetryOptIn).
+            promptTelemetryOptIn(configFilePath);
             log.info(LangManager.get("xinbot.config.modify.prompt", configPath));
             System.exit(1);
         }

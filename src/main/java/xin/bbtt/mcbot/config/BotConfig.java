@@ -92,4 +92,63 @@ public class BotConfig {
                 java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
         );
     }
+
+    /**
+     * Rewrites the {@code telemetry.enable} value inside config text (e.g. the
+     * freshly copied default config) so the first-run telemetry opt-in choice
+     * survives restarts, keeping every comment and the rest of the file intact.
+     * Only the value inside the {@code telemetry} block is touched: it must
+     * already be a boolean literal, otherwise nothing is changed and
+     * {@code null} is returned. Never touches e.g. {@code proxy.enable}.
+     */
+    static String replaceTelemetryEnabled(String configText, boolean enabled) {
+        int block = configText.indexOf("\"telemetry\"");
+        if (block < 0) {
+            return null;
+        }
+        int key = configText.indexOf("\"enable\"", block);
+        if (key < 0) {
+            return null;
+        }
+        int colon = configText.indexOf(':', key);
+        if (colon < 0) {
+            return null;
+        }
+        int valueStart = colon + 1;
+        while (valueStart < configText.length()
+                && Character.isWhitespace(configText.charAt(valueStart))) {
+            valueStart++;
+        }
+        int valueEnd = valueStart;
+        while (valueEnd < configText.length()
+                && configText.charAt(valueEnd) != ','
+                && configText.charAt(valueEnd) != '\n'
+                && configText.charAt(valueEnd) != '\r') {
+            valueEnd++;
+        }
+        while (valueEnd > valueStart
+                && Character.isWhitespace(configText.charAt(valueEnd - 1))) {
+            valueEnd--;
+        }
+        String current = configText.substring(valueStart, valueEnd);
+        if (!current.equals("true") && !current.equals("false")) {
+            return null;
+        }
+        return configText.substring(0, valueStart) + enabled + configText.substring(valueEnd);
+    }
+
+    /**
+     * Applies the first-run telemetry opt-in choice to the config file on disk.
+     * Returns {@code false} (leaving the file untouched) when the file does not
+     * contain a boolean {@code telemetry.enable} to rewrite.
+     */
+    public static boolean setTelemetryEnabled(Path configPath, boolean enabled) throws IOException {
+        String text = Files.readString(configPath, java.nio.charset.StandardCharsets.UTF_8);
+        String updated = replaceTelemetryEnabled(text, enabled);
+        if (updated == null) {
+            return false;
+        }
+        Files.writeString(configPath, updated, java.nio.charset.StandardCharsets.UTF_8);
+        return true;
+    }
 }

@@ -49,10 +49,25 @@ public class  BotConfigData {
 
     @Data
     public static class Telemetry {
-        private boolean enable = true;      // Whether telemetry is enabled
+        // Opt-in: telemetry stays off unless explicitly enabled in the user config.
+        private boolean enable = false;
         private String mode = "udp";        // Transport mode: "udp" (default) or "http"
         private String ip = "127.0.0.1";    // Telemetry server IP address
         private int port = 9000;            // Telemetry server port
+        // Deployment-specific secret shared with the telemetry server: Base64 of 32 random
+        // bytes (generate with `openssl rand -base64 32`). Empty means telemetry cannot start.
+        private String key = "";
+
+        // Per-field privacy switches (default true = report everything). Set a switch to
+        // false to stop sending that piece of data; the server then shows a placeholder
+        // for the omitted field. Only applies to heartbeat & crash base fields; the crash
+        // details (thread_name / exception / stack_trace) are always reported.
+        private boolean sendBot = true;       // report "bot" (BOT name)
+        private boolean sendServer = true;    // report "server" (server address)
+        private boolean sendState = true;     // report "online" + "state" (login status & main-server stage)
+        private boolean sendPlayers = true;   // report "players" (player count)
+        private boolean sendUptime = true;    // report "uptime_ms"
+        private boolean sendSystem = true;    // report JVM heap / OS / Java version (heartbeat only)
     }
 
     @Data

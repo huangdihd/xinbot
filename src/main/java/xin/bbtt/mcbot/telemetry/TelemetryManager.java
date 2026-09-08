@@ -46,6 +46,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -62,9 +63,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *   [4]      protocol version (1)
  *   [5]      message type (1 = heartbeat, 2 = crash report)
  *   [6..17]  AES-GCM 12-byte IV
- *   [18..]   AES-128-GCM ciphertext (plain JSON payload + 16-byte auth tag)
+ *   [18..]   AES-GCM ciphertext (plain JSON payload + 16-byte auth tag)
  * </pre>
- * The fixed encryption key ({@link #ENCRYPTION_KEY}) must match on the receiver.
+ * The first six header bytes (magic + version + type) are bound to the ciphertext
+ * as AES-GCM AAD, so flipping the type byte alone invalidates the tag. The key is
+ * deployment-specific: the {@code telemetry.key} configured here (Base64 of 32
+ * random bytes) must match on the receiver. Telemetry refuses to start without it.
  * UDP mode sends the raw envelope as one datagram; HTTP mode POSTs the same
  * envelope to {@code http://<ip>:<port>/telemetry} as
  * {@code application/octet-stream}.
@@ -80,11 +84,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     /** Message type: crash report sent when an uncaught exception kills the bot. */
     public static final byte TYPE_CRASH = 2;
 
-    /**
-     * Fixed AES-128 encryption key (16 bytes). Intentionally hard-coded so no
-     * secret ever touches the config file; receivers must use the same value.
-     */
-    static final byte[] ENCRYPTION_KEY = "xinbot-telemetry".getBytes(StandardCharsets.US_ASCII);
+    /** AES-256 key size: the configured secret is Base64 of exactly 32 random bytes. */
+    private static final int KEY_LENGTH = 32;
 
     public static final long HEARTBEAT_INTERVAL_MILLIS = TimeUnit.MINUTES.toMillis(5);
     public static final String DEFAULT_MODE = "udp";
@@ -105,10 +106,31 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         .connectTimeout(Duration.ofSeconds(3))
         .build();
 
+    /**
+     * Snapshot of the per-field reporting switches taken from {@code telemetry.send*}.
+     * Each boolean mirrors one switch in the user config; the default is everything on.
+     */
+    record PayloadOptions(boolean bot, boolean server, boolean state, boolean players,
+                          boolean uptime, boolean system) {
+        static PayloadOptions all() {
+            return new PayloadOptions(true, true, true, true, true, true);
+        }
+
+        static PayloadOptions of(BotConfigData.Telemetry telemetry) {
+            return new PayloadOptions(telemetry.isSendBot(), telemetry.isSendServer(),
+                telemetry.isSendState(), telemetry.isSendPlayers(), telemetry.isSendUptime(),
+                telemetry.isSendSystem());
+        }
+    }
+
     private final AtomicBoolean enabled = new AtomicBoolean(false);
     private volatile String mode = DEFAULT_MODE;
     private volatile String ip = DEFAULT_IP;
     private volatile int port = DEFAULT_PORT;
+    /** Deployment-specific AES-256 key, decoded from {@code telemetry.key} on configure(). */
+    private volatile byte[] key;
+    /** Which optional payload fields may be sent; refreshed on each configure(). */
+    private volatile PayloadOptions payloadOptions = PayloadOptions.all();
     private volatile ScheduledExecutorService heartbeatExecutor;
     private volatile Thread.UncaughtExceptionHandler previousHandler;
     private volatile boolean handlerInstalled = false;
@@ -128,8 +150,26 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         String nextIp = telemetry.getIp() == null || telemetry.getIp().isBlank()
             ? DEFAULT_IP : telemetry.getIp().trim();
         int nextPort = telemetry.getPort() > 0 ? telemetry.getPort() : DEFAULT_PORT;
+        PayloadOptions nextOptions = PayloadOptions.of(telemetry);
 
-        if (enabled.get() && mode.equals(nextMode) && ip.equals(nextIp) && port == nextPort) {
+        // Deployment secret is mandatory: without it there is no confidentiality or
+        // sender authentication, so telemetry fails closed instead of sending in clear.
+        if (telemetry.getKey() == null || telemetry.getKey().isBlank()) {
+            log.error(LangManager.get("xinbot.telemetry.key.required"));
+            shutdown();
+            return;
+        }
+        final byte[] nextKey;
+        try {
+            nextKey = parseKey(telemetry.getKey());
+        } catch (IllegalArgumentException e) {
+            log.error(LangManager.get("xinbot.telemetry.key.invalid", e.getMessage()));
+            shutdown();
+            return;
+        }
+
+        if (enabled.get() && mode.equals(nextMode) && ip.equals(nextIp) && port == nextPort
+            && Arrays.equals(key, nextKey) && payloadOptions.equals(nextOptions)) {
             return;
         }
 
@@ -137,6 +177,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         this.mode = nextMode;
         this.ip = nextIp;
         this.port = nextPort;
+        this.key = nextKey;
+        this.payloadOptions = nextOptions;
         enabled.set(true);
         installCrashHandler();
         startHeartbeat();
@@ -213,7 +255,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
             return;
         }
         try {
-            transmit(buildEnvelope(TYPE_HEARTBEAT, toJsonBytes(heartbeatPayload())));
+            byte[] plaintext = toJsonBytes(filterPayload(heartbeatPayload(), payloadOptions));
+            transmit(buildEnvelope(TYPE_HEARTBEAT, plaintext, key));
         } catch (Throwable e) {
             log.warn(LangManager.get(
                 "xinbot.telemetry.send.failed", "heartbeat", ip, port, String.valueOf(e)
@@ -223,7 +266,8 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
 
     private void sendCrashReport(Throwable throwable, Thread thread) {
         try {
-            transmit(buildEnvelope(TYPE_CRASH, toJsonBytes(crashPayload(throwable, thread))));
+            byte[] plaintext = toJsonBytes(filterPayload(crashPayload(throwable, thread), payloadOptions));
+            transmit(buildEnvelope(TYPE_CRASH, plaintext, key));
         } catch (Throwable e) {
             log.warn(LangManager.get(
                 "xinbot.telemetry.send.failed", "crash", ip, port, String.valueOf(e)
@@ -269,11 +313,14 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
 
     /**
      * Builds an encrypted envelope: magic + version + type + random IV + ciphertext.
+     * The six header bytes are bound to the ciphertext as GCM AAD.
+     *
+     * @param key 32-byte AES-256 key shared with the receiver
      */
-    static byte[] buildEnvelope(byte type, byte[] plaintext) throws Exception {
+    static byte[] buildEnvelope(byte type, byte[] plaintext, byte[] key) throws Exception {
         byte[] iv = new byte[IV_LENGTH];
         RANDOM.nextBytes(iv);
-        byte[] ciphertext = encrypt(plaintext, iv);
+        byte[] ciphertext = encrypt(plaintext, iv, headerAad(type), key);
         return ByteBuffer.allocate(HEADER_LENGTH + ciphertext.length)
             .put(MAGIC)
             .put(PROTOCOL_VERSION)
@@ -287,7 +334,7 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
      * Decrypts an envelope and returns the plain JSON bytes. Exposed for tests
      * and as the reference implementation for telemetry receivers.
      */
-    static byte[] decryptEnvelope(byte[] envelope) throws Exception {
+    static byte[] decryptEnvelope(byte[] envelope, byte[] key) throws Exception {
         if (envelope.length < HEADER_LENGTH) {
             throw new IllegalArgumentException("Envelope too short: " + envelope.length);
         }
@@ -298,22 +345,53 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         if (envelope[4] != PROTOCOL_VERSION) {
             throw new IllegalArgumentException("Unsupported protocol version: " + envelope[4]);
         }
+        byte type = envelope[5];
         byte[] iv = Arrays.copyOfRange(envelope, 6, 6 + IV_LENGTH);
         byte[] ciphertext = Arrays.copyOfRange(envelope, 6 + IV_LENGTH, envelope.length);
-        return decrypt(ciphertext, iv);
+        return decrypt(ciphertext, iv, headerAad(type), key);
     }
 
-    private static byte[] encrypt(byte[] plaintext, byte[] iv) throws Exception {
+    /** AAD for AES-GCM: the header bytes before the IV, i.e. magic + version + type. */
+    private static byte[] headerAad(byte type) {
+        return new byte[]{MAGIC[0], MAGIC[1], MAGIC[2], MAGIC[3], PROTOCOL_VERSION, type};
+    }
+
+    /**
+     * Decodes the configured deployment secret: Base64 of exactly 32 random bytes
+     * (AES-256). Throws {@link IllegalArgumentException} when blank, not Base64,
+     * or of the wrong decoded length.
+     */
+    static byte[] parseKey(String configured) {
+        String text = configured == null ? "" : configured.trim();
+        if (text.isEmpty()) {
+            throw new IllegalArgumentException("empty");
+        }
+        final byte[] decoded;
+        try {
+            decoded = Base64.getDecoder().decode(text);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("not valid Base64: " + e.getMessage());
+        }
+        if (decoded.length != KEY_LENGTH) {
+            throw new IllegalArgumentException(
+                "expected 32 bytes after Base64 decoding, got " + decoded.length);
+        }
+        return decoded;
+    }
+
+    private static byte[] encrypt(byte[] plaintext, byte[] iv, byte[] aad, byte[] key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(ENCRYPTION_KEY, "AES"),
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"),
             new GCMParameterSpec(GCM_TAG_BITS, iv));
+        cipher.updateAAD(aad);
         return cipher.doFinal(plaintext);
     }
 
-    private static byte[] decrypt(byte[] ciphertext, byte[] iv) throws Exception {
+    private static byte[] decrypt(byte[] ciphertext, byte[] iv, byte[] aad, byte[] key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(ENCRYPTION_KEY, "AES"),
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"),
             new GCMParameterSpec(GCM_TAG_BITS, iv));
+        cipher.updateAAD(aad);
         return cipher.doFinal(ciphertext);
     }
 
@@ -333,6 +411,32 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
         payload.put("players", playerCount());
         payload.put("uptime_ms", ManagementFactory.getRuntimeMXBean().getUptime());
         return payload;
+    }
+
+    /**
+     * Removes every payload field disabled by the per-field privacy switches, returning
+     * a new map (the input is left untouched). Protocol fields ({@code type},
+     * {@code timestamp_ms}, {@code version}) and crash details ({@code thread_name},
+     * {@code exception}, {@code stack_trace}) are never filtered.
+     */
+    static Map<String, Object> filterPayload(Map<String, Object> payload, PayloadOptions options) {
+        Map<String, Object> filtered = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : payload.entrySet()) {
+            boolean allowed = switch (entry.getKey()) {
+                case "bot" -> options.bot();
+                case "server" -> options.server();
+                case "online", "state" -> options.state();
+                case "players" -> options.players();
+                case "uptime_ms" -> options.uptime();
+                case "heap_used_bytes", "heap_max_bytes", "os_name", "os_arch", "java_version"
+                    -> options.system();
+                default -> true;
+            };
+            if (allowed) {
+                filtered.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return filtered;
     }
 
     private static Map<String, Object> heartbeatPayload() {
