@@ -4,6 +4,10 @@
 /plugin/*
 /config.conf
 /remote_config.json
+
+### 本地独立项目(不推送) ###
+/XinBotTelemetry/
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
