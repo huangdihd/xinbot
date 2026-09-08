@@ -113,6 +113,11 @@ public class Xinbot {
         LangManager.initLang(Xinbot.class.getClassLoader());
         LangManager.loadExternal();
 
+        // Initialize JLine before any log output: until the LineReader is ready,
+        // JLineConsoleAppender falls back to System.out and prints UTF-8 bytes raw,
+        // which garbles CJK text on Windows GBK consoles. printAbove() is safe.
+        CLI.init();
+
         // Handle sub-commands (anything starting with '-'), e.g. --version, --install
         Cli cli = Cli.create();
         if (cli.isSubcommand(args)) {
@@ -142,9 +147,6 @@ public class Xinbot {
             log.error(LangManager.get("xinbot.config.error", configPath), e);
             System.exit(1);
         }
-
-        // Initialize JLine
-        CLI.init();
 
         // Initialize minecraft language
         if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();

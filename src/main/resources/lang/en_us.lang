@@ -221,3 +221,8 @@ xinbot.modpack.info.failed=Failed to read modpack info: %s
 xinbot.update.checking=Checking for Xinbot updates...
 xinbot.update.newversion=A new version of Xinbot, %s, is available. See %s for more details.
 xinbot.update.checking.failed=Failed to check for updates: %s
+
+# Telemetry
+xinbot.telemetry.enabled=Telemetry enabled, mode: %s, target: %s:%d
+xinbot.telemetry.crash.detected=Uncaught exception on thread %s, sending a crash report to the telemetry server
+xinbot.telemetry.send.failed=Failed to send the %s telemetry report to %s:%d: %s

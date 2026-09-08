@@ -165,3 +165,8 @@ xinbot.modpack.info.failed=讀取整合包資訊失敗：%s
 xinbot.update.checking=正在檢查 Xinbot 更新...
 xinbot.update.newversion=Xinbot 有新版本 %s 可用，詳見 %s。
 xinbot.update.checking.failed=檢查更新失敗：%s
+
+# Telemetry
+xinbot.telemetry.enabled=遙測已開啟，模式：%s，目標：%s:%d
+xinbot.telemetry.crash.detected=執行緒 %s 發生未捕獲例外，正在向遙測伺服器傳送崩潰報告
+xinbot.telemetry.send.failed=向 %s:%d 傳送%s遙測報告失敗：%s

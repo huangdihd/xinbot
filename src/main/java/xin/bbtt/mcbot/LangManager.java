@@ -179,7 +179,15 @@ public class LangManager {
                 return;
             }
 
-            JsonObject root = JsonParser.parseReader(new InputStreamReader(raw, StandardCharsets.UTF_8)).getAsJsonObject();
+            JsonObject root;
+            try {
+                root = JsonParser.parseReader(new InputStreamReader(raw, StandardCharsets.UTF_8)).getAsJsonObject();
+            } catch (JsonParseException | IllegalStateException e) {
+                // A missing real file (e.g. an undownloaded Git LFS pointer) must not
+                // abort startup: translation simply stays unavailable until fixed.
+                log.warn(get("xinbot.langmanager.json.error", targetLang, e.getMessage()));
+                return;
+            }
 
             if (!root.has(targetLang)) {
                 log.debug(get("xinbot.langmanager.json.lang_not_found", targetLang));

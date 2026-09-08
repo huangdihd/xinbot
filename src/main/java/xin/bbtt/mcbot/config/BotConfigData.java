@@ -29,6 +29,7 @@ public class  BotConfigData {
     private Boolean checkForUpdates;
     private Plugin plugin;
     private Proxy proxy;
+    private Telemetry telemetry = new Telemetry();
     private boolean enableTranslation;
     private int reconnectTimeout = 5000;
     private int reconnectDelay = 3000;
@@ -44,6 +45,14 @@ public class  BotConfigData {
     @Data
     public static class Plugin {
         private String directory;
+    }
+
+    @Data
+    public static class Telemetry {
+        private boolean enable = true;      // Whether telemetry is enabled
+        private String mode = "udp";        // Transport mode: "udp" (default) or "http"
+        private String ip = "127.0.0.1";    // Telemetry server IP address
+        private int port = 9000;            // Telemetry server port
     }
 
     @Data
