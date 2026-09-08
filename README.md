@@ -46,6 +46,7 @@ You can find the official MetaPlugin implementation for 2b2t.xin here: [xinMetaP
 - MetaPlugin Architecture: core interaction logic is decoupled, enabling support for various server types via MetaPlugins.
 - Plugin architecture: extend behavior with a familiar Bukkit-style event system.
 - Internationalization: support for multiple languages and bootstrap error reporting.
+- Telemetry: optional AES-256-GCM encrypted heartbeat & crash reporting with privacy redaction (opt-in, off by default).
 
 ---
 
@@ -95,6 +96,43 @@ java -jar xinbot.jar --help                     # list all sub-commands
 Installing overwrites existing files of the same name (with a warning) and ignores any
 archive entry outside `plugins/` and `lang/`. The plugin directory is read from
 `config.conf` when present, otherwise the default `plugin/` is used.
+
+---
+
+## Telemetry Reporting
+
+Since 2.5.0, Xinbot can report encrypted heartbeats (every 5 minutes) and crash
+reports to your own telemetry server. Telemetry is **fully optional and opt-in**:
+the config default is off, and on first run the bot asks once (Y/N) before any
+data is transmitted. Enable it in `config.conf`:
+
+```hocon
+"telemetry" : {
+    "enable" : true,      // Opt-in: enable telemetry (heartbeat & crash reports)
+    "mode" : "udp",       // Transport mode: "udp" (default) or "http"
+    "ip" : "127.0.0.1",   // Your telemetry server
+    "port" : 9000,
+    "key" : ""            // Deployment secret: Base64 of 32 random bytes,
+                           // e.g. `openssl rand -base64 32`. Must match the server.
+    // Per-field privacy switches: sendBot, sendServer, sendState,
+    // sendPlayers, sendUptime, sendSystem (all default true)
+}
+```
+
+**Encryption** — every packet is an "XBTL" envelope (magic + version + type +
+IV + ciphertext) encrypted with AES-256-GCM under the deployment key above,
+which must match the key on your server. The 6-byte header is bound to the
+ciphertext as GCM AAD and the JSON payload `type` must match the envelope type,
+so tampered or wrong-key packets are rejected. Without a configured key nothing
+is sent (fails closed). UDP and HTTP transports carry the same envelope.
+
+**Privacy** — per-field switches decide which payload groups are reported:
+`sendBot` (bot name), `sendServer` (server address), `sendState` (online
+status & stage), `sendPlayers` (player count), `sendUptime` (uptime), and
+`sendSystem` (JVM heap / OS / Java version). Crash report text (exception
+message and stack trace) is redacted before it leaves the client: any run of
+4+ digits, positive or negative (e.g. player coordinates), becomes `****`, and
+passwords from the config (`account.password`, proxy password) become `******`.
 
 ---
 
