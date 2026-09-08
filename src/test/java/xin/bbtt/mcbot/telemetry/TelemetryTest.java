@@ -285,4 +285,59 @@ class TelemetryTest {
         assertFalse(filtered.containsKey("uptime_ms"));
         assertEquals(6, filtered.size());
     }
+
+    @Test
+    void keyRequestIsJustTheSixByteControlHeader() {
+        byte[] request = TelemetryManager.buildKeyRequest();
+        assertEquals(6, request.length);
+        assertEquals('X', request[0]);
+        assertEquals('B', request[1]);
+        assertEquals('T', request[2]);
+        assertEquals('L', request[3]);
+        assertEquals(TelemetryManager.PROTOCOL_VERSION, request[4]);
+        assertEquals(TelemetryManager.TYPE_KEY_REQUEST, request[5]);
+    }
+
+    @Test
+    void parseKeyResponseDecodesTheBase64Body() {
+        byte[] reply = keyResponseFor(TEST_KEY);
+        assertArrayEquals(TEST_KEY, TelemetryManager.parseKeyResponse(reply));
+    }
+
+    @Test
+    void parseKeyResponseRejectsMalformedReplies() {
+        // Wrong magic, wrong type and truncated replies are all rejected
+        byte[] badMagic = keyResponseFor(TEST_KEY);
+        badMagic[3] = 'X';
+        assertThrows(IllegalArgumentException.class,
+                () -> TelemetryManager.parseKeyResponse(badMagic));
+        byte[] wrongType = keyResponseFor(TEST_KEY);
+        wrongType[5] = TelemetryManager.TYPE_KEY_REQUEST;
+        assertThrows(IllegalArgumentException.class,
+                () -> TelemetryManager.parseKeyResponse(wrongType));
+        assertThrows(IllegalArgumentException.class,
+                () -> TelemetryManager.parseKeyResponse(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> TelemetryManager.parseKeyResponse(new byte[6]));
+        // Body that is not Base64 of 32 bytes fails the key parser too
+        byte[] junk = new byte[6 + 5];
+        System.arraycopy(TelemetryManager.MAGIC, 0, junk, 0, 4);
+        junk[4] = TelemetryManager.PROTOCOL_VERSION;
+        junk[5] = TelemetryManager.TYPE_KEY_RESPONSE;
+        System.arraycopy("nope!".getBytes(StandardCharsets.UTF_8), 0, junk, 6, 5);
+        assertThrows(IllegalArgumentException.class,
+                () -> TelemetryManager.parseKeyResponse(junk));
+    }
+
+    /** Builds a plaintext key response: header + Base64 of the given key. */
+    private static byte[] keyResponseFor(byte[] key) {
+        byte[] body = Base64.getEncoder().encodeToString(key)
+                .getBytes(StandardCharsets.UTF_8);
+        byte[] reply = new byte[6 + body.length];
+        System.arraycopy(TelemetryManager.MAGIC, 0, reply, 0, 4);
+        reply[4] = TelemetryManager.PROTOCOL_VERSION;
+        reply[5] = TelemetryManager.TYPE_KEY_RESPONSE;
+        System.arraycopy(body, 0, reply, 6, body.length);
+        return reply;
+    }
 }

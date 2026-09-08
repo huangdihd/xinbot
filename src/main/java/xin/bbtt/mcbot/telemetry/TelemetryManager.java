@@ -72,7 +72,11 @@ import java.util.regex.Pattern;
  * The first six header bytes (magic + version + type) are bound to the ciphertext
  * as AES-GCM AAD, so flipping the type byte alone invalidates the tag. The key is
  * deployment-specific: the {@code telemetry.key} configured here (Base64 of 32
- * random bytes) must match on the receiver. Telemetry refuses to start without it.
+ * random bytes) must match on the receiver. Leaving telemetry.key empty switches
+ * to the weakened mode: the key is fetched from the server at startup through a
+ * plaintext exchange over the configured transport (UDP type 3/4 control packets,
+ * or HTTP GET /telemetry/key). This is convenient but anyone able to eavesdrop on
+ * that exchange learns the key, so it only makes sense on trusted networks.
  * UDP mode sends the raw envelope as one datagram; HTTP mode POSTs the same
  * envelope to {@code http://<ip>:<port>/telemetry} as
  * {@code application/octet-stream}.
@@ -87,6 +91,10 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     public static final byte TYPE_HEARTBEAT = 1;
     /** Message type: crash report sent when an uncaught exception kills the bot. */
     public static final byte TYPE_CRASH = 2;
+    /** Message type: plaintext key request (header only, no body). */
+    public static final byte TYPE_KEY_REQUEST = 3;
+    /** Message type: plaintext key response carrying the Base64 deployment key. */
+    public static final byte TYPE_KEY_RESPONSE = 4;
 
     /** AES-256 key size: the configured secret is Base64 of exactly 32 random bytes. */
     private static final int KEY_LENGTH = 32;
@@ -98,6 +106,10 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     private static final int IV_LENGTH = 12;
     private static final int GCM_TAG_BITS = 128;
     private static final int HEADER_LENGTH = 4 + 1 + 1 + IV_LENGTH;
+    /** Plaintext control-packet header length (magic + version + type). */
+    private static final int CONTROL_HEADER_LENGTH = 6;
+    /** UDP key-exchange round trip must finish before telemetry gives up and stays off. */
+    private static final int KEY_EXCHANGE_TIMEOUT_MILLIS = 4000;
     /** UDP payload ceiling (65535 minus UDP/IP headers), also caps HTTP bodies. */
     private static final int MAX_PAYLOAD = 65507;
     /** Stack trace length cap so a crash report cannot exceed the UDP payload ceiling. */
@@ -188,30 +200,108 @@ public class TelemetryManager implements Thread.UncaughtExceptionHandler {
     /**
      * Validates and normalizes a telemetry configuration into the settings the
      * manager would run with. {@code null} means telemetry must stay off: the
-     * section is disabled or missing, or the deployment key is blank or invalid
-     * (fails closed instead of sending in clear).
+     * section is disabled or missing, or no deployment key could be resolved.
+     * An explicitly configured key is parsed as-is (an invalid one fails closed);
+     * an empty key triggers the weakened auto-fetch over the configured transport,
+     * which fails closed too when the server cannot be reached.
      */
     private ResolvedSettings resolveSettings(BotConfigData.Telemetry telemetry) {
         if (telemetry == null || !telemetry.isEnable()) {
             return null;
         }
-        if (telemetry.getKey() == null || telemetry.getKey().isBlank()) {
-            log.error(LangManager.get("xinbot.telemetry.key.required"));
-            return null;
-        }
+        String mode = normalizeMode(telemetry.getMode());
+        String host = normalizeIp(telemetry.getIp());
+        int targetPort = telemetry.getPort() > 0 ? telemetry.getPort() : DEFAULT_PORT;
+        String configuredKey = telemetry.getKey();
         final byte[] nextKey;
+        if (configuredKey == null || configuredKey.isBlank()) {
+            nextKey = fetchKeyOrNull(mode, host, targetPort);
+            if (nextKey == null) {
+                return null; // fetchKeyOrNull already logged the reason
+            }
+            log.info(LangManager.get("xinbot.telemetry.key.auto", host, targetPort));
+        } else {
+            try {
+                nextKey = parseKey(configuredKey);
+            } catch (IllegalArgumentException e) {
+                log.error(LangManager.get("xinbot.telemetry.key.invalid", e.getMessage()));
+                return null;
+            }
+        }
+        return new ResolvedSettings(mode, host, targetPort, nextKey,
+                PayloadOptions.of(telemetry));
+    }
+
+    /**
+     * Asks the server to disclose its deployment key over the transport the manager
+     * runs on; {@code null} (and an error log) when the exchange fails. The request
+     * itself travels in clear, so this weakened mode only makes sense on trusted
+     * networks; an explicit telemetry.key never goes through this path.
+     */
+    private byte[] fetchKeyOrNull(String mode, String ip, int port) {
         try {
-            nextKey = parseKey(telemetry.getKey());
-        } catch (IllegalArgumentException e) {
-            log.error(LangManager.get("xinbot.telemetry.key.invalid", e.getMessage()));
+            return "http".equals(mode) ? fetchKeyHttp(ip, port) : fetchKeyUdp(ip, port);
+        } catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            log.error(LangManager.get(
+                "xinbot.telemetry.key.fetch.failed", ip, port, String.valueOf(e)));
             return null;
         }
-        return new ResolvedSettings(
-                normalizeMode(telemetry.getMode()),
-                normalizeIp(telemetry.getIp()),
-                telemetry.getPort() > 0 ? telemetry.getPort() : DEFAULT_PORT,
-                nextKey,
-                PayloadOptions.of(telemetry));
+    }
+
+    /** UDP key exchange: send the plaintext request, wait for the key response. */
+    private byte[] fetchKeyUdp(String ip, int port) throws IOException {
+        byte[] request = buildKeyRequest();
+        try (DatagramSocket socket = new DatagramSocket()) {
+            socket.setSoTimeout(KEY_EXCHANGE_TIMEOUT_MILLIS);
+            socket.send(new DatagramPacket(
+                request, request.length, InetAddress.getByName(ip), port));
+            byte[] buffer = new byte[MAX_PAYLOAD];
+            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+            socket.receive(response);
+            return parseKeyResponse(Arrays.copyOf(buffer, response.getLength()));
+        }
+    }
+
+    /** HTTP key exchange: GET the plaintext key from {@code /telemetry/key}. */
+    private byte[] fetchKeyHttp(String ip, int port) throws IOException, InterruptedException {
+        String host = ip.contains(":") && !ip.startsWith("[") ? "[" + ip + "]" : ip;
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://" + host + ":" + port + "/telemetry/key"))
+            .timeout(Duration.ofSeconds(5))
+            .GET()
+            .build();
+        HttpResponse<byte[]> response = HTTP_CLIENT.send(
+            request, HttpResponse.BodyHandlers.ofByteArray());
+        int status = response.statusCode();
+        if (status < 200 || status >= 300) {
+            throw new IOException("HTTP status " + status);
+        }
+        return parseKey(new String(response.body(), StandardCharsets.UTF_8).trim());
+    }
+
+    /** Plaintext key request: magic + version + type = KEY_REQUEST (no body). */
+    static byte[] buildKeyRequest() {
+        return new byte[]{MAGIC[0], MAGIC[1], MAGIC[2], MAGIC[3],
+            PROTOCOL_VERSION, TYPE_KEY_REQUEST};
+    }
+
+    /**
+     * Validates a plaintext key response (magic + version + type = KEY_RESPONSE)
+     * and decodes the deployment key carried in its body.
+     */
+    static byte[] parseKeyResponse(byte[] data) {
+        if (data == null || data.length <= CONTROL_HEADER_LENGTH
+                || data[0] != MAGIC[0] || data[1] != MAGIC[1]
+                || data[2] != MAGIC[2] || data[3] != MAGIC[3]
+                || data[4] != PROTOCOL_VERSION
+                || data[5] != TYPE_KEY_RESPONSE) {
+            throw new IllegalArgumentException("Malformed key response");
+        }
+        return parseKey(new String(data, CONTROL_HEADER_LENGTH,
+            data.length - CONTROL_HEADER_LENGTH, StandardCharsets.UTF_8));
     }
 
     /**

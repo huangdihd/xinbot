@@ -113,18 +113,26 @@ data is transmitted. Enable it in `config.conf`:
     "ip" : "127.0.0.1",   // Your telemetry server
     "port" : 9000,
     "key" : ""            // Deployment secret: Base64 of 32 random bytes,
-                           // e.g. `openssl rand -base64 32`. Must match the server.
+                           // e.g. `openssl rand -base64 32`. Leave empty to
+                           // fetch it from the server automatically (see below).
     // Per-field privacy switches: sendBot, sendServer, sendState,
     // sendPlayers, sendUptime, sendSystem (all default true)
 }
 ```
 
 **Encryption** — every packet is an "XBTL" envelope (magic + version + type +
-IV + ciphertext) encrypted with AES-256-GCM under the deployment key above,
-which must match the key on your server. The 6-byte header is bound to the
+IV + ciphertext) encrypted with AES-256-GCM. The 6-byte header is bound to the
 ciphertext as GCM AAD and the JSON payload `type` must match the envelope type,
-so tampered or wrong-key packets are rejected. Without a configured key nothing
-is sent (fails closed). UDP and HTTP transports carry the same envelope.
+so tampered or wrong-key packets are rejected. UDP and HTTP transports carry
+the same envelope.
+
+**Key handling** — the key is deployment-specific and must match the server's.
+Set `telemetry.key` explicitly, or leave it empty to have the bot fetch it from
+the server at startup over the configured transport (UDP key-request/response
+packets, or HTTP `GET /telemetry/key`). That exchange is plaintext, so anyone
+able to watch it learns the key: auto-fetch only makes sense on trusted
+networks (bot and server on the same LAN, for example). When no key can be
+obtained or the configured key is invalid, nothing is sent (fails closed).
 
 **Privacy** — per-field switches decide which payload groups are reported:
 `sendBot` (bot name), `sendServer` (server address), `sendState` (online
