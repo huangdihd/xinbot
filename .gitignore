@@ -48,3 +48,7 @@
 *.rev
 *.p12
 secring.*
+
+### programmer
+/.programmer
+/PROGRAMMER.md
