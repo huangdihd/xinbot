@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import xin.bbtt.mcbot.Bot;
+import xin.bbtt.mcbot.ComponentParser;
 import xin.bbtt.mcbot.Utils;
 import xin.bbtt.mcbot.events.OverlayUpdateEvent;
 import xin.bbtt.mcbot.events.SystemChatMessageEvent;
@@ -34,7 +35,6 @@ import xin.bbtt.mcbot.LangManager;
 
 import java.util.Arrays;
 
-import static xin.bbtt.mcbot.Utils.parseColors;
 import static xin.bbtt.mcbot.Utils.toStrings;
 
 public class ChatMessagePrinter extends SessionAdapter {
@@ -57,8 +57,8 @@ public class ChatMessagePrinter extends SessionAdapter {
             OverlayUpdateEvent overlayUpdateEvent = new OverlayUpdateEvent(systemChatPacket.getContent());
             Bot.INSTANCE.getPluginManager().events().callEvent(overlayUpdateEvent);
         }
-        Arrays.stream(event.getText().split("\n"))
-                .forEach((line) -> log.info(marker, parseColors(line)));
+        Arrays.stream(ComponentParser.toAnsi(event.getContent()).split("\n"))
+                .forEach((line) -> log.info(marker, line));
         log.debug(marker, xin.bbtt.mcbot.LangManager.get("xinbot.chat.system.received", toStrings(systemChatPacket.getContent())));
     }
 }
