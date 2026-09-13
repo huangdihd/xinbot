@@ -19,6 +19,7 @@ jobs:
       matrix:
         test-class: [
           "xin.bbtt.mcbot.util.UtilsTest",
+          "xin.bbtt.mcbot.util.ComponentParserTest",
           "xin.bbtt.mcbot.LangManagerTest",
           "xin.bbtt.mcbot.command.CommandManagerTest",
           "xin.bbtt.mcbot.event.EventManagerTest",
