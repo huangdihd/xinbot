@@ -27,6 +27,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,7 @@ public final class ComponentParser {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final Pattern TRANSLATION_PLACEHOLDER = Pattern.compile("%%|%(?:(\\d+)\\$)?s");
     private static final String LEGACY_CODES = "0123456789abcdef";
+    private static final Set<Character> LEGACY_DECORATIONS = Set.of('k', 'l', 'm', 'n', 'o');
     private static final List<NamedTextColor> LEGACY_COLORS = List.of(
         NamedTextColor.BLACK, NamedTextColor.DARK_BLUE, NamedTextColor.DARK_GREEN,
         NamedTextColor.DARK_AQUA, NamedTextColor.DARK_RED, NamedTextColor.DARK_PURPLE,
@@ -134,41 +136,53 @@ public final class ComponentParser {
 
     private static void appendLegacyText(List<TextRun> runs, String text, StyleState baseStyle) {
         StyleState style = baseStyle;
+        int index = 0;
         int lastIndex = 0;
 
-        for (int index = 0; index + 1 < text.length(); index++) {
+        while (index + 1 < text.length()) {
             if (text.charAt(index) != '§') {
+                index++;
                 continue;
             }
 
-            char code = Character.toLowerCase(text.charAt(index + 1));
-            TextColor hexColor = readLegacyHexColor(text, index);
-            if (hexColor != null) {
-                appendRun(runs, text.substring(lastIndex, index), style);
-                style = style.withColor(hexColor).withoutDecorations();
-                index += 13;
-                lastIndex = index + 1;
+            LegacyFormat format = readLegacyFormat(text, index, style, baseStyle);
+            if (format == null) {
+                index++;
                 continue;
             }
 
-            int colorIndex = LEGACY_CODES.indexOf(code);
-            if (colorIndex >= 0) {
-                appendRun(runs, text.substring(lastIndex, index), style);
-                style = style.withColor(namedColor(colorIndex)).withoutDecorations();
-            } else if (code == 'k' || code == 'l' || code == 'm' || code == 'n' || code == 'o') {
-                appendRun(runs, text.substring(lastIndex, index), style);
-                style = style.withDecoration(code);
-            } else if (code == 'r') {
-                appendRun(runs, text.substring(lastIndex, index), style);
-                style = baseStyle;
-            } else {
-                continue;
-            }
-
-            index++;
-            lastIndex = index + 1;
+            appendRun(runs, text.substring(lastIndex, index), style);
+            style = format.style();
+            index = format.nextIndex();
+            lastIndex = index;
         }
         appendRun(runs, text.substring(lastIndex), style);
+    }
+
+    private static LegacyFormat readLegacyFormat(
+        String text,
+        int start,
+        StyleState currentStyle,
+        StyleState baseStyle
+    ) {
+        TextColor hexColor = readLegacyHexColor(text, start);
+        if (hexColor != null) {
+            return new LegacyFormat(currentStyle.withColor(hexColor).withoutDecorations(), start + 14);
+        }
+
+        char code = Character.toLowerCase(text.charAt(start + 1));
+        int colorIndex = LEGACY_CODES.indexOf(code);
+        if (colorIndex >= 0) {
+            StyleState style = currentStyle.withColor(namedColor(colorIndex)).withoutDecorations();
+            return new LegacyFormat(style, start + 2);
+        }
+        if (LEGACY_DECORATIONS.contains(code)) {
+            return new LegacyFormat(currentStyle.withDecoration(code), start + 2);
+        }
+        if (code == 'r') {
+            return new LegacyFormat(baseStyle, start + 2);
+        }
+        return null;
     }
 
     private static TextColor readLegacyHexColor(String text, int start) {
@@ -228,6 +242,9 @@ public final class ComponentParser {
         if (style.strikethrough()) result.append("\u001B[9m");
         if (style.obfuscated()) result.append('░');
         return result.toString();
+    }
+
+    private record LegacyFormat(StyleState style, int nextIndex) {
     }
 
     private record TextRun(String text, StyleState style) {
