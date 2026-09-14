@@ -40,6 +40,7 @@ import xin.bbtt.mcbot.events.DisconnectEvent;
 import xin.bbtt.mcbot.listeners.*;
 import xin.bbtt.mcbot.plugin.Plugin;
 import xin.bbtt.mcbot.plugin.PluginManager;
+import xin.bbtt.mcbot.telemetry.TelemetryManager;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -55,7 +56,10 @@ public class Bot {
     private MinecraftProtocol protocol;
     @Getter
     private volatile ClientSession session;
+    @Getter
     private Thread mainThread;
+    @Getter
+    private TelemetryManager telemetryManager = new TelemetryManager();
     @Getter
     private BotConfig config;
     @Getter
@@ -119,6 +123,8 @@ public class Bot {
 
         running = true;
         protocol = AccountLoader.getProtocol();
+        telemetryManager.updateSecrets(config.getConfigData());
+        telemetryManager.configure(config.getConfigData().getTelemetry());
         var proxy = config.getConfigData().getProxy();
         if (proxy.isEnable()) {
             if (proxy.getInfo() == null) {
@@ -137,6 +143,7 @@ public class Bot {
     public void stop() {
         try {
             running = false;
+            telemetryManager.shutdown();
             scheduler.shutdownNow();
             if (session != null) {
                 disconnect(LangManager.get("xinbot.bot.stopped"));
@@ -363,6 +370,8 @@ public class Bot {
         if (session != null && session.isConnected()) {
             disconnect(LangManager.get("xinbot.command.reload.disconnect", "Reloading config..."));
         }
+        telemetryManager.updateSecrets(config.getConfigData());
+        telemetryManager.configure(config.getConfigData().getTelemetry());
     }
 
     @SuppressWarnings("unused")
