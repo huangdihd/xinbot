@@ -211,6 +211,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <shade.universal.skip>false</shade.universal.skip>
     </properties>
 
     <build>
@@ -256,11 +257,13 @@
                 <version>3.6.2</version>
                 <executions>
                     <execution>
+                        <id>shade-universal</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <skip>${shade.universal.skip}</skip>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <shadedArtifactId>${project.artifactId}</shadedArtifactId>
                             <!-- Deployed POM must not carry the shaded-in deps: MCProtocolLib is a
@@ -319,6 +322,79 @@
     </build>
 
     <profiles>
+        <!-- Windows GUI distribution: retain only Windows x86-64 native binaries.
+             The normal build remains a universal, cross-platform fat jar. -->
+        <profile>
+            <id>windows-x86_64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+            </properties>
+            <build>
+                <finalName>${project.artifactId}-${project.version}-windows-x86_64</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.2</version>
+                        <executions>
+                            <execution>
+                                <id>shade-windows-x86_64</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>false</shadedArtifactAttached>
+                                    <shadedArtifactId>${project.artifactId}</shadedArtifactId>
+                                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                                    <artifactSet>
+                                        <excludes>
+                                            <!-- Lombok is only used while compiling and is not needed at runtime. -->
+                                            <exclude>org.projectlombok:lombok</exclude>
+                                        </excludes>
+                                    </artifactSet>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                                <!-- Netty names Unix native libraries with a libnetty_ prefix;
+                                                     the Windows x86-64 DLL has a netty_ prefix and is retained. -->
+                                                <exclude>META-INF/native/libnetty_*</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/AIX/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/FreeBSD/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/Linux/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/Mac/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/SunOS/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/Windows/arm64/**</exclude>
+                                                <exclude>org/fusesource/jansi/internal/native/Windows/x86/**</exclude>
+                                                <exclude>org/jline/nativ/FreeBSD/**</exclude>
+                                                <exclude>org/jline/nativ/Linux/**</exclude>
+                                                <exclude>org/jline/nativ/Mac/**</exclude>
+                                                <exclude>org/jline/nativ/Windows/arm64/**</exclude>
+                                                <exclude>org/jline/nativ/Windows/x86/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>xin.bbtt.mcbot.Xinbot</mainClass>
+                                            <manifestEntries>
+                                                <Implementation-Version>${project.version}</Implementation-Version>
+                                            </manifestEntries>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- mvn -Pcentral deploy  ->  publishes to Maven Central via the Central Portal.
              Left out of the default build so ordinary `mvn package` needs no GPG key. -->
         <profile>

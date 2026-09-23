@@ -89,6 +89,15 @@ java -jar xinbot.jar --modpack-info <file.zip>  # 打印整合包清单信息
 java -jar xinbot.jar --help                     # 列出全部子命令
 ```
 
+为 Windows x86-64 GUI 发行版构建时，可以生成不包含其他操作系统和 CPU
+架构原生库的精简 fat JAR：
+
+```bash
+mvn -Pwindows-x86_64 clean package
+```
+
+普通的 `mvn package` 构建仍然是跨平台版本。
+
 安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/` 与 `lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
 
 ## 遥测上报
