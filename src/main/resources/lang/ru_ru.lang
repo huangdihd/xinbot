@@ -142,9 +142,12 @@ xinbot.command.reload.disconnect=Перезагрузка конфигураци
 
 xinbot.proxy.error.no_info=Прокси включён, но информация о прокси не настроена; продолжение без прокси.
 xinbot.plugin.yml.invalid_type=Плагин %s имеет недопустимый тип '%s', используется PLUGIN по умолчанию.
+xinbot.plugin.init_only.usage=Использование: --init-plugins [config.conf]
+xinbot.plugin.init_only.complete=Инициализация плагинов завершена; подключение к серверу не выполнялось.
+xinbot.plugin.init_only.failed=Не удалось инициализировать плагины: %s
 # Подкоманды CLI и справка
 xinbot.args.unknown=Неизвестный аргумент: %s
-xinbot.help.usage=Использование:\n  xinbot [<config.conf>]              Запустить бота с указанным файлом конфигурации\n  xinbot --install <file.zip>         Установить модпак\n  xinbot --export <out.zip>           Экспортировать текущие плагины и языковые файлы в модпак\n  xinbot --modpack-info <file.zip>    Показать манифест модпака\n  xinbot --version                    Показать версию\n  xinbot --license                    Показать лицензию\n  xinbot --help                       Показать эту справку
+xinbot.help.usage=Использование:\n  xinbot [<config.conf>]              Запустить бота с указанным файлом конфигурации\n  xinbot --init-plugins [config.conf] Создать конфигурацию плагинов без подключения\n  xinbot --install <file.zip>         Установить модпак\n  xinbot --export <out.zip>           Экспортировать текущие плагины и языковые файлы в модпак\n  xinbot --modpack-info <file.zip>    Показать манифест модпака\n  xinbot --version                    Показать версию\n  xinbot --license                    Показать лицензию\n  xinbot --help                       Показать эту справку
 
 # Сообщения модпака
 xinbot.modpack.manifest.invalid=Недопустимый манифест модпака: поля 'name' и 'version' обязательны.

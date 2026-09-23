@@ -191,9 +191,12 @@ xinbot.command.reload.disconnect=Reloading config...
 
 xinbot.proxy.error.no_info=Proxy is enabled but no proxy info is configured; proceeding without a proxy.
 xinbot.plugin.yml.invalid_type=Plugin %s has an invalid type '%s', defaulting to PLUGIN.
+xinbot.plugin.init_only.usage=Usage: --init-plugins [config.conf]
+xinbot.plugin.init_only.complete=Plugin initialization completed; no server connection was made.
+xinbot.plugin.init_only.failed=Plugin initialization failed: %s
 # CLI sub-commands & help
 xinbot.args.unknown=Unknown argument: %s
-xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
+xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --init-plugins [config.conf] Initialize plugin configuration without connecting\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
 
 # Modpack messages
 xinbot.modpack.manifest.invalid=Invalid modpack manifest: 'name' and 'version' are required.

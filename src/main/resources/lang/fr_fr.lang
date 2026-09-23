@@ -142,9 +142,12 @@ xinbot.command.reload.disconnect=Rechargement de la configuration...
 
 xinbot.proxy.error.no_info=Le proxy est activé mais aucune information de proxy n'est configurée ; poursuite sans proxy.
 xinbot.plugin.yml.invalid_type=Le plugin %s a un type '%s' invalide ; utilisation de PLUGIN par défaut.
+xinbot.plugin.init_only.usage=Utilisation : --init-plugins [config.conf]
+xinbot.plugin.init_only.complete=Initialisation des plugins terminée ; aucune connexion au serveur n'a été établie.
+xinbot.plugin.init_only.failed=Échec de l'initialisation des plugins : %s
 # Sous-commandes CLI et aide
 xinbot.args.unknown=Argument inconnu : %s
-xinbot.help.usage=Utilisation :\n  xinbot [<config.conf>]              Démarrer le bot avec le fichier de configuration indiqué\n  xinbot --install <file.zip>         Installer un modpack\n  xinbot --export <out.zip>           Exporter les plugins et fichiers de langue actuels en modpack\n  xinbot --modpack-info <file.zip>    Afficher le manifeste d'un modpack\n  xinbot --version                    Afficher la version\n  xinbot --license                    Afficher la licence\n  xinbot --help                       Afficher cette aide
+xinbot.help.usage=Utilisation :\n  xinbot [<config.conf>]              Démarrer le bot avec le fichier de configuration indiqué\n  xinbot --init-plugins [config.conf] Initialiser la configuration des plugins sans connexion\n  xinbot --install <file.zip>         Installer un modpack\n  xinbot --export <out.zip>           Exporter les plugins et fichiers de langue actuels en modpack\n  xinbot --modpack-info <file.zip>    Afficher le manifeste d'un modpack\n  xinbot --version                    Afficher la version\n  xinbot --license                    Afficher la licence\n  xinbot --help                       Afficher cette aide
 
 # Messages du modpack
 xinbot.modpack.manifest.invalid=Manifeste de modpack invalide : 'name' et 'version' sont requis.

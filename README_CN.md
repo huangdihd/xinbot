@@ -54,6 +54,15 @@
 
 请参考[文档站](https://xinbot.shouldbe.top/zh/guide/getting-started.html)
 
+## 不连接服务器地初始化插件配置
+
+```shell
+java -jar xinbot.jar --init-plugins [配置文件]
+```
+
+该模式只通过 `onLoad()` 加载插件，让插件生成默认配置，然后调用 `onUnload()` 并退出。
+它不会认证账号、启用插件或连接 Minecraft 服务器。省略配置路径时使用 `config.conf`。
+
 ## 整合包（Modpack）
 
 **整合包**把一组插件和语言文件打包成单个 `.zip`，便于把一套开箱即用的配置分享给他人并一键安装。整合包**不包含** `config.conf`，因此不会泄露账号密码与登录会话。

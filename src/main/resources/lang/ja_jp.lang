@@ -142,9 +142,12 @@ xinbot.command.reload.disconnect=設定を再読み込みしています...
 
 xinbot.proxy.error.no_info=プロキシは有効ですが、プロキシ情報が設定されていません。プロキシなしで続行します。
 xinbot.plugin.yml.invalid_type=プラグイン %s の type '%s' は無効です。デフォルトの PLUGIN を使用します。
+xinbot.plugin.init_only.usage=使い方: --init-plugins [config.conf]
+xinbot.plugin.init_only.complete=プラグインの初期化が完了しました。サーバーには接続していません。
+xinbot.plugin.init_only.failed=プラグインの初期化に失敗しました: %s
 # CLI サブコマンドとヘルプ
 xinbot.args.unknown=不明な引数: %s
-xinbot.help.usage=使い方:\n  xinbot [<config.conf>]              指定した設定ファイルでボットを起動\n  xinbot --install <file.zip>         モッドパックをインストール\n  xinbot --export <out.zip>           現在のプラグインと言語ファイルをモッドパックとして書き出す\n  xinbot --modpack-info <file.zip>    モッドパックのマニフェストを表示\n  xinbot --version                    バージョンを表示\n  xinbot --license                    ライセンスを表示\n  xinbot --help                       このヘルプを表示
+xinbot.help.usage=使い方:\n  xinbot [<config.conf>]              指定した設定ファイルでボットを起動\n  xinbot --init-plugins [config.conf] 接続せずにプラグイン設定を初期化\n  xinbot --install <file.zip>         モッドパックをインストール\n  xinbot --export <out.zip>           現在のプラグインと言語ファイルをモッドパックとして書き出す\n  xinbot --modpack-info <file.zip>    モッドパックのマニフェストを表示\n  xinbot --version                    バージョンを表示\n  xinbot --license                    ライセンスを表示\n  xinbot --help                       このヘルプを表示
 
 # モッドパック関連
 xinbot.modpack.manifest.invalid=モッドパックのマニフェストが無効です: 'name' と 'version' は必須です。

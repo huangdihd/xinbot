@@ -27,12 +27,23 @@ import java.util.List;
  * validation generically, so no per-command boilerplate is needed.
  *
  * @param aliases  the flags that trigger this command, e.g. {@code [--install, -i]}
- * @param arity    the exact number of arguments expected after the flag
+ * @param minArity the minimum number of arguments expected after the flag
+ * @param maxArity the maximum number of arguments expected after the flag
  * @param usageKey the {@link xin.bbtt.mcbot.LangManager} key printed when the
  *                 argument count is wrong
  * @param handler  the action to run with the arguments following the flag
  */
-public record Subcommand(List<String> aliases, int arity, String usageKey, Handler handler) {
+public record Subcommand(List<String> aliases, int minArity, int maxArity, String usageKey, Handler handler) {
+
+    public Subcommand {
+        if (minArity < 0 || maxArity < minArity) {
+            throw new IllegalArgumentException("Invalid argument-count range");
+        }
+    }
+
+    public boolean acceptsArgumentCount(int count) {
+        return count >= minArity && count <= maxArity;
+    }
 
     /**
      * The action behind a sub-command. Implementations are expected to report

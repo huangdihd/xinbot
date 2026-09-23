@@ -136,9 +136,12 @@ xinbot.command.reload.disconnect=正在重載設定...
 
 xinbot.proxy.error.no_info=代理已啟用，但未設定 info，將不使用代理。
 xinbot.plugin.yml.invalid_type=外掛程式 %s 的 type '%s' 無效，已回退為 PLUGIN。
+xinbot.plugin.init_only.usage=用法：--init-plugins [config.conf]
+xinbot.plugin.init_only.complete=外掛程式初始化完成；未建立伺服器連線。
+xinbot.plugin.init_only.failed=外掛程式初始化失敗：%s
 # CLI 子指令與說明
 xinbot.args.unknown=未知參數：%s
-xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定設定檔啟動機器人\n  xinbot --install <file.zip>         安裝整合包\n  xinbot --export <out.zip>           將目前外掛與語言檔匯出為整合包\n  xinbot --modpack-info <file.zip>    檢視整合包清單資訊\n  xinbot --version                    顯示版本\n  xinbot --license                    顯示授權\n  xinbot --help                       顯示此說明
+xinbot.help.usage=用法：\n  xinbot [<config.conf>]              使用指定設定檔啟動機器人\n  xinbot --init-plugins [config.conf] 不連線伺服器地產生外掛預設設定\n  xinbot --install <file.zip>         安裝整合包\n  xinbot --export <out.zip>           將目前外掛與語言檔匯出為整合包\n  xinbot --modpack-info <file.zip>    檢視整合包清單資訊\n  xinbot --version                    顯示版本\n  xinbot --license                    顯示授權\n  xinbot --help                       顯示此說明
 
 # 整合包相關
 xinbot.modpack.manifest.invalid=整合包清單無效：'name' 與 'version' 為必填項。

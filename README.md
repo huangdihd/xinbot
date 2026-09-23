@@ -56,6 +56,18 @@ Please refer to the [documentation site](https://xinbot.shouldbe.top/guide/getti
 
 ---
 
+## Initialize Plugin Configuration Without Connecting
+
+```shell
+java -jar xinbot.jar --init-plugins [config-file]
+```
+
+This mode loads plugins through `onLoad()`, lets them create their default configuration files,
+then calls `onUnload()` and exits. It does not authenticate an account, enable plugins, or connect
+to a Minecraft server. When the configuration path is omitted, `config.conf` is used.
+
+---
+
 ## Modpacks
 
 A **modpack** bundles a set of plugins and language files into a single `.zip` so a

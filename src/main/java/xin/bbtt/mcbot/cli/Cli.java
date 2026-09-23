@@ -20,6 +20,7 @@ package xin.bbtt.mcbot.cli;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xin.bbtt.mcbot.Bot;
 import xin.bbtt.mcbot.LangManager;
 import xin.bbtt.mcbot.Xinbot;
 import xin.bbtt.mcbot.config.BotConfig;
@@ -61,11 +62,17 @@ public final class Cli {
         cli.register(1, "xinbot.modpack.install.usage", Cli::install, "--install", "-i");
         cli.register(1, "xinbot.modpack.export.usage", Cli::export, "--export", "-e");
         cli.register(1, "xinbot.modpack.info.usage", Cli::modpackInfo, "--modpack-info");
+        cli.register(0, 1, "xinbot.plugin.init_only.usage", Cli::initializePlugins, "--init-plugins");
         return cli;
     }
 
     private void register(int arity, String usageKey, Subcommand.Handler handler, String... aliases) {
-        Subcommand cmd = new Subcommand(List.of(aliases), arity, usageKey, handler);
+        register(arity, arity, usageKey, handler, aliases);
+    }
+
+    private void register(int minArity, int maxArity, String usageKey,
+                          Subcommand.Handler handler, String... aliases) {
+        Subcommand cmd = new Subcommand(List.of(aliases), minArity, maxArity, usageKey, handler);
         for (String alias : aliases) registry.put(alias, cmd);
     }
 
@@ -86,7 +93,7 @@ public final class Cli {
             return false;
         }
         String[] rest = Arrays.copyOfRange(args, 1, args.length);
-        if (rest.length != cmd.arity()) {
+        if (!cmd.acceptsArgumentCount(rest.length)) {
             log.error(LangManager.get(cmd.usageKey()));
             return false;
         }
@@ -147,6 +154,39 @@ public final class Cli {
             log.error(LangManager.get("xinbot.modpack.info.failed", e.getMessage()), e);
             return false;
         }
+    }
+
+    /**
+     * Loads plugins just long enough for their {@code onLoad()} hooks to create
+     * default configuration files, then unloads them without authenticating an
+     * account, enabling plugins, or opening a server connection.
+     */
+    private static boolean initializePlugins(String[] args) {
+        String configPath = args.length == 0 ? Xinbot.defaultConfigPath : args[0];
+        boolean initialized = false;
+        try {
+            BotConfig config = new BotConfig(configPath);
+            String pluginDirectory = config.getConfigData().getPlugin().getDirectory();
+            if (pluginDirectory == null || pluginDirectory.isBlank()) {
+                throw new IllegalArgumentException(LangManager.get("xinbot.plugin.dir.not.found"));
+            }
+
+            Path pluginPath = Paths.get(pluginDirectory);
+            if (Files.exists(pluginPath) && !Files.isDirectory(pluginPath)) {
+                throw new IllegalArgumentException(LangManager.get("xinbot.plugin.dir.invalid", pluginDirectory));
+            }
+            Files.createDirectories(pluginPath);
+
+            Xinbot.configPath = configPath;
+            Bot.INSTANCE.init(config);
+            initialized = true;
+        } catch (Exception e) {
+            log.error(LangManager.get("xinbot.plugin.init_only.failed", e.getMessage()), e);
+        } finally {
+            Bot.INSTANCE.getPluginManager().unloadPlugins();
+        }
+        if (initialized) log.info(LangManager.get("xinbot.plugin.init_only.complete"));
+        return initialized;
     }
 
     /**
