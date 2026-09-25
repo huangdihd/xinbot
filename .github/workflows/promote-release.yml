@@ -74,7 +74,9 @@ jobs:
 
       - name: Build JARs
         if: steps.version.outputs.changed == 'true'
-        run: mvn clean package -DskipTests
+        run: |
+          mvn clean package -DskipTests
+          mvn -Plinux-aarch64 package -DskipTests
 
       - name: Create Draft Release
         if: steps.version.outputs.changed == 'true'
@@ -87,6 +89,7 @@ jobs:
             gh release upload "$VERSION" \
               --clobber \
               target/xinbot-$VERSION.jar \
+              target/xinbot-$VERSION-linux-aarch64.jar \
               target/original-xinbot-$VERSION.jar
           else
             gh release create "$VERSION" \
@@ -94,6 +97,7 @@ jobs:
               --draft \
               --generate-notes \
               target/xinbot-$VERSION.jar \
+              target/xinbot-$VERSION-linux-aarch64.jar \
               target/original-xinbot-$VERSION.jar
           fi
 

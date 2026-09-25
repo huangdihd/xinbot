@@ -89,6 +89,15 @@ java -jar xinbot.jar --modpack-info <file.zip>  # 打印整合包清单信息
 java -jar xinbot.jar --help                     # 列出全部子命令
 ```
 
+在 Linux ARM64 设备上，可以构建精简的 fat jar，省略其他操作系统和 CPU 架构的原生库：
+
+```bash
+mvn -Plinux-aarch64 clean package
+```
+
+生成的 `target/xinbot-<version>-linux-aarch64.jar` 适用于 AArch64 Linux 系统，GitHub
+Release 也会附带该文件。常规的 `mvn package` 构建仍然是跨平台版本。
+
 安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/` 与 `lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
 
 ## 遥测上报

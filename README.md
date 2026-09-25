@@ -93,6 +93,17 @@ java -jar xinbot.jar --modpack-info <file.zip>  # print a modpack's manifest
 java -jar xinbot.jar --help                     # list all sub-commands
 ```
 
+For Linux ARM64 deployments, build a smaller fat jar that omits native binaries
+for other operating systems and CPU architectures:
+
+```bash
+mvn -Plinux-aarch64 clean package
+```
+
+The resulting `target/xinbot-<version>-linux-aarch64.jar` is intended for
+AArch64 Linux systems and is also attached to GitHub releases. The normal
+`mvn package` build remains cross-platform.
+
 Installing overwrites existing files of the same name (with a warning) and ignores any
 archive entry outside `plugins/` and `lang/`. The plugin directory is read from
 `config.conf` when present, otherwise the default `plugin/` is used.
