@@ -89,14 +89,25 @@ java -jar xinbot.jar --modpack-info <file.zip>  # 打印整合包清单信息
 java -jar xinbot.jar --help                     # 列出全部子命令
 ```
 
-在 Linux ARM64 设备上，可以构建精简的 fat jar，省略其他操作系统和 CPU 架构的原生库：
+如需为某一个操作系统和 CPU 架构构建精简 fat jar，请只启用一个平台 profile：
 
 ```bash
-mvn -Plinux-aarch64 clean package
+mvn -Pwindows-x86_64 clean package
 ```
 
-生成的 `target/xinbot-<version>-linux-aarch64.jar` 适用于 AArch64 Linux 系统，GitHub
-Release 也会附带该文件。常规的 `mvn package` 构建仍然是跨平台版本。
+可用 profile：
+
+```text
+freebsd-x86       freebsd-x86_64
+linux-arm         linux-armv6        linux-armv7       linux-arm64
+linux-ppc64       linux-riscv64      linux-x86         linux-x86_64
+macos-arm64       macos-x86          macos-x86_64
+windows-arm64     windows-x86        windows-x86_64
+```
+
+输出文件为 `target/xinbot-<version>-<profile>.jar`。每个 profile 只保留当前依赖为该目标
+提供的原生库；没有对应原生库的组件仍使用原有 Java 回退实现。常规 `mvn package` 仍生成
+通用跨平台版本。GitHub Release 还会附带无头 ARM64 部署使用的 `linux-arm64` 构建。
 
 安装时会覆盖同名文件（并给出警告），且会忽略 `plugins/` 与 `lang/` 以外的所有条目。插件目录在存在 `config.conf` 时从中读取，否则使用默认的 `plugin/`。
 

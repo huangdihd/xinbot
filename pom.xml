@@ -212,9 +212,54 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shade.universal.skip>false</shade.universal.skip>
+        <shade.platform.skip>true</shade.platform.skip>
+        <shade.platform.suffix></shade.platform.suffix>
+
+        <!-- Every native resource group starts excluded from a platform build.
+             A platform profile changes only its matching groups to a sentinel
+             pattern, allowing one shared Shade execution to serve every target. -->
+        <slim.exclude.netty.linux-arm64>META-INF/native/*aarch_64.so</slim.exclude.netty.linux-arm64>
+        <slim.exclude.netty.linux-riscv64>META-INF/native/*riscv64.so</slim.exclude.netty.linux-riscv64>
+        <slim.exclude.netty.linux-x86_64>META-INF/native/*x86_64.so</slim.exclude.netty.linux-x86_64>
+        <slim.exclude.netty.macos-arm64>META-INF/native/*aarch_64.jnilib</slim.exclude.netty.macos-arm64>
+        <slim.exclude.netty.macos-x86_64>META-INF/native/*x86_64.jnilib</slim.exclude.netty.macos-x86_64>
+        <slim.exclude.netty.windows-x86_64>META-INF/native/*windows_x86_64.dll</slim.exclude.netty.windows-x86_64>
+
+        <slim.exclude.jansi.freebsd-x86>org/fusesource/jansi/internal/native/FreeBSD/x86/**</slim.exclude.jansi.freebsd-x86>
+        <slim.exclude.jansi.freebsd-x86_64>org/fusesource/jansi/internal/native/FreeBSD/x86_64/**</slim.exclude.jansi.freebsd-x86_64>
+        <slim.exclude.jansi.linux-arm>org/fusesource/jansi/internal/native/Linux/arm/**</slim.exclude.jansi.linux-arm>
+        <slim.exclude.jansi.linux-arm64>org/fusesource/jansi/internal/native/Linux/arm64/**</slim.exclude.jansi.linux-arm64>
+        <slim.exclude.jansi.linux-armv6>org/fusesource/jansi/internal/native/Linux/armv6/**</slim.exclude.jansi.linux-armv6>
+        <slim.exclude.jansi.linux-armv7>org/fusesource/jansi/internal/native/Linux/armv7/**</slim.exclude.jansi.linux-armv7>
+        <slim.exclude.jansi.linux-ppc64>org/fusesource/jansi/internal/native/Linux/ppc64/**</slim.exclude.jansi.linux-ppc64>
+        <slim.exclude.jansi.linux-x86>org/fusesource/jansi/internal/native/Linux/x86/**</slim.exclude.jansi.linux-x86>
+        <slim.exclude.jansi.linux-x86_64>org/fusesource/jansi/internal/native/Linux/x86_64/**</slim.exclude.jansi.linux-x86_64>
+        <slim.exclude.jansi.macos-arm64>org/fusesource/jansi/internal/native/Mac/arm64/**</slim.exclude.jansi.macos-arm64>
+        <slim.exclude.jansi.macos-x86>org/fusesource/jansi/internal/native/Mac/x86/**</slim.exclude.jansi.macos-x86>
+        <slim.exclude.jansi.macos-x86_64>org/fusesource/jansi/internal/native/Mac/x86_64/**</slim.exclude.jansi.macos-x86_64>
+        <slim.exclude.jansi.windows-arm64>org/fusesource/jansi/internal/native/Windows/arm64/**</slim.exclude.jansi.windows-arm64>
+        <slim.exclude.jansi.windows-x86>org/fusesource/jansi/internal/native/Windows/x86/**</slim.exclude.jansi.windows-x86>
+        <slim.exclude.jansi.windows-x86_64>org/fusesource/jansi/internal/native/Windows/x86_64/**</slim.exclude.jansi.windows-x86_64>
+
+        <slim.exclude.jline.freebsd-x86>org/jline/nativ/FreeBSD/x86/**</slim.exclude.jline.freebsd-x86>
+        <slim.exclude.jline.freebsd-x86_64>org/jline/nativ/FreeBSD/x86_64/**</slim.exclude.jline.freebsd-x86_64>
+        <slim.exclude.jline.linux-arm>org/jline/nativ/Linux/arm/**</slim.exclude.jline.linux-arm>
+        <slim.exclude.jline.linux-arm64>org/jline/nativ/Linux/arm64/**</slim.exclude.jline.linux-arm64>
+        <slim.exclude.jline.linux-armv6>org/jline/nativ/Linux/armv6/**</slim.exclude.jline.linux-armv6>
+        <slim.exclude.jline.linux-armv7>org/jline/nativ/Linux/armv7/**</slim.exclude.jline.linux-armv7>
+        <slim.exclude.jline.linux-ppc64>org/jline/nativ/Linux/ppc64/**</slim.exclude.jline.linux-ppc64>
+        <slim.exclude.jline.linux-x86>org/jline/nativ/Linux/x86/**</slim.exclude.jline.linux-x86>
+        <slim.exclude.jline.linux-x86_64>org/jline/nativ/Linux/x86_64/**</slim.exclude.jline.linux-x86_64>
+        <slim.exclude.jline.macos-arm64>org/jline/nativ/Mac/arm64/**</slim.exclude.jline.macos-arm64>
+        <slim.exclude.jline.macos-x86>org/jline/nativ/Mac/x86/**</slim.exclude.jline.macos-x86>
+        <slim.exclude.jline.macos-x86_64>org/jline/nativ/Mac/x86_64/**</slim.exclude.jline.macos-x86_64>
+        <slim.exclude.jline.windows-arm64>org/jline/nativ/Windows/arm64/**</slim.exclude.jline.windows-arm64>
+        <slim.exclude.jline.windows-x86>org/jline/nativ/Windows/x86/**</slim.exclude.jline.windows-x86>
+        <slim.exclude.jline.windows-x86_64>org/jline/nativ/Windows/x86_64/**</slim.exclude.jline.windows-x86_64>
     </properties>
 
     <build>
+        <finalName>${project.artifactId}-${project.version}${shade.platform.suffix}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -291,6 +336,83 @@
                             </transformers>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>shade-platform</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${shade.platform.skip}</skip>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <shadedArtifactId>${project.artifactId}</shadedArtifactId>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            <artifactSet>
+                                <excludes>
+                                    <!-- Lombok is used only while compiling. -->
+                                    <exclude>org.projectlombok:lombok</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+
+                                        <exclude>${slim.exclude.netty.linux-arm64}</exclude>
+                                        <exclude>${slim.exclude.netty.linux-riscv64}</exclude>
+                                        <exclude>${slim.exclude.netty.linux-x86_64}</exclude>
+                                        <exclude>${slim.exclude.netty.macos-arm64}</exclude>
+                                        <exclude>${slim.exclude.netty.macos-x86_64}</exclude>
+                                        <exclude>${slim.exclude.netty.windows-x86_64}</exclude>
+
+                                        <exclude>${slim.exclude.jansi.freebsd-x86}</exclude>
+                                        <exclude>${slim.exclude.jansi.freebsd-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-arm}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-arm64}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-armv6}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-armv7}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-ppc64}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-x86}</exclude>
+                                        <exclude>${slim.exclude.jansi.linux-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jansi.macos-arm64}</exclude>
+                                        <exclude>${slim.exclude.jansi.macos-x86}</exclude>
+                                        <exclude>${slim.exclude.jansi.macos-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jansi.windows-arm64}</exclude>
+                                        <exclude>${slim.exclude.jansi.windows-x86}</exclude>
+                                        <exclude>${slim.exclude.jansi.windows-x86_64}</exclude>
+
+                                        <exclude>${slim.exclude.jline.freebsd-x86}</exclude>
+                                        <exclude>${slim.exclude.jline.freebsd-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-arm}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-arm64}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-armv6}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-armv7}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-ppc64}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-x86}</exclude>
+                                        <exclude>${slim.exclude.jline.linux-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jline.macos-arm64}</exclude>
+                                        <exclude>${slim.exclude.jline.macos-x86}</exclude>
+                                        <exclude>${slim.exclude.jline.macos-x86_64}</exclude>
+                                        <exclude>${slim.exclude.jline.windows-arm64}</exclude>
+                                        <exclude>${slim.exclude.jline.windows-x86}</exclude>
+                                        <exclude>${slim.exclude.jline.windows-x86_64}</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>xin.bbtt.mcbot.Xinbot</mainClass>
+                                    <manifestEntries>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- Publish the pre-shade jar alongside the fat jar as the "thin" classifier.
@@ -322,89 +444,171 @@
     </build>
 
     <profiles>
-        <!-- Linux ARM64 distribution: retain only Linux AArch64 native binaries.
-             The normal build remains a universal, cross-platform fat jar. -->
+        <!-- Activate exactly one platform profile to build a fat jar containing
+             only the native resources available for that OS/CPU combination. -->
         <profile>
-            <id>linux-aarch64</id>
+            <id>freebsd-x86</id>
             <properties>
                 <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-freebsd-x86</shade.platform.suffix>
+                <slim.exclude.jansi.freebsd-x86>__xinbot_keep_selected_native__</slim.exclude.jansi.freebsd-x86>
+                <slim.exclude.jline.freebsd-x86>__xinbot_keep_selected_native__</slim.exclude.jline.freebsd-x86>
             </properties>
-            <build>
-                <finalName>${project.artifactId}-${project.version}-linux-aarch64</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.6.2</version>
-                        <executions>
-                            <execution>
-                                <id>shade-linux-aarch64</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <shadedArtifactAttached>false</shadedArtifactAttached>
-                                    <shadedArtifactId>${project.artifactId}</shadedArtifactId>
-                                    <createDependencyReducedPom>true</createDependencyReducedPom>
-                                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                                    <artifactSet>
-                                        <excludes>
-                                            <!-- Lombok is only used while compiling and is not needed at runtime. -->
-                                            <exclude>org.projectlombok:lombok</exclude>
-                                        </excludes>
-                                    </artifactSet>
-                                    <filters>
-                                        <filter>
-                                            <artifact>*:*</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/*.SF</exclude>
-                                                <exclude>META-INF/*.DSA</exclude>
-                                                <exclude>META-INF/*.RSA</exclude>
-                                                <!-- Retain Netty's Linux AArch64 epoll, io_uring and QUIC binaries. -->
-                                                <exclude>META-INF/native/*x86_64*</exclude>
-                                                <exclude>META-INF/native/*riscv64*</exclude>
-                                                <exclude>META-INF/native/*kqueue*</exclude>
-                                                <exclude>META-INF/native/*macos*</exclude>
-                                                <exclude>META-INF/native/*osx*</exclude>
-                                                <exclude>META-INF/native/*windows*</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/AIX/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/FreeBSD/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/arm/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/armv6/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/armv7/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/ppc64/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/x86/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Linux/x86_64/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Mac/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/SunOS/**</exclude>
-                                                <exclude>org/fusesource/jansi/internal/native/Windows/**</exclude>
-                                                <exclude>org/jline/nativ/FreeBSD/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/arm/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/armv6/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/armv7/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/ppc64/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/x86/**</exclude>
-                                                <exclude>org/jline/nativ/Linux/x86_64/**</exclude>
-                                                <exclude>org/jline/nativ/Mac/**</exclude>
-                                                <exclude>org/jline/nativ/Windows/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                    </filters>
-                                    <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                            <mainClass>xin.bbtt.mcbot.Xinbot</mainClass>
-                                            <manifestEntries>
-                                                <Implementation-Version>${project.version}</Implementation-Version>
-                                            </manifestEntries>
-                                        </transformer>
-                                    </transformers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+        </profile>
+        <profile>
+            <id>freebsd-x86_64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-freebsd-x86_64</shade.platform.suffix>
+                <slim.exclude.jansi.freebsd-x86_64>__xinbot_keep_selected_native__</slim.exclude.jansi.freebsd-x86_64>
+                <slim.exclude.jline.freebsd-x86_64>__xinbot_keep_selected_native__</slim.exclude.jline.freebsd-x86_64>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-arm</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-arm</shade.platform.suffix>
+                <slim.exclude.jansi.linux-arm>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-arm>
+                <slim.exclude.jline.linux-arm>__xinbot_keep_selected_native__</slim.exclude.jline.linux-arm>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-armv6</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-armv6</shade.platform.suffix>
+                <slim.exclude.jansi.linux-armv6>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-armv6>
+                <slim.exclude.jline.linux-armv6>__xinbot_keep_selected_native__</slim.exclude.jline.linux-armv6>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-armv7</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-armv7</shade.platform.suffix>
+                <slim.exclude.jansi.linux-armv7>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-armv7>
+                <slim.exclude.jline.linux-armv7>__xinbot_keep_selected_native__</slim.exclude.jline.linux-armv7>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-arm64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-arm64</shade.platform.suffix>
+                <slim.exclude.netty.linux-arm64>__xinbot_keep_selected_native__</slim.exclude.netty.linux-arm64>
+                <slim.exclude.jansi.linux-arm64>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-arm64>
+                <slim.exclude.jline.linux-arm64>__xinbot_keep_selected_native__</slim.exclude.jline.linux-arm64>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-ppc64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-ppc64</shade.platform.suffix>
+                <slim.exclude.jansi.linux-ppc64>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-ppc64>
+                <slim.exclude.jline.linux-ppc64>__xinbot_keep_selected_native__</slim.exclude.jline.linux-ppc64>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-riscv64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-riscv64</shade.platform.suffix>
+                <slim.exclude.netty.linux-riscv64>__xinbot_keep_selected_native__</slim.exclude.netty.linux-riscv64>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-x86</shade.platform.suffix>
+                <slim.exclude.jansi.linux-x86>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-x86>
+                <slim.exclude.jline.linux-x86>__xinbot_keep_selected_native__</slim.exclude.jline.linux-x86>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86_64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-linux-x86_64</shade.platform.suffix>
+                <slim.exclude.netty.linux-x86_64>__xinbot_keep_selected_native__</slim.exclude.netty.linux-x86_64>
+                <slim.exclude.jansi.linux-x86_64>__xinbot_keep_selected_native__</slim.exclude.jansi.linux-x86_64>
+                <slim.exclude.jline.linux-x86_64>__xinbot_keep_selected_native__</slim.exclude.jline.linux-x86_64>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-arm64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-macos-arm64</shade.platform.suffix>
+                <slim.exclude.netty.macos-arm64>__xinbot_keep_selected_native__</slim.exclude.netty.macos-arm64>
+                <slim.exclude.jansi.macos-arm64>__xinbot_keep_selected_native__</slim.exclude.jansi.macos-arm64>
+                <slim.exclude.jline.macos-arm64>__xinbot_keep_selected_native__</slim.exclude.jline.macos-arm64>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-x86</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-macos-x86</shade.platform.suffix>
+                <slim.exclude.jansi.macos-x86>__xinbot_keep_selected_native__</slim.exclude.jansi.macos-x86>
+                <slim.exclude.jline.macos-x86>__xinbot_keep_selected_native__</slim.exclude.jline.macos-x86>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-x86_64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-macos-x86_64</shade.platform.suffix>
+                <slim.exclude.netty.macos-x86_64>__xinbot_keep_selected_native__</slim.exclude.netty.macos-x86_64>
+                <slim.exclude.jansi.macos-x86_64>__xinbot_keep_selected_native__</slim.exclude.jansi.macos-x86_64>
+                <slim.exclude.jline.macos-x86_64>__xinbot_keep_selected_native__</slim.exclude.jline.macos-x86_64>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-arm64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-windows-arm64</shade.platform.suffix>
+                <slim.exclude.jansi.windows-arm64>__xinbot_keep_selected_native__</slim.exclude.jansi.windows-arm64>
+                <slim.exclude.jline.windows-arm64>__xinbot_keep_selected_native__</slim.exclude.jline.windows-arm64>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-x86</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-windows-x86</shade.platform.suffix>
+                <slim.exclude.jansi.windows-x86>__xinbot_keep_selected_native__</slim.exclude.jansi.windows-x86>
+                <slim.exclude.jline.windows-x86>__xinbot_keep_selected_native__</slim.exclude.jline.windows-x86>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-x86_64</id>
+            <properties>
+                <shade.universal.skip>true</shade.universal.skip>
+                <shade.platform.skip>false</shade.platform.skip>
+                <shade.platform.suffix>-windows-x86_64</shade.platform.suffix>
+                <slim.exclude.netty.windows-x86_64>__xinbot_keep_selected_native__</slim.exclude.netty.windows-x86_64>
+                <slim.exclude.jansi.windows-x86_64>__xinbot_keep_selected_native__</slim.exclude.jansi.windows-x86_64>
+                <slim.exclude.jline.windows-x86_64>__xinbot_keep_selected_native__</slim.exclude.jline.windows-x86_64>
+            </properties>
         </profile>
 
         <!-- mvn -Pcentral deploy  ->  publishes to Maven Central via the Central Portal.
