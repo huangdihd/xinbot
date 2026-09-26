@@ -93,29 +93,6 @@ java -jar xinbot.jar --modpack-info <file.zip>  # print a modpack's manifest
 java -jar xinbot.jar --help                     # list all sub-commands
 ```
 
-To build a smaller fat jar for one operating system and CPU architecture, activate
-exactly one platform profile:
-
-```bash
-mvn -Pwindows-x86_64 clean package
-```
-
-Available profiles:
-
-```text
-freebsd-x86       freebsd-x86_64
-linux-arm         linux-armv6        linux-armv7       linux-arm64
-linux-ppc64       linux-riscv64      linux-x86         linux-x86_64
-macos-arm64       macos-x86          macos-x86_64
-windows-arm64     windows-x86        windows-x86_64
-```
-
-The output is `target/xinbot-<version>-<profile>.jar`. Each profile retains the
-native libraries that the current dependencies provide for that target; components
-without a target-specific native library keep their normal Java fallback. The regular
-`mvn package` build remains universal and cross-platform. GitHub releases also attach
-the `linux-arm64` build used by headless ARM64 deployments.
-
 Installing overwrites existing files of the same name (with a warning) and ignores any
 archive entry outside `plugins/` and `lang/`. The plugin directory is read from
 `config.conf` when present, otherwise the default `plugin/` is used.
