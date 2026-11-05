@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import xin.bbtt.mcbot.jLine.CLI;
 import xin.bbtt.mcbot.auth.AccountLoader;
 import xin.bbtt.mcbot.config.BotConfig;
+import xin.bbtt.mcbot.debug.JfrManager;
 import xin.bbtt.mcbot.events.ConnectEvent;
 import xin.bbtt.mcbot.events.DisconnectEvent;
 import xin.bbtt.mcbot.listeners.*;
@@ -60,6 +61,8 @@ public class Bot {
     private BotConfig config;
     @Getter
     private final PluginManager pluginManager;
+    @Getter
+    private final JfrManager jfrManager = new JfrManager();
     @Getter
     private ProxyInfo proxyInfo;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {

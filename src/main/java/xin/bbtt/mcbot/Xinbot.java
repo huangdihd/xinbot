@@ -107,6 +107,12 @@ public class Xinbot {
 
     public static void main(String[] args){
         BotConfig config = null;
+        boolean debugMode = java.util.Arrays.asList(args).contains("--debug");
+        if (debugMode) {
+            args = java.util.Arrays.stream(args)
+                .filter(arg -> !"--debug".equals(arg))
+                .toArray(String[]::new);
+        }
 
         // Init xinbot language early so all CLI output is localized
         LangManager.init();
@@ -122,6 +128,30 @@ public class Xinbot {
         if (args.length > 1) {
             log.error(LangManager.get("xinbot.args.invalid"));
             return;
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            var jfrManager = Bot.INSTANCE.getJfrManager();
+            if (!jfrManager.isRunning()) return;
+            try {
+                Path output = jfrManager.stop();
+                log.info(LangManager.get("xinbot.jfr.stopped", output));
+            } catch (Exception e) {
+                log.error(LangManager.get("xinbot.jfr.stop.failed", e.getMessage()), e);
+            }
+        }, "JFR-Shutdown"));
+
+        // Initialize JLine
+        CLI.init();
+
+        if (debugMode) {
+            try {
+                Path output = Bot.INSTANCE.getJfrManager().start();
+                log.info(LangManager.get("xinbot.jfr.started", output));
+            } catch (Exception e) {
+                log.error(LangManager.get("xinbot.jfr.start.failed", e.getMessage()), e);
+                System.exit(1);
+            }
         }
 
         // Load the configuration file (use the default path when none is given)
@@ -142,9 +172,6 @@ public class Xinbot {
             log.error(LangManager.get("xinbot.config.error", configPath), e);
             System.exit(1);
         }
-
-        // Initialize JLine
-        CLI.init();
 
         // Initialize minecraft language
         if (config.getConfigData().isEnableTranslation()) LangManager.loadMinecraft();

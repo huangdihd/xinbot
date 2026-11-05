@@ -54,3 +54,7 @@ reload:
   usage: "xinbot.command.reload.usage"
   aliases: ["rl"]
   executor: "xin.bbtt.mcbot.commandExecutors.ReloadCommandExecutor"
+jfr:
+  description: "xinbot.command.jfr.description"
+  usage: "xinbot.command.jfr.usage"
+  executor: "xin.bbtt.mcbot.commandExecutors.JfrCommandExecutor"

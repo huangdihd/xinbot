@@ -189,11 +189,23 @@ xinbot.command.reload.success=Successfully reloaded configuration from: %s
 xinbot.command.reload.failed=Failed to reload configuration from: %s
 xinbot.command.reload.disconnect=Reloading config...
 
+xinbot.command.jfr.description=Manages Java Flight Recorder recordings.
+xinbot.command.jfr.usage=jfr start / jfr stop / jfr status
+xinbot.jfr.started=JFR recording started: %s
+xinbot.jfr.stopped=JFR recording saved: %s
+xinbot.jfr.start.failed=Failed to start JFR recording: %s
+xinbot.jfr.stop.failed=Failed to stop JFR recording: %s
+xinbot.jfr.already.running=JFR recording is already running.
+xinbot.jfr.not.running=No JFR recording is running.
+xinbot.jfr.status.running=JFR is recording to: %s
+xinbot.jfr.status.stopped=JFR is not recording.
+xinbot.jfr.status.stopped.last=JFR is not recording. Last recording: %s
+
 xinbot.proxy.error.no_info=Proxy is enabled but no proxy info is configured; proceeding without a proxy.
 xinbot.plugin.yml.invalid_type=Plugin %s has an invalid type '%s', defaulting to PLUGIN.
 # CLI sub-commands & help
 xinbot.args.unknown=Unknown argument: %s
-xinbot.help.usage=Usage:\n  xinbot [<config.conf>]              Start the bot with the given config file\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
+xinbot.help.usage=Usage:\n  xinbot [--debug] [<config.conf>]    Start the bot with optional JFR recording\n  xinbot --install <file.zip>         Install a modpack\n  xinbot --export <out.zip>           Export current plugins & language files as a modpack\n  xinbot --modpack-info <file.zip>    Show a modpack's manifest\n  xinbot --version                    Show the version\n  xinbot --license                    Show the license\n  xinbot --help                       Show this help
 
 # Modpack messages
 xinbot.modpack.manifest.invalid=Invalid modpack manifest: 'name' and 'version' are required.

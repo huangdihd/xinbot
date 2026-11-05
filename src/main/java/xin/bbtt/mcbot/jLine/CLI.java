@@ -30,9 +30,14 @@ public class CLI {
 
     public static void init() {
         try {
+            var consoleCharset = System.console() != null
+                ? System.console().charset()
+                : java.nio.charset.Charset.forName(
+                    System.getProperty("stdout.encoding", java.nio.charset.Charset.defaultCharset().name())
+                );
             Terminal terminal = TerminalBuilder.builder()
                 .system(true)
-                .encoding("UTF-8")
+                .encoding(consoleCharset)
                 .build();
 
             lineReader = LineReaderBuilder.builder()
