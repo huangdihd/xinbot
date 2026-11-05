@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The command-line front end: a tiny registry that maps flags such as
- * {@code --install} to {@link Subcommand} handlers and dispatches them.
+ * The command-line front end: parses startup options and maps flags such as
+ * {@code --install} to {@link Subcommand} handlers.
  *
  * <p>The dispatch mechanism is generic; all sub-commands are wired up in
  * {@link #create()}. To add a new one, register it there and add a handler
@@ -49,6 +49,7 @@ public final class Cli {
     private static final String LANG_DIR = "lang";
 
     private final Map<String, Subcommand> registry = new LinkedHashMap<>();
+    private boolean debugMode;
 
     private Cli() {}
 
@@ -67,6 +68,21 @@ public final class Cli {
     private void register(int arity, String usageKey, Subcommand.Handler handler, String... aliases) {
         Subcommand cmd = new Subcommand(List.of(aliases), arity, usageKey, handler);
         for (String alias : aliases) registry.put(alias, cmd);
+    }
+
+    public String[] parseArgs(String[] args) {
+        debugMode = false;
+        return Arrays.stream(args)
+            .filter(arg -> {
+                if (!"--debug".equals(arg)) return true;
+                debugMode = true;
+                return false;
+            })
+            .toArray(String[]::new);
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
     }
 
     /** @return true if {@code args} looks like a sub-command invocation (a leading flag). */

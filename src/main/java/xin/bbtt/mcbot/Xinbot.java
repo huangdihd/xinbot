@@ -107,12 +107,6 @@ public class Xinbot {
 
     public static void main(String[] args){
         BotConfig config = null;
-        boolean debugMode = java.util.Arrays.asList(args).contains("--debug");
-        if (debugMode) {
-            args = java.util.Arrays.stream(args)
-                .filter(arg -> !"--debug".equals(arg))
-                .toArray(String[]::new);
-        }
 
         // Init xinbot language early so all CLI output is localized
         LangManager.init();
@@ -121,6 +115,7 @@ public class Xinbot {
 
         // Handle sub-commands (anything starting with '-'), e.g. --version, --install
         Cli cli = Cli.create();
+        args = cli.parseArgs(args);
         if (cli.isSubcommand(args)) {
             System.exit(cli.dispatch(args) ? 0 : 1);
         }
@@ -144,7 +139,7 @@ public class Xinbot {
         // Initialize JLine
         CLI.init();
 
-        if (debugMode) {
+        if (cli.isDebugMode()) {
             try {
                 Path output = Bot.INSTANCE.getJfrManager().start();
                 log.info(LangManager.get("xinbot.jfr.started", output));
