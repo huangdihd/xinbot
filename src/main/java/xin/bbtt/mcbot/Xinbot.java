@@ -125,16 +125,7 @@ public class Xinbot {
             return;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            var jfrManager = Bot.INSTANCE.getJfrManager();
-            if (!jfrManager.isRunning()) return;
-            try {
-                Path output = jfrManager.stop();
-                log.info(LangManager.get("xinbot.jfr.stopped", output));
-            } catch (Exception e) {
-                log.error(LangManager.get("xinbot.jfr.stop.failed", e.getMessage()), e);
-            }
-        }, "JFR-Shutdown"));
+        Runtime.getRuntime().addShutdownHook(Bot.INSTANCE.jfrShutdownHook);
 
         // Initialize JLine
         CLI.init();

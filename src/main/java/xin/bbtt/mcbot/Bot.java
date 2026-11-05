@@ -63,6 +63,7 @@ public class Bot {
     private final PluginManager pluginManager;
     @Getter
     private final JfrManager jfrManager = new JfrManager();
+    public final Thread jfrShutdownHook = new Thread(this::stopJfrRecording, "JFR-Shutdown");
     @Getter
     private ProxyInfo proxyInfo;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
@@ -135,6 +136,16 @@ public class Bot {
         scheduler.execute(this::connect);
         
         getInput();
+    }
+
+    private void stopJfrRecording() {
+        if (!jfrManager.isRunning()) return;
+        try {
+            var output = jfrManager.stop();
+            log.info(LangManager.get("xinbot.jfr.stopped", output));
+        } catch (Exception e) {
+            log.error(LangManager.get("xinbot.jfr.stop.failed", e.getMessage()), e);
+        }
     }
 
     public void stop() {
